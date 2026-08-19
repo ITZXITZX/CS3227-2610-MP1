@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt Reply Log"
+  short_description: "Log a prompt, reply, and agent actions"
+  default_prompt: "/log-prompt"
