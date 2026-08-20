@@ -366,3 +366,153 @@ Logged the conversation to [logs/log-prompt.md](logs/log-prompt.md). I preserved
 - Read the `log-prompt` skill instructions from `.agents\\skills\\log-prompt\\SKILL.md`.
 - Added a new root-level `TESTING.md` with the project test logging policy.
 - Appended a new conversation section to `logs\\log-prompt.md` using the provided logging helper script.
+
+## Conversation - 2026-08-20 14:42:19 +08:00
+
+### Conversation history
+
+```text
+User: Implement Phase 2 Issue 4 in PLAN.md
+Trace the code and Explain the changes you made to all the files relevant for this issue with code examples.
+Follow log-prompt.md's guidelines.
+Guide me on how to run and test once you have completed, in both powershell and git.
+Stage the changed files that are relevant to this issue.
+
+Assistant: I will implement Phase 2 Issue 4, trace the affected flow, record this conversation according to the project logging guidelines, then stage only the files relevant to the change.
+```
+
+### Assistant reply
+
+````text
+Implemented Phase 2 Issue 4. The optional-field model was already present in the tracked domain code; I added and staged its focused contract tests.
+
+Relevant code and flow
+
+- [Habit.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/main/java/com/example/habitzone/domain/Habit.java) remains the domain owner. Its basic constructor keeps MVP creation unchanged: `new Habit(id, name)` delegates with `null` optional values and `HabitPriority.NORMAL`. The full constructor accepts `expiryDate`, `category`, `priority`, and `reminderTime`; nullable priority is normalized with `Objects.requireNonNullElse(priority, HabitPriority.NORMAL)`. Getters expose optional values as `Optional`, e.g. `Optional<LocalDate> expiryDate()`, so callers cannot accidentally depend on null.
+- [HabitCategory.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/main/java/com/example/habitzone/domain/HabitCategory.java) is an immutable value type. `new HabitCategory("Learning")` trims and rejects blank names.
+- [HabitPriority.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/main/java/com/example/habitzone/domain/HabitPriority.java) defines the stable `LOW`, `NORMAL`, and `HIGH` domain values.
+- [HabitTest.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/test/java/com/example/habitzone/domain/HabitTest.java) now verifies the Issue 4 contract: a basic habit returns empty optional fields and `NORMAL`, while the full constructor retains supplied expiry, category, priority, and reminder values.
+
+The fields are data-only extension points: no existing completion, use-case, or command behavior reads them, so MVP behavior is unchanged.
+
+Verification
+
+The initial Gradle run could not create `C:\.gradle`; I reran it with a project-local cache, but it emitted no progress for several minutes and was stopped. Treat the new tests as not yet execution-verified.
+
+In PowerShell, run:
+
+```powershell
+$env:GRADLE_USER_HOME = (Join-Path (Get-Location) '.gradle-user')
+.\gradlew.bat test --tests com.example.habitzone.domain.HabitTest
+.\gradlew.bat test
+.\gradlew.bat run
+```
+
+In Git, inspect and commit the staged change:
+
+```powershell
+git diff --cached --check
+git diff --cached
+git status --short
+git commit -m "test: cover optional habit fields"
+```
+
+Staged file: `src/test/java/com/example/habitzone/domain/HabitTest.java`. The three domain source files are already tracked with no new working-tree diff, so staging them makes no index change. All unrelated untracked files were left unstaged.
+
+This conversation was recorded in [logs/log-prompt.md](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/logs/log-prompt.md).
+````
+
+### Actions taken
+
+- Read the log-prompt skill instructions and Phase 2 Issue 4 in docs/PLAN.md.
+- Inspected the tracked domain model and existing domain tests.
+- Added focused tests for absent optional values, default NORMAL priority, and supplied optional values.
+- Attempted the targeted Gradle test; configured a workspace-local Gradle cache after the default cache path was blocked, then stopped the silent run after several minutes.
+- Staged only the relevant changed test file and checked the staged diff.
+- Prepared this single log entry using the repository logging helper.
+
+## Conversation - 2026-08-20 14:55:30 +08:00
+
+### Conversation history
+
+```text
+Implement Phase 3 Issue 5 in PLAN.md
+Trace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples.
+Follow log-prompt.md's guidelines.
+Guide me on how to run and test once you have completed, in both powershell and git.
+Stage the changed files that are relevant to this issue.
+```
+
+### Assistant reply
+
+````text
+Implemented and staged Phase 3 Issue 5: the application now has repository and clock ports plus fake-based compile-time coverage.
+
+Code trace
+
+- [HabitRepository.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/main/java/com/example/habitzone/port/HabitRepository.java:1) places the persistence boundary in `port`. `import ...Habit` and `import java.util.List` define the only types it needs. `List<Habit> loadAll()` reads the single user's full collection; `void saveAll(List<Habit> habits)` replaces that collection. For example, an infrastructure adapter can implement `saveAll(List.of(new Habit(new HabitId("read"), "Read")))` without the use case knowing whether it is JSON, a database, or memory.
+- [ClockProvider.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/main/java/com/example/habitzone/port/ClockProvider.java:1) imports only `LocalDate` and exposes `LocalDate currentDate()`. Code that needs today receives this interface rather than calling `LocalDate.now()` directly; a production adapter can return `LocalDate.now()`, while tests use a fixed date.
+- [PortContractsTest.java](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/src/test/java/com/example/habitzone/port/PortContractsTest.java:1) compiles and exercises both seams. `InMemoryHabitRepository` implements `HabitRepository`, saves a defensive `ArrayList`, and returns `List.copyOf`; the test verifies a saved habit can be loaded. The clock test uses the concise fake `ClockProvider clock = () -> expectedDate`, then asserts `clock.currentDate()` returns the controlled value. These demonstrate that later use cases can be tested without files or the system clock.
+
+Verification
+
+`git diff --cached --check` passed. The targeted Gradle test could not run in this environment: the default cache `C:\.gradle` is unwritable, and the workspace cache has unreadable/missing dependencies; after a refresh attempt, Gradle could not resolve `org.gradle.toolchains.foojay-resolver-convention:0.10.0`. No production code failure was reported.
+
+Run and test in PowerShell
+
+```powershell
+$env:GRADLE_USER_HOME = Join-Path (Get-Location) '.gradle-user'
+.\gradlew.bat test --tests com.example.habitzone.port.PortContractsTest --refresh-dependencies
+.\gradlew.bat test
+.\gradlew.bat run
+```
+
+Run the Git checks / commit
+
+```powershell
+git diff --cached --check
+git diff --cached
+git status --short
+git commit -m "feat: add repository and clock ports"
+```
+
+Staged files: `src/main/java/com/example/habitzone/port/HabitRepository.java`, `src/main/java/com/example/habitzone/port/ClockProvider.java`, and `src/test/java/com/example/habitzone/port/PortContractsTest.java`. I left all unrelated existing changes unstaged. `logs/log-prompt.md` was appended as required but remains unstaged because it already contained a prior unrelated modification; staging it would mix that earlier work with Issue 5.
+
+This conversation was recorded in [logs/log-prompt.md](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/logs/log-prompt.md).
+````
+
+### Actions taken
+
+- Read the log-prompt skill instructions and Phase 3 Issue 5 in docs/PLAN.md.
+- Inspected the existing domain model, module configuration, ports, and working-tree state.
+- Documented the two port contracts and added fake-based repository and clock contract tests.
+- Attempted the targeted Gradle test with both the default and workspace-local cache; dependency/cache failures prevented execution.
+- Staged only the Issue 5 port and test source files, and verified the staged diff has no whitespace errors.
+- Prepared this single conversation entry using the repository logging helper.
+
+## Conversation - 2026-08-20 15:08:03 +08:00
+
+### Conversation history
+
+```text
+User: Fix this issue and stage any changed files: Gradle could not run here because the default cache is unwritable and the project-local cache has unreadable/missing dependencies; refreshing then failed to resolve the Foojay Gradle plugin.
+
+User: can I just delete gradle caches in my .gradle-cache/caches? It seems like codex keeps generating more and more of such files making my untrack files reach over 1000
+
+User: Help me do this
+
+User: [$log-prompt](C:\\Users\\isaac\\Documents\\local\\NUS\\Y4S1_local\\CS3227\\Assignments\\MP1\\HabitZone\\.agents\\skills\\log-prompt\\SKILL.md)
+```
+
+### Assistant reply
+
+```text
+Recorded this conversation in [logs/log-prompt.md](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/logs/log-prompt.md).
+```
+
+### Actions taken
+
+- Removed the unnecessary Foojay resolver settings plugin and staged settings.gradle.kts.
+- Validated the targeted port contract test successfully with a fresh project-local Gradle cache.
+- Added .gradle-cache/ and .gradle-user/ to .gitignore, deleted both cache directories after stopping Gradle, and staged .gitignore.
+- Read the log-prompt skill instructions and appended this single log entry using its helper script.
