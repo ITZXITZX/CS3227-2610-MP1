@@ -1,5 +1,6 @@
 module com.example.habitzone {
     requires javafx.controls;
+    requires transitive javafx.graphics;
     requires javafx.fxml;
     requires javafx.web;
 
@@ -8,6 +9,5 @@ module com.example.habitzone {
     requires org.kordamp.ikonli.javafx;
     requires eu.hansolo.tilesfx;
 
-    opens com.example.habitzone to javafx.fxml;
-    exports com.example.habitzone;
+    exports com.example.habitzone.app;
 }
