@@ -1,0 +1,3 @@
+package com.example.habitzone.usecase;
+import com.example.habitzone.domain.Habit; import com.example.habitzone.port.*; import java.time.*; import java.util.*;
+public final class ViewHabitStreakUseCase { private final HabitRepository repository; private final ClockProvider clock; public ViewHabitStreakUseCase(HabitRepository repository,ClockProvider clock){this.repository=repository;this.clock=clock;} public UseCaseResult<Integer> execute(String name){List<Habit> habits=repository.loadAll();return HabitLookup.findByName(habits,name).map(h->{int n=0;LocalDate d=clock.currentDate();while(h.isCompleteOn(d)){n++;d=d.minusDays(1);}return UseCaseResult.success(n);}).orElseGet(()->UseCaseResult.failure(UseCaseError.HABIT_NOT_FOUND));}}

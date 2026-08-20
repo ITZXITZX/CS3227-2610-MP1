@@ -12,6 +12,7 @@ import com.example.habitzone.usecase.SetHabitCategoryUseCase;
 import com.example.habitzone.usecase.UnmarkHabitCompleteUseCase;
 import com.example.habitzone.usecase.ViewHabitHistoryUseCase;
 import com.example.habitzone.usecase.ViewHabitsUseCase;
+import com.example.habitzone.usecase.ViewHabitStreakUseCase;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -63,6 +64,7 @@ public class CommandRegistry {
         registry.register(new ClearExpiryCommand(new ClearHabitExpiryUseCase(repository)));
         registry.register(new SetPriorityCommand(new SetHabitPriorityUseCase(repository)));
         registry.register(new SetCategoryCommand(new SetHabitCategoryUseCase(repository)));
+        registry.register(new StreakCommand(new ViewHabitStreakUseCase(repository, clockProvider)));
         return registry;
     }
 
