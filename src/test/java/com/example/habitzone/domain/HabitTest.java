@@ -3,7 +3,9 @@ package com.example.habitzone.domain;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,6 +25,38 @@ class HabitTest {
     @Test
     void rejectsBlankHabitName() {
         assertThrows(IllegalArgumentException.class, () -> new Habit(new HabitId("habit-1"), " "));
+    }
+
+    @Test
+    void createsHabitWithoutOptionalFutureFields() {
+        Habit habit = new Habit(new HabitId("habit-1"), "Read");
+
+        assertEquals(Optional.empty(), habit.expiryDate());
+        assertEquals(Optional.empty(), habit.category());
+        assertEquals(HabitPriority.NORMAL, habit.priority());
+        assertEquals(Optional.empty(), habit.reminderTime());
+    }
+
+    @Test
+    void retainsSuppliedFutureFieldValues() {
+        LocalDate expiryDate = LocalDate.of(2026, 12, 31);
+        HabitCategory category = new HabitCategory("Learning");
+        LocalTime reminderTime = LocalTime.of(9, 30);
+
+        Habit habit = new Habit(
+                new HabitId("habit-1"),
+                "Read",
+                List.of(),
+                expiryDate,
+                category,
+                HabitPriority.HIGH,
+                reminderTime
+        );
+
+        assertEquals(Optional.of(expiryDate), habit.expiryDate());
+        assertEquals(Optional.of(category), habit.category());
+        assertEquals(HabitPriority.HIGH, habit.priority());
+        assertEquals(Optional.of(reminderTime), habit.reminderTime());
     }
 
     @Test
