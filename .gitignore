@@ -7,6 +7,10 @@ build/
 !**/src/test/**/build/
 .kotlin
 
+# Local runtime data; retain the directory for fresh clones.
+/data/*
+!/data/.gitkeep
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
