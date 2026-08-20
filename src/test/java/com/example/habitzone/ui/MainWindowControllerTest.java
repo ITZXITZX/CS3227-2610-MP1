@@ -38,4 +38,20 @@ class MainWindowControllerTest {
         assertEquals("Goodbye.", controller.feedback());
         assertTrue(exited.get());
     }
+
+    @Test
+    void clearsTheHabitListWhenExecutorReturnsAnEmptySnapshot() {
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        MainWindowController controller = new MainWindowController(
+                input -> "list".equals(input)
+                        ? CommandResult.habits("No habits.", List.of())
+                        : CommandResult.habits("1 habit.", List.of(exercise)),
+                () -> fail("exit should not run")
+        );
+
+        controller.submit("add exercise");
+        controller.submit("list");
+
+        assertTrue(controller.habits().isEmpty());
+    }
 }

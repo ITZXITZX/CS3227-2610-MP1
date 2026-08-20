@@ -49,7 +49,10 @@ public class MarkCompleteCommand implements Command {
             String trimmed = arguments.trim();
             int lastSpace = trimmed.lastIndexOf(' ');
             if (lastSpace < 0) {
-                return new ParsedDatedHabit("", CommandSupport.parseIsoDate(trimmed));
+                Optional<LocalDate> date = CommandSupport.parseIsoDate(trimmed);
+                return date.isPresent()
+                        ? new ParsedDatedHabit("", date)
+                        : new ParsedDatedHabit(trimmed, Optional.empty());
             }
 
             String habitName = trimmed.substring(0, lastSpace).trim();

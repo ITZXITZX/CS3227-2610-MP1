@@ -761,3 +761,109 @@ I logged this follow-up in `logs/log-prompt.md`. I did not alter the previously 
 - Inspected the existing .gitignore, local data directory, and working-tree state.
 - Added the data ignore exception pattern and data/.gitkeep placeholder.
 - Appended and verified this follow-up conversation log entry.
+
+## Conversation - 2026-08-20 16:50:31 +08:00
+
+### Conversation history
+
+```text
+User: Implement Phase 6 Issue 11 in PLAN.md
+Trace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.
+Follow log-prompt.md's guidelines.
+Guide me on how to run and test in gitbash once you have completed.
+Stage the changed files that are relevant to this issue.
+
+Assistant: I’ll trace the Phase 6 Issue 11 requirements through the codebase, implement and test the scoped changes, record this conversation per the project’s logging guidelines, then stage only the files relevant to the issue.
+
+Assistant: I’m using the project’s `log-prompt` skill because you asked to follow its logging guidelines.
+
+Assistant: The existing Issue 10 window already delegates to the command registry, but its refresh contract cannot distinguish “no list payload” from “an updated, empty list.” That leaves a deleted final habit visible. I’m tightening that command-to-UI result contract and adding an end-to-end adapter test for the required MVP flow.
+
+Assistant: The focused implementation is now applied: a concrete command-registry adapter owns the refresh behavior, and the controller accepts explicit empty-list updates.
+
+Assistant: Both the focused UI/adapter tests and the entire Gradle suite pass. The automated end-to-end test covers the requested command sequence and confirms deletion returns an explicitly empty habit snapshot, so the UI clears correctly.
+```
+
+### Assistant reply
+
+````text
+Implemented Phase 6 Issue 11 and staged the relevant files. Focused UI/command-adapter tests and the full Gradle suite pass.
+
+## Code trace
+
+### `HabitZoneApplication.java`
+
+`start` remains the composition root. It creates `CommandRegistry`, wraps it in `CommandRegistryExecutor`, and passes that executor to `MainWindowController`; JavaFX therefore contains no command business logic.
+
+```java
+new MainWindowController(new CommandRegistryExecutor(commandRegistry), stage::close)
+```
+
+### `CommandRegistryExecutor.java`
+
+This new adapter is the UI-to-command-layer bridge. It forwards entered text directly to `CommandRegistry`. For successful non-exit commands, it runs `list` and attaches that snapshot to the original command result. Errors and `exit` are returned unchanged, so errors remain visible and `exit` is handled gracefully by the controller.
+
+```java
+CommandResult result = commandRegistry.execute(input);
+if (result.error() || result.exit()) return result;
+return result.withHabitList(commandRegistry.execute("list").habits());
+```
+
+That makes `add`, `done`, `undone`, `delete`, and `history` refresh the habit panel while preserving the original feedback and any structured history.
+
+### `CommandResult.java`
+
+Added `includesHabitList`, an explicit payload marker. An empty list is meaningful after deleting the final habit, whereas `List.of()` also previously meant “this command supplied no list.” `habits(...)` and `withHabitList(...)` set the marker; ordinary successes, errors, history, and exit do not.
+
+```java
+public CommandResult withHabitList(List<HabitSnapshot> habits) {
+    return new CommandResult(message, error, exit, habits, history, true);
+}
+```
+
+### `MainWindowController.java`
+
+The controller now replaces its habit state when `includesHabitList()` is true, including an empty list. It still only renders command results and calls the injected close action for an exit signal.
+
+```java
+if (result.includesHabitList()) {
+    habits = result.habits();
+    history = Optional.empty();
+}
+```
+
+### Tests
+
+`MainWindowControllerTest` verifies an explicit empty snapshot clears stale habits. New `CommandRegistryExecutorTest` runs the MVP sequence `add exercise`, `done`, `history`, `undone`, and `delete`, then verifies the deletion returns an empty supplied list.
+
+## Run and test in Git Bash
+
+```bash
+cd /c/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone
+export GRADLE_USER_HOME="$PWD/.gradle-user"
+./gradlew test --tests 'com.example.habitzone.ui.MainWindowControllerTest' --tests 'com.example.habitzone.ui.CommandRegistryExecutorTest'
+./gradlew test
+./gradlew run
+```
+
+For the JavaFX smoke test, press Enter after each command: `add exercise`, `done exercise 2026-08-19`, `history exercise`, `undone exercise 2026-08-19`, and `delete exercise`. Confirm feedback updates, history appears after `history`, and the habits panel is empty after deletion. Try an invalid command to confirm the window stays open, then `exit` to close it.
+
+## Staged files
+
+- `src/main/java/com/example/habitzone/app/HabitZoneApplication.java`
+- `src/main/java/com/example/habitzone/command/CommandResult.java`
+- `src/main/java/com/example/habitzone/ui/CommandRegistryExecutor.java`
+- `src/main/java/com/example/habitzone/ui/MainWindowController.java`
+- `src/test/java/com/example/habitzone/ui/CommandRegistryExecutorTest.java`
+- `src/test/java/com/example/habitzone/ui/MainWindowControllerTest.java`
+- `logs/log-prompt.md`
+````
+
+### Actions taken
+
+- Read the `log-prompt` skill and Phase 6 Issue 11 in `docs/PLAN.md`.
+- Traced the JavaFX view, controller, application composition root, command registry, and command result contract.
+- Implemented the command-registry UI adapter and explicit empty-list refresh handling.
+- Added controller and command-adapter tests for the required MVP flow.
+- Ran focused UI tests and the complete Gradle test suite successfully.
+- Appended and verified this conversation entry, then staged only Issue 11 files.

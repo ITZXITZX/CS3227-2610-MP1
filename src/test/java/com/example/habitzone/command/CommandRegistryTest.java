@@ -156,6 +156,14 @@ class CommandRegistryTest {
     }
 
     @Test
+    void doneAndUndoneWithHabitButNoDateReportAnInvalidDate() {
+        CommandRegistry registry = registry(new FakeHabitRepository());
+
+        assertEquals(CommandMessages.INVALID_DATE, registry.execute("done exercise").message());
+        assertEquals(CommandMessages.INVALID_DATE, registry.execute("undone exercise").message());
+    }
+
+    @Test
     void missingArgumentsReturnFriendlyErrors() {
         CommandRegistry registry = registry(new FakeHabitRepository());
 

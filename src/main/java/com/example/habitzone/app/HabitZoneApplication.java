@@ -1,9 +1,9 @@
 package com.example.habitzone.app;
 
 import com.example.habitzone.command.CommandRegistry;
-import com.example.habitzone.command.CommandResult;
 import com.example.habitzone.infrastructure.JsonHabitRepository;
 import com.example.habitzone.port.ClockProvider;
+import com.example.habitzone.ui.CommandRegistryExecutor;
 import com.example.habitzone.ui.HabitZoneView;
 import com.example.habitzone.ui.MainWindowController;
 import javafx.application.Application;
@@ -19,7 +19,7 @@ public class HabitZoneApplication extends Application {
                 new JsonHabitRepository(),
                 (ClockProvider) LocalDate::now
         );
-        MainWindowController controller = new MainWindowController(input -> executeAndRefresh(commandRegistry, input), stage::close);
+        MainWindowController controller = new MainWindowController(new CommandRegistryExecutor(commandRegistry), stage::close);
         HabitZoneView root = new HabitZoneView(controller, LocalDate::now);
 
         Scene scene = new Scene(root, 980, 680);
@@ -30,14 +30,5 @@ public class HabitZoneApplication extends Application {
         stage.setMinHeight(560);
         stage.setScene(scene);
         stage.show();
-    }
-
-    private CommandResult executeAndRefresh(CommandRegistry commandRegistry, String input) {
-        CommandResult result = commandRegistry.execute(input);
-        if (result.error() || result.exit()) {
-            return result;
-        }
-        CommandResult habits = commandRegistry.execute("list");
-        return new CommandResult(result.message(), false, false, habits.habits(), result.history());
     }
 }

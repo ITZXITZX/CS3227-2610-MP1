@@ -26,7 +26,7 @@ public final class MainWindowController {
         CommandResult result = commandExecutor.execute(input);
         feedback = result.message();
         feedbackIsError = result.error();
-        if (!result.habits().isEmpty()) {
+        if (result.includesHabitList()) {
             habits = result.habits();
             history = Optional.empty();
         }
