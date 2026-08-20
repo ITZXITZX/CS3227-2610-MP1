@@ -15,8 +15,8 @@ public class Habit {
     private final String name;
     private final NavigableSet<LocalDate> completionDates;
     private LocalDate expiryDate;
-    private final HabitCategory category;
-    private final HabitPriority priority;
+    private HabitCategory category;
+    private HabitPriority priority;
     private final LocalTime reminderTime;
 
     public Habit(HabitId id, String name) {
@@ -74,9 +74,13 @@ public class Habit {
         return Optional.ofNullable(category);
     }
 
+    public void setCategory(HabitCategory category) { this.category = Objects.requireNonNull(category, "category"); }
+
     public HabitPriority priority() {
         return priority;
     }
+
+    public void setPriority(HabitPriority priority) { this.priority = Objects.requireNonNull(priority, "priority"); }
 
     public Optional<LocalTime> reminderTime() {
         return Optional.ofNullable(reminderTime);

@@ -7,6 +7,8 @@ import com.example.habitzone.usecase.ClearHabitExpiryUseCase;
 import com.example.habitzone.usecase.DeleteHabitUseCase;
 import com.example.habitzone.usecase.MarkHabitCompleteUseCase;
 import com.example.habitzone.usecase.SetHabitExpiryUseCase;
+import com.example.habitzone.usecase.SetHabitPriorityUseCase;
+import com.example.habitzone.usecase.SetHabitCategoryUseCase;
 import com.example.habitzone.usecase.UnmarkHabitCompleteUseCase;
 import com.example.habitzone.usecase.ViewHabitHistoryUseCase;
 import com.example.habitzone.usecase.ViewHabitsUseCase;
@@ -59,6 +61,8 @@ public class CommandRegistry {
         );
         registry.register(new SetExpiryCommand(new SetHabitExpiryUseCase(repository)));
         registry.register(new ClearExpiryCommand(new ClearHabitExpiryUseCase(repository)));
+        registry.register(new SetPriorityCommand(new SetHabitPriorityUseCase(repository)));
+        registry.register(new SetCategoryCommand(new SetHabitCategoryUseCase(repository)));
         return registry;
     }
 
