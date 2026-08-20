@@ -516,3 +516,157 @@ Recorded this conversation in [logs/log-prompt.md](C:/Users/isaac/Documents/loca
 - Validated the targeted port contract test successfully with a fresh project-local Gradle cache.
 - Added .gradle-cache/ and .gradle-user/ to .gitignore, deleted both cache directories after stopping Gradle, and staged .gitignore.
 - Read the log-prompt skill instructions and appended this single log entry using its helper script.
+
+## Conversation - 2026-08-20 15:16:35 +08:00
+
+### Conversation history
+
+```text
+User: Implement Phase 3 Issue 6 in PLAN.md
+Trace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples.
+Follow log-prompt.md's guidelines.
+Guide me on how to run and test once you have completed.
+Stage the changed files that are relevant to this issue.
+```
+
+### Assistant reply
+
+````text
+Implemented Phase 3 Issue 6. The six use cases return structured `UseCaseResult` values, save mutations through `HabitRepository`, and have focused fake-based unit tests. All 19 Issue 6 source/test files are staged; unrelated command, storage, and temporary files remain unstaged.
+
+## Execution trace
+
+1. `AddHabitUseCase.execute(name)` rejects blank names, loads a mutable copy, finds duplicates case-insensitively, creates `HabitId.newId()`, saves, and returns a `HabitSnapshot`.
+2. `DeleteHabitUseCase.execute(name)` loads, looks up, returns `HABIT_NOT_FOUND` if absent, otherwise removes, saves, and snapshots the deleted habit.
+3. Mark/unmark load a habit, validate its existence, call the domain mutation on the requested date, persist the collection, then snapshot it. Their one-argument overloads obtain the date through `ClockProvider`.
+4. The read use cases do not save: listing maps sorted habits to snapshots; history maps one habit to its descending `CompletionLog` list.
+
+## Files changed
+
+- `UseCaseResult`, `UseCaseError`, `HabitSnapshot`, and `HabitHistory` define UI-independent success/failure and read models. For example:
+
+  ```java
+  return UseCaseResult.failure(UseCaseError.DUPLICATE_HABIT);
+  ```
+
+- `HabitLookup` centralizes trimming, blank detection, and case-insensitive name matching, so every use case applies the same identity rule.
+- `AddHabitUseCase`, `DeleteHabitUseCase`, `MarkHabitCompleteUseCase`, and `UnmarkHabitCompleteUseCase` implement the mutation flow. The core persist-after-mutation sequence is:
+
+  ```java
+  habit.markComplete(date);
+  repository.saveAll(habits);
+  return UseCaseResult.success(HabitSnapshot.from(habit));
+  ```
+
+- `ViewHabitsUseCase` returns an alphabetically sorted immutable list of snapshots; `ViewHabitHistoryUseCase` returns one habit's newest-first completion history. Neither knows about JavaFX or formatting.
+- The nine test files provide in-memory `FakeHabitRepository` and `FixedClockProvider`, then cover add/duplicate/blank, delete/missing, empty/sorted list, mark/current-date/missing, unmark/missing, and history/missing cases.
+
+## Verify locally
+
+In PowerShell from the repository root:
+
+```powershell
+$env:GRADLE_USER_HOME = Join-Path (Get-Location) '.gradle-user'
+.\gradlew.bat cleanTest test --tests 'com.example.habitzone.usecase.*' --rerun-tasks
+.\gradlew.bat test
+```
+
+The focused clean suite passed here: `BUILD SUCCESSFUL` (5 tasks executed). The first command is the direct Issue 6 check; the second runs the full project suite. Inspect the staged change with `git diff --cached` and commit when ready.
+
+This conversation was recorded in [logs/log-prompt.md](C:/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone/logs/log-prompt.md).
+````
+
+### Actions taken
+
+- Read the log-prompt skill instructions and Phase 3 Issue 6 in docs/PLAN.md.
+- Inspected the existing domain model, ports, use-case implementation, tests, build configuration, and working-tree state.
+- Ran the focused use-case suite from clean test outputs with forced task execution; it passed successfully.
+- Staged only the 19 Issue 6 use-case source and test files and verified the staged diff has no whitespace errors.
+- Appended this required single conversation entry using the repository logging helper.
+
+## Conversation - 2026-08-20 15:30:59 +08:00
+
+### Conversation history
+
+```text
+Implement Phase 4 Issue 7 in PLAN.md\nTrace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples.\nFollow log-prompt.md's guidelines.\nGuide me on how to run and test in gitbash once you have completed.\nStage the changed files that are relevant to this issue.
+```
+
+### Assistant reply
+
+````text
+Implemented Phase 4 Issue 7 and staged its implementation and tests. `JsonHabitRepository` persists the full habit collection in `data/habits.json` by default, recreates domain objects on load, creates a missing data directory/file as `[]`, and wraps corrupt or I/O data failures in `StorageException`.\n\n## Code trace\n\n- `JsonHabitRepository` is the `HabitRepository` adapter. Its no-argument constructor selects `Path.of(\"data\", \"habits.json\")`; the `Path` constructor lets tests (and future configuration) isolate a data file.\n- `loadAll()` first calls `ensureDataFileExists()`. That creates the parent directory and initializes a new file with an empty JSON array, then blank files return `List.of()`. Otherwise the internal JSON reader requires a top-level array and maps every object via `toHabit(...)`.\n\n  ```java\n  ensureDataFileExists();\n  Object parsed = Json.parse(json);\n  habits.add(toHabit(value));\n  ```\n\n- `toHabit(...)` reads the stable ID, name, completion-date array, and optional future-ready fields, then calls the existing domain constructor. `Habit` stores dates in a `TreeSet`, so restored completion history is deduplicated and ascending.\n- `saveAll()` creates a parent directory when necessary and serializes every supplied habit. `toJson(...)` writes all persisted fields; its escaping routine keeps quotes, backslashes, control characters, and Unicode escapes valid JSON.\n\n  ```java\n  appendStringField(json, \"id\", habit.id().value(), true);\n  appendCompletionDates(json, habit.completionDatesAscending());\n  appendStringField(json, \"priority\", habit.priority().name(), true);\n  ```\n\n- The small nested parser handles the JSON forms this schema needs: objects, arrays, strings, `null`, whitespace, and standard escapes. Any malformed structure, invalid date/time, unknown priority, or I/O failure is caught at the repository boundary and rethrown as a controlled `StorageException`.\n- `StorageException` is the infrastructure-specific unchecked error surfaced to the command/UI layer later, without leaking parser or filesystem details as an uncontrolled failure.\n- `JsonHabitRepositoryTest` uses JUnit `@TempDir`, so no JavaFX or real user data is needed. It covers full habit round-trip, completion-date round-trip, missing-file initialization, blank-store handling, and corrupt JSON.\n\n## Verification\n\nBoth the focused repository suite and the full project suite passed: `./gradlew test --tests com.example.habitzone.infrastructure.JsonHabitRepositoryTest` and `./gradlew test`.\n\nIn Git Bash at the repository root, run:\n\n```bash\n./gradlew test --tests 'com.example.habitzone.infrastructure.JsonHabitRepositoryTest'\n./gradlew test\n```\n\nTo manually inspect persistence after the application wiring is added, use `cat data/habits.json`; the repository's default path is `data/habits.json`.\n\nStaged Issue 7 files:\n\n- `src/main/java/com/example/habitzone/infrastructure/JsonHabitRepository.java`\n- `src/main/java/com/example/habitzone/infrastructure/StorageException.java`\n- `src/test/java/com/example/habitzone/infrastructure/JsonHabitRepositoryTest.java`\n\nI also recorded this conversation in `logs/log-prompt.md`. That log already had unrelated unstaged Issue 6 content, so I deliberately left the log file unstaged to avoid staging someone else's changes.
+````
+
+### Actions taken
+
+- Read the log-prompt skill instructions and Phase 4 Issue 7 in docs/PLAN.md.
+- Inspected the domain model, HabitRepository port, JSON repository, storage exception, tests, Gradle build, module descriptor, and working-tree state.
+- Updated missing-file loading to create the configured parent directory and initialize the data file as an empty JSON array.
+- Ran the focused JSON repository test suite and the full Gradle test suite; both passed.
+- Staged only the Issue 7 repository implementation and focused test files; preserved unrelated working-tree changes.
+
+## Conversation - 2026-08-20 15:43:54 +08:00
+
+### Conversation history
+
+```text
+Implement Phase 5 Issue 8 in PLAN.md
+Trace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.
+Follow log-prompt.md's guidelines.
+Guide me on how to run and test in gitbash once you have completed.
+Stage the changed files that are relevant to this issue.
+```
+
+### Assistant reply
+
+````text
+Implemented Phase 5 Issue 8 and staged the 15 command-layer source/test files. All MVP commands parse, dispatch to use cases through small handlers, produce structured UI-ready results, and return friendly errors. The full Gradle suite passes.
+
+## Code trace
+
+- `CommandParser.parse(input)` returns a normalized command name plus preserved arguments. It trims input, finds the first whitespace character, lower-cases the name, and trims the rest. This supports multi-word habit names and tab-separated input.
+
+  ```java
+  String commandName = trimmed.substring(0, argumentStart).toLowerCase();
+  String arguments = trimmed.substring(argumentStart).trim();
+  ```
+
+- `CommandRegistry.execute(input)` parses, rejects an empty command, finds the handler in its insertion-ordered map, and calls `execute(arguments)`. Unknown commands return the help-directed error. `withUseCases(...)` registers add, delete, list, done, undone, history, help, and exit, while `withRepository(...)` constructs their existing use cases.
+
+  ```java
+  Command command = commands.get(parsed.name());
+  return command == null ? failure(UNKNOWN_COMMAND) : command.execute(parsed.arguments());
+  ```
+
+- `Command` defines the extension point: `name()`, `usage()`, and `execute(arguments)`. Each individual command handler validates only command syntax and delegates business work to its corresponding use case. `CommandSupport` translates `UseCaseError` values and unexpected storage failures into display-safe messages.
+
+- The add, delete, list, and history handlers preserve the full multi-word argument as the habit name. `MarkCompleteCommand.ParsedDatedHabit` instead reserves its final token for the date, so done with a multi-word habit name passes that name and the parsed `LocalDate` to the use case. Invalid or missing dates return the required `YYYY-MM-DD` error. `UnmarkCompleteCommand` reuses this parser.
+
+- `CommandResult` is the UI boundary: every result has a message and can carry an error flag, exit signal, habit snapshots, or optional history. `ExitCommand` sets the signal only; it does not close JavaFX directly. `HelpCommand` derives its usage text from registered handlers, avoiding a duplicate command list.
+
+- `CommandRegistryTest` uses a fake repository and fixed clock. It covers every valid MVP command, list/history result payloads, command-name parsing including tabs, unknown/empty commands, invalid dates, missing arguments, expected use-case failures, storage failure, help, and exit.
+
+## Verify in Git Bash
+
+From the repository root:
+
+```bash
+export GRADLE_USER_HOME="$PWD/.gradle-user"
+./gradlew test --tests 'com.example.habitzone.command.CommandRegistryTest'
+./gradlew test
+```
+
+Both commands passed here with `BUILD SUCCESSFUL`. Review the staged work with `git diff --cached --check`, `git diff --cached --stat`, and `git status --short`.
+
+Staged: 14 command implementation files and `src/test/java/com/example/habitzone/command/CommandRegistryTest.java`. `logs/log-prompt.md` was updated as required but remains unstaged because it already had unrelated prior edits.
+````
+
+### Actions taken
+
+- Read the log-prompt skill instructions and Phase 5 Issue 8 in docs/PLAN.md.
+- Traced the command layer, dependencies, tests, build configuration, and working-tree state.
+- Updated CommandParser to recognize all whitespace separators and added the regression test.
+- Ran the focused CommandRegistryTest suite and full Gradle test suite; both passed using the project-local Gradle cache.
+- Staged only the 14 command implementation files and focused command test, then verified no staged whitespace errors.
+- Appended this required single conversation entry using the repository logging helper; kept the pre-existing modified log unstaged.
