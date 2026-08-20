@@ -3,8 +3,10 @@ package com.example.habitzone.command;
 import com.example.habitzone.port.ClockProvider;
 import com.example.habitzone.port.HabitRepository;
 import com.example.habitzone.usecase.AddHabitUseCase;
+import com.example.habitzone.usecase.ClearHabitExpiryUseCase;
 import com.example.habitzone.usecase.DeleteHabitUseCase;
 import com.example.habitzone.usecase.MarkHabitCompleteUseCase;
+import com.example.habitzone.usecase.SetHabitExpiryUseCase;
 import com.example.habitzone.usecase.UnmarkHabitCompleteUseCase;
 import com.example.habitzone.usecase.ViewHabitHistoryUseCase;
 import com.example.habitzone.usecase.ViewHabitsUseCase;
@@ -47,7 +49,7 @@ public class CommandRegistry {
     }
 
     public static CommandRegistry withRepository(HabitRepository repository, ClockProvider clockProvider) {
-        return withUseCases(
+        CommandRegistry registry = withUseCases(
                 new AddHabitUseCase(repository),
                 new DeleteHabitUseCase(repository),
                 new ViewHabitsUseCase(repository),
@@ -55,6 +57,9 @@ public class CommandRegistry {
                 new UnmarkHabitCompleteUseCase(repository, clockProvider),
                 new ViewHabitHistoryUseCase(repository)
         );
+        registry.register(new SetExpiryCommand(new SetHabitExpiryUseCase(repository)));
+        registry.register(new ClearExpiryCommand(new ClearHabitExpiryUseCase(repository)));
+        return registry;
     }
 
     public void register(Command command) {

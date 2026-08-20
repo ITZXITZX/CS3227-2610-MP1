@@ -14,7 +14,7 @@ public class Habit {
     private final HabitId id;
     private final String name;
     private final NavigableSet<LocalDate> completionDates;
-    private final LocalDate expiryDate;
+    private LocalDate expiryDate;
     private final HabitCategory category;
     private final HabitPriority priority;
     private final LocalTime reminderTime;
@@ -60,6 +60,14 @@ public class Habit {
 
     public Optional<LocalDate> expiryDate() {
         return Optional.ofNullable(expiryDate);
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = Objects.requireNonNull(expiryDate, "expiryDate");
+    }
+
+    public void clearExpiryDate() {
+        expiryDate = null;
     }
 
     public Optional<HabitCategory> category() {
