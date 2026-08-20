@@ -2,6 +2,7 @@ package com.example.habitzone.command;
 
 import com.example.habitzone.domain.Habit;
 import com.example.habitzone.domain.HabitId;
+import com.example.habitzone.infrastructure.StorageException;
 import com.example.habitzone.port.ClockProvider;
 import com.example.habitzone.port.HabitRepository;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,14 @@ class CommandRegistryTest {
 
         assertEquals("done", parsed.name());
         assertEquals("Morning Run 2026-08-19", parsed.arguments());
+    }
+
+    @Test
+    void parserTreatsNullAndWhitespaceOnlyInputAsAnEmptyCommand() {
+        CommandParser parser = new CommandParser();
+
+        assertEquals(new CommandParser.ParsedCommand("", ""), parser.parse(null));
+        assertEquals(new CommandParser.ParsedCommand("", ""), parser.parse(" \t\n "));
     }
 
     @Test
@@ -148,6 +157,23 @@ class CommandRegistryTest {
     }
 
     @Test
+    void invalidCommandsDoNotModifyExistingHabits() {
+        FakeHabitRepository repository = new FakeHabitRepository();
+        Habit read = new Habit(new HabitId("habit-1"), "Read");
+        repository.seed(read);
+        CommandRegistry registry = registry(repository);
+
+        registry.execute("   ");
+        registry.execute("dance Read");
+        registry.execute("done Read not-a-date");
+        registry.execute("add");
+
+        assertEquals(1, repository.loadAll().size());
+        assertEquals("Read", repository.loadAll().getFirst().name());
+        assertFalse(repository.loadAll().getFirst().isCompleteOn(today));
+    }
+
+    @Test
     void invalidDateReturnsFriendlyError() {
         CommandResult result = registry(new FakeHabitRepository()).execute("done Read 19-08-2026");
 
@@ -227,12 +253,12 @@ class CommandRegistryTest {
     private static class ThrowingHabitRepository implements HabitRepository {
         @Override
         public List<Habit> loadAll() {
-            throw new IllegalStateException("storage unavailable");
+            throw new StorageException("storage unavailable", new IllegalStateException());
         }
 
         @Override
         public void saveAll(List<Habit> habits) {
-            throw new IllegalStateException("storage unavailable");
+            throw new StorageException("storage unavailable", new IllegalStateException());
         }
     }
 }

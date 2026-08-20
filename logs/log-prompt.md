@@ -17,11 +17,11 @@ I want to create a skill that logs my single prompt and the ai agent's (you) sin
 
 once you create the skill, tell me how to access it, and use it. Then use your skill for this prompt.
 
-Assistant: I’m renaming the skill and its local references so it shows up as `log-prompt` everywhere it’s defined. I’ll update the skill metadata, the on-disk folder, and the log/script references together so the name stays consistent.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m renaming the skill and its local references so it shows up as `log-prompt` everywhere itÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s defined. IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll update the skill metadata, the on-disk folder, and the log/script references together so the name stays consistent.
 
 User: Change the name of the skill from prompt-reply-log to log-prompt
 
-Assistant: I’ve confirmed this is a local skill rename, so I’m updating the skill’s internal name and the surrounding paths together. Next I’m finding every `prompt-reply-log` reference so nothing points at the old name afterward.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ve confirmed this is a local skill rename, so IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m updating the skillÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s internal name and the surrounding paths together. Next IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m finding every `prompt-reply-log` reference so nothing points at the old name afterward.
 
 User: I want to be able to invoke log-prompt when I type in `/log-prompt` in the editor. I do not want to keep any references of prompt-reply-log. I already said I wanted to change all occurences of prompt-reply-log to log-prompt in my previous request.
 
@@ -29,7 +29,7 @@ Also I want to update the skill, log-prompt, so that it doesnt just log 1 intera
 
 Invoke this skill for the current conversation, for example using `/log-prompt`
 
-Assistant: I’m updating the skill itself so `/log-prompt` becomes the live invocation path, and I’ll remove the old `prompt-reply-log` references rather than leaving a duplicate behind. I also need to widen the logger from a single turn to the whole conversation history, so I’m checking the existing skill instructions first before I edit anything.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m updating the skill itself so `/log-prompt` becomes the live invocation path, and IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll remove the old `prompt-reply-log` references rather than leaving a duplicate behind. I also need to widen the logger from a single turn to the whole conversation history, so IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m checking the existing skill instructions first before I edit anything.
 ```
 
 ### Assistant reply
@@ -185,7 +185,7 @@ Logged this conversation to `logs/log-prompt.md`.
 ```text
 User: Implement Phase 1 Issue 1 in PLAN.md, explain the changes you made to all the files relevant for this issue, and guide me on how to run and test once you have completed
 
-Assistant: I’ll inspect the project plan and existing code, implement the first Phase 1 issue within the current project conventions, then run the relevant checks and give you a concise file-by-file walkthrough.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll inspect the project plan and existing code, implement the first Phase 1 issue within the current project conventions, then run the relevant checks and give you a concise file-by-file walkthrough.
 
 Assistant actions:
 - Read docs/PLAN.md, project sources, module descriptor, Gradle configuration, and Git status.
@@ -203,7 +203,7 @@ Changes:
 - module-info.java: exports the new app package.
 - HabitZoneApplication.java: provides the JavaFX HabitZone shell, with the HabitZone window title and placeholder content.
 - Main.java: is the new JavaFX launcher.
-- Removed obsolete HelloApplication, HelloController, Launcher, and hello-view.fxml; no starter “Hello” UI text or references remain.
+- Removed obsolete HelloApplication, HelloController, Launcher, and hello-view.fxml; no starter ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œHelloÃƒÂ¢Ã¢â€šÂ¬Ã‚Â UI text or references remain.
 
 Verification: .\gradlew.bat clean test completed successfully.
 
@@ -217,7 +217,7 @@ To run tests later:
 
 User: if you trace the application from the launch to the end, for this issue, could you show me the trace of how it works, covering all the files involved, and then stage the files with code changes that are part of completing this issue? I want to commit them myself
 
-Assistant: I’ll trace the Phase 1 startup path file by file, then stage only the Issue 1 changes. I’ll leave the unrelated in-progress packages, documentation, tests, and the pre-existing test-runtime dependency unstaged.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll trace the Phase 1 startup path file by file, then stage only the Issue 1 changes. IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll leave the unrelated in-progress packages, documentation, tests, and the pre-existing test-runtime dependency unstaged.
 
 Assistant actions:
 - Inspected the app sources and relevant diff.
@@ -230,9 +230,9 @@ Assistant actions:
 Assistant: The Phase 1 Issue 1 files are staged; no commit was made. git diff --cached --check passes.
 
 Trace from launch to exit:
-.\gradlew.bat run → build.gradle.kts → module-info.java → app/Main.java → app/HabitZoneApplication.java → JavaFX window shown → user closes window → JavaFX runtime exits
+.\gradlew.bat run ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ build.gradle.kts ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ module-info.java ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ app/Main.java ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ app/HabitZoneApplication.java ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ JavaFX window shown ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ user closes window ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ JavaFX runtime exits
 
-- build.gradle.kts configures Gradle’s Application plugin to launch com.example.habitzone.app.Main.
+- build.gradle.kts configures GradleÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s Application plugin to launch com.example.habitzone.app.Main.
 - module-info.java declares JavaFX dependencies and exports the app package that contains the application entry point.
 - Main.java is the ordinary Java main entry point. It calls Application.launch(HabitZoneApplication.class, args).
 - HabitZoneApplication.java is the JavaFX lifecycle class. JavaFX calls start(Stage), which builds the title/placeholder UI, assigns the scene, sets the window title to HabitZone, and shows it.
@@ -244,7 +244,7 @@ Note: build.gradle.kts shows MM because its Issue 1 launcher change is staged, w
 
 User: explain and resolve this warning: "The type Stage from module javafx.graphics may not be accessible to clients due to missing 'requires transitive'"
 
-Assistant: That warning is caused by exporting the app package while its public HabitZoneApplication.start(Stage) method exposes JavaFX’s Stage type. I’ll make the JavaFX graphics dependency transitive so any module that can access the exported class can also resolve that public type.
+Assistant: That warning is caused by exporting the app package while its public HabitZoneApplication.start(Stage) method exposes JavaFXÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s Stage type. IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll make the JavaFX graphics dependency transitive so any module that can access the exported class can also resolve that public type.
 
 Assistant actions:
 - Added requires transitive javafx.graphics; to module-info.java.
@@ -259,7 +259,7 @@ Why it occurred: HabitZoneApplication.java is in an exported package and exposes
 I added this to module-info.java:
 requires transitive javafx.graphics;
 
-transitive means modules that depend on com.example.habitzone also receive read access to javafx.graphics, satisfying the public API’s dependency.
+transitive means modules that depend on com.example.habitzone also receive read access to javafx.graphics, satisfying the public APIÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s dependency.
 
 Verified with:
 .\gradlew.bat compileJava --no-daemon
@@ -302,7 +302,7 @@ Assistant: Implemented and staged Phase 1 Issue 2.
 
 Changes made:
 
-- [architecture.md](C:\Users\isaac\Documents\local\NUS\Y4S1_local\CS3227\Assignments\MP1\HabitZone\docs\architecture.md) documents all layers and their dependency flow: `ui → command → usecase → domain`, with `infrastructure` implementing `port` interfaces.
+- [architecture.md](C:\Users\isaac\Documents\local\NUS\Y4S1_local\CS3227\Assignments\MP1\HabitZone\docs\architecture.md) documents all layers and their dependency flow: `ui ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ command ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ usecase ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ domain`, with `infrastructure` implementing `port` interfaces.
 - Added package-level boundary documentation for domain, usecase, command, port, infrastructure, and ui. The ui package was created as the presentation layer.
 
 Code trace: JavaFX presentation code belongs in `ui`, forwards input to `command`, which orchestrates `usecase` actions. Use cases operate on `domain` objects through `port` interfaces. `infrastructure` sits outside this path and provides concrete port implementations. This prevents JavaFX controllers from owning business rules or persistence.
@@ -343,13 +343,13 @@ Logged this conversation to `logs/log-prompt.md`.
 
 ```text
 User: what is the industrial best practice for test logging?
-Assistant: The industrial best practice is to keep test logging minimal, intentional, and machine-friendly. In practice: log only when a test is failing, diagnosing flaky behavior, or validating integration boundaries. Prefer assertions over logs for expected behavior. Avoid `println`-style noise in unit tests; it makes CI output harder to scan. If you need diagnostics, use structured logs or targeted debug output that can be enabled selectively. Make logs deterministic. Donâ€™t include timestamps, random IDs, or environment-specific details unless they matter. Keep the signal high: one or two lines that explain the state before a failure are usually enough. In CI, rely on test framework reports, stack traces, and artifacts rather than verbose runtime logs. For flaky or integration tests, capture context only around the failing step so the output stays readable. If a test needs a lot of logging to be understandable, that often means the test should be split into smaller tests or the setup should be simplified. A good rule of thumb: Unit tests: almost no logging. Integration tests: selective, structured logging only when it helps diagnose failures. End-to-end tests: enough logging to reconstruct the flow, but still filtered to failures or debug mode. If you want, I can also give you: 1. a practical logging policy you can apply in a Java project, or 2. examples of good vs bad test logging in JUnit.
+Assistant: The industrial best practice is to keep test logging minimal, intentional, and machine-friendly. In practice: log only when a test is failing, diagnosing flaky behavior, or validating integration boundaries. Prefer assertions over logs for expected behavior. Avoid `println`-style noise in unit tests; it makes CI output harder to scan. If you need diagnostics, use structured logs or targeted debug output that can be enabled selectively. Make logs deterministic. DonÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢t include timestamps, random IDs, or environment-specific details unless they matter. Keep the signal high: one or two lines that explain the state before a failure are usually enough. In CI, rely on test framework reports, stack traces, and artifacts rather than verbose runtime logs. For flaky or integration tests, capture context only around the failing step so the output stays readable. If a test needs a lot of logging to be understandable, that often means the test should be split into smaller tests or the setup should be simplified. A good rule of thumb: Unit tests: almost no logging. Integration tests: selective, structured logging only when it helps diagnose failures. End-to-end tests: enough logging to reconstruct the flow, but still filtered to failures or debug mode. If you want, I can also give you: 1. a practical logging policy you can apply in a Java project, or 2. examples of good vs bad test logging in JUnit.
 User: give me both
-Assistant: Hereâ€™s both, in a form you can actually use. A practical Java test logging policy: Unit tests should not log by default. Use assertions to express expectations, not logs. Only log in tests when the output helps explain a failure that is hard to infer from the assertion message alone. Keep logs behind a toggle or framework level so normal CI runs stay quiet. Prefer one clear line of context over many noisy lines. Make test logs deterministic. Avoid logging random values, timestamps, object identity hashes, or environment-specific details unless they are part of what you are testing. For integration tests, log the boundary interactions that help diagnose failures. For flaky tests, log just enough state to reproduce the failure path. If a test needs a lot of logging, split the test or simplify the setup. In CI, rely on test framework reports, stack traces, and failure artifacts as the primary diagnostic output. Use structured logs if you need to search or aggregate test failures later. If you want a simple team rule, this works well: Unit tests: no logs unless debugging a failure. Integration tests: selective logs only around external calls or setup/teardown boundaries. End-to-end tests: limited logs that help reconstruct the user flow on failure. Good vs bad test logging in JUnit: Bad: noisy System.out.println... Better: use an assertion with a useful failure message... Good: targeted debug output for a flaky integration test... Even better: log only on failure in the test framework... Bad: logging internal implementation details... Better: assert the observable behavior... A nice middle ground for hard-to-debug tests... If you want, I can also turn this into a short â€œteam conventionâ€ paragraph you can paste into your project README or CONTRIBUTING file.
+Assistant: HereÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢s both, in a form you can actually use. A practical Java test logging policy: Unit tests should not log by default. Use assertions to express expectations, not logs. Only log in tests when the output helps explain a failure that is hard to infer from the assertion message alone. Keep logs behind a toggle or framework level so normal CI runs stay quiet. Prefer one clear line of context over many noisy lines. Make test logs deterministic. Avoid logging random values, timestamps, object identity hashes, or environment-specific details unless they are part of what you are testing. For integration tests, log the boundary interactions that help diagnose failures. For flaky tests, log just enough state to reproduce the failure path. If a test needs a lot of logging, split the test or simplify the setup. In CI, rely on test framework reports, stack traces, and failure artifacts as the primary diagnostic output. Use structured logs if you need to search or aggregate test failures later. If you want a simple team rule, this works well: Unit tests: no logs unless debugging a failure. Integration tests: selective logs only around external calls or setup/teardown boundaries. End-to-end tests: limited logs that help reconstruct the user flow on failure. Good vs bad test logging in JUnit: Bad: noisy System.out.println... Better: use an assertion with a useful failure message... Good: targeted debug output for a flaky integration test... Even better: log only on failure in the test framework... Bad: logging internal implementation details... Better: assert the observable behavior... A nice middle ground for hard-to-debug tests... If you want, I can also turn this into a short ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“team conventionÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â paragraph you can paste into your project README or CONTRIBUTING file.
 User: Which of these good practices do you recommend to be included?
-Assistant: Iâ€™d include the core rules that keep tests clean by default and make failures easy to diagnose: Unit tests should not log by default. Prefer assertions over logs for expected behavior. Use assertion failure messages for context instead of println. Keep any test logging deterministic. Allow logging only at integration or end-to-end boundaries, and keep it selective. Make logs easy to turn on and off, rather than always-on noise. If a test needs lots of logs, split the test or simplify the setup. In CI, rely on framework reports and stack traces first, not verbose runtime logs. If you want the shortest practical policy, Iâ€™d boil it down to this: No test logs unless they help debug a failure. Prefer assertion messages over prints. Integration tests may log boundary calls sparingly. Keep logs deterministic and failure-focused. If you want, I can turn that into a polished 4-6 line policy for your repo.
+Assistant: IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢d include the core rules that keep tests clean by default and make failures easy to diagnose: Unit tests should not log by default. Prefer assertions over logs for expected behavior. Use assertion failure messages for context instead of println. Keep any test logging deterministic. Allow logging only at integration or end-to-end boundaries, and keep it selective. Make logs easy to turn on and off, rather than always-on noise. If a test needs lots of logs, split the test or simplify the setup. In CI, rely on framework reports and stack traces first, not verbose runtime logs. If you want the shortest practical policy, IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢d boil it down to this: No test logs unless they help debug a failure. Prefer assertion messages over prints. Integration tests may log boundary calls sparingly. Keep logs deterministic and failure-focused. If you want, I can turn that into a polished 4-6 line policy for your repo.
 User: where do you recommend planing this policy in my workflow?
-Assistant: Iâ€™d place it in two spots in your workflow: At project setup time, in a shared repo document like README.md, CONTRIBUTING.md, or a short TESTING.md. And at code review time, as part of the checklist for new tests and test changes. Practically, the best flow is: Decide the policy once, early, with the team. Write it down in one visible place. Apply it when writing tests. Recheck it during review when a test adds logging. If you want the most useful placement for HabitZone specifically, Iâ€™d put a short version in README.md or a dedicated TESTING.md, then keep the detailed version in your team notes or contribution guidelines. A good rule is: README.md for the short version people actually read. CONTRIBUTING.md or TESTING.md for the fuller policy. Code review checklist for enforcement. If you want, I can draft the exact wording for that policy and suggest the best file in your repo to put it in.
+Assistant: IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢d place it in two spots in your workflow: At project setup time, in a shared repo document like README.md, CONTRIBUTING.md, or a short TESTING.md. And at code review time, as part of the checklist for new tests and test changes. Practically, the best flow is: Decide the policy once, early, with the team. Write it down in one visible place. Apply it when writing tests. Recheck it during review when a test adds logging. If you want the most useful placement for HabitZone specifically, IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢d put a short version in README.md or a dedicated TESTING.md, then keep the detailed version in your team notes or contribution guidelines. A good rule is: README.md for the short version people actually read. CONTRIBUTING.md or TESTING.md for the fuller policy. Code review checklist for enforcement. If you want, I can draft the exact wording for that policy and suggest the best file in your repo to put it in.
 User: put it in TESTING.md
 Assistant: I created a new TESTING.md at the repo root with a short testing policy focused on: keeping unit tests quiet by default, using assertions and failure messages instead of println, allowing only targeted logging in integration or end-to-end tests, keeping logs deterministic and CI-friendly.
 User: [$log-prompt](C:\\Users\\isaac\\Documents\\local\\NUS\\Y4S1_local\\CS3227\\Assignments\\MP1\\HabitZone\\.agents\\skills\\log-prompt\\SKILL.md)
@@ -676,13 +676,13 @@ Staged: 14 command implementation files and `src/test/java/com/example/habitzone
 ### Conversation history
 
 ```text
-User: Implement Phase 5 Issue 9 in PLAN.md\nTrace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.\nFollow log-prompt.md's guidelines.\nGuide me on how to run and test in gitbash once you have completed.\nStage the changed files that are relevant to this issue.\n\nAssistant: Iâ€™ll first read the project plan and the conversation-logging instructions, then trace the affected code path, implement Issue 9, verify it, log this thread, and stage only the issue-related files.\n\nAssistant: The individual handler classes and registry structure are already present from the earlier command-layer work. The missing Issue 9 evidence is focused handler-level coverage, so Iâ€™ll add direct success/failure tests without changing the domain or use-case layers.\n\nAssistant: The targeted test itself is ready, but Gradle is blocked before compilation because its wrapper tries to create a cache lock under C:\\.gradle, outside the workspace sandbox. Iâ€™ll rerun the same read/compile test with the required permission.\n\nAssistant: All tests now pass. Iâ€™m applying the requested logging workflow next: Iâ€™ll record the final response exactly once in logs/log-prompt.md, verify that appended entry, then stage the new handler test and that log only.
+User: Implement Phase 5 Issue 9 in PLAN.md\nTrace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.\nFollow log-prompt.md's guidelines.\nGuide me on how to run and test in gitbash once you have completed.\nStage the changed files that are relevant to this issue.\n\nAssistant: IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ll first read the project plan and the conversation-logging instructions, then trace the affected code path, implement Issue 9, verify it, log this thread, and stage only the issue-related files.\n\nAssistant: The individual handler classes and registry structure are already present from the earlier command-layer work. The missing Issue 9 evidence is focused handler-level coverage, so IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ll add direct success/failure tests without changing the domain or use-case layers.\n\nAssistant: The targeted test itself is ready, but Gradle is blocked before compilation because its wrapper tries to create a cache lock under C:\\.gradle, outside the workspace sandbox. IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ll rerun the same read/compile test with the required permission.\n\nAssistant: All tests now pass. IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢m applying the requested logging workflow next: IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ll record the final response exactly once in logs/log-prompt.md, verify that appended entry, then stage the new handler test and that log only.
 ```
 
 ### Assistant reply
 
 ````text
-Implemented Phase 5, Issue 9. The handler architecture was already in place from Issue 8; I added direct handler-level tests for all eight commands. Full Gradle suite passes, and the issue files are staged.\n\n## Code trace and changes\n\n### Existing command flow (verified)\n\n`CommandRegistry.execute` parses input, looks up a `Command`, then delegates only:\n\n```java\nCommand command = commands.get(parsed.name());\nreturn command.execute(parsed.arguments());\n```\n\n`CommandRegistry.withUseCases` registers `AddHabitCommand`, `DeleteHabitCommand`, `ListHabitsCommand`, `MarkCompleteCommand`, `UnmarkCompleteCommand`, `ViewHistoryCommand`, `HelpCommand`, and `ExitCommand`. This keeps future command additions local to a handler plus one registrationâ€”there is no central business-rule switch.\n\nEach handler validates only its command shape and delegates domain work to a use case. For example:\n\n```java\nreturn CommandSupport.executeUseCase(\n    () -> addHabitUseCase.execute(arguments),\n    habit -> CommandResult.success("Added habit '" + habit.name() + "'.")\n);\n```\n\n`CommandSupport.executeUseCase` turns use-case failures and storage exceptions into UI-safe `CommandResult`s. `ExitCommand` returns `CommandResult.exit("Goodbye.")`; it never closes JavaFX directly.\n\n### Added: `src/test/java/com/example/habitzone/command/CommandHandlerTest.java`\n\nThis new test class calls every handler directly, using a small in-memory `HabitRepository` and fixed `ClockProvider`. That isolates handler orchestration from parser/registry tests.\n\n- `addHandlerAddsHabitAndRejectsMissingName`: verifies creation and blank-name validation.\n- `deleteHandlerDeletesHabitAndReportsMissingHabit`: verifies deletion and use-case error mapping.\n- `listHandlerReturnsStructuredHabitSnapshots`: verifies list data is placed in `CommandResult.habits()`.\n- `markHandlerCompletesHabitAndRejectsInvalidDate`: verifies date parsing, completion delegation, and invalid-date feedback.\n- `unmarkHandlerRemovesCompletionAndRejectsMissingName`: verifies uncompletion and missing-name handling.\n- `historyHandlerReturnsHistoryAndReportsMissingHabit`: verifies structured history and missing-habit feedback.\n- `helpHandlerListsRegisteredCommands`: verifies usage output comes from registered commands.\n- `exitHandlerReturnsSignalWithoutClosingTheApplication`: verifies the exit signal is data only.\n\nExample of the direct success/failure coverage:\n\n```java\nassertFalse(command.execute("Read 2026-08-19").error());\nassertTrue(repository.loadAll().getFirst().isCompleteOn(DATE));\nassertEquals(CommandMessages.INVALID_DATE, command.execute("Read yesterday").message());\n```\n\nNo production source changes were needed: the existing eight handlers already meet the Issue 9 separation requirement; this change supplies the focused tests requested by the plan.\n\n### Verification\n\n`./gradlew test` completed successfully. Gradle reports an existing deprecation warning related to Gradle 9 compatibility, but no test failures.\n\n### Run and test in Git Bash\n\n```bash\ncd /c/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone\n./gradlew test\n./gradlew run\n```\n\nTo run only the Issue 9 tests:\n\n```bash\n./gradlew test --tests com.example.habitzone.command.CommandHandlerTest\n```\n\n### Staged files\n\n- `src/test/java/com/example/habitzone/command/CommandHandlerTest.java`\n- `logs/log-prompt.md`
+Implemented Phase 5, Issue 9. The handler architecture was already in place from Issue 8; I added direct handler-level tests for all eight commands. Full Gradle suite passes, and the issue files are staged.\n\n## Code trace and changes\n\n### Existing command flow (verified)\n\n`CommandRegistry.execute` parses input, looks up a `Command`, then delegates only:\n\n```java\nCommand command = commands.get(parsed.name());\nreturn command.execute(parsed.arguments());\n```\n\n`CommandRegistry.withUseCases` registers `AddHabitCommand`, `DeleteHabitCommand`, `ListHabitsCommand`, `MarkCompleteCommand`, `UnmarkCompleteCommand`, `ViewHistoryCommand`, `HelpCommand`, and `ExitCommand`. This keeps future command additions local to a handler plus one registrationÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Âthere is no central business-rule switch.\n\nEach handler validates only its command shape and delegates domain work to a use case. For example:\n\n```java\nreturn CommandSupport.executeUseCase(\n    () -> addHabitUseCase.execute(arguments),\n    habit -> CommandResult.success("Added habit '" + habit.name() + "'.")\n);\n```\n\n`CommandSupport.executeUseCase` turns use-case failures and storage exceptions into UI-safe `CommandResult`s. `ExitCommand` returns `CommandResult.exit("Goodbye.")`; it never closes JavaFX directly.\n\n### Added: `src/test/java/com/example/habitzone/command/CommandHandlerTest.java`\n\nThis new test class calls every handler directly, using a small in-memory `HabitRepository` and fixed `ClockProvider`. That isolates handler orchestration from parser/registry tests.\n\n- `addHandlerAddsHabitAndRejectsMissingName`: verifies creation and blank-name validation.\n- `deleteHandlerDeletesHabitAndReportsMissingHabit`: verifies deletion and use-case error mapping.\n- `listHandlerReturnsStructuredHabitSnapshots`: verifies list data is placed in `CommandResult.habits()`.\n- `markHandlerCompletesHabitAndRejectsInvalidDate`: verifies date parsing, completion delegation, and invalid-date feedback.\n- `unmarkHandlerRemovesCompletionAndRejectsMissingName`: verifies uncompletion and missing-name handling.\n- `historyHandlerReturnsHistoryAndReportsMissingHabit`: verifies structured history and missing-habit feedback.\n- `helpHandlerListsRegisteredCommands`: verifies usage output comes from registered commands.\n- `exitHandlerReturnsSignalWithoutClosingTheApplication`: verifies the exit signal is data only.\n\nExample of the direct success/failure coverage:\n\n```java\nassertFalse(command.execute("Read 2026-08-19").error());\nassertTrue(repository.loadAll().getFirst().isCompleteOn(DATE));\nassertEquals(CommandMessages.INVALID_DATE, command.execute("Read yesterday").message());\n```\n\nNo production source changes were needed: the existing eight handlers already meet the Issue 9 separation requirement; this change supplies the focused tests requested by the plan.\n\n### Verification\n\n`./gradlew test` completed successfully. Gradle reports an existing deprecation warning related to Gradle 9 compatibility, but no test failures.\n\n### Run and test in Git Bash\n\n```bash\ncd /c/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone\n./gradlew test\n./gradlew run\n```\n\nTo run only the Issue 9 tests:\n\n```bash\n./gradlew test --tests com.example.habitzone.command.CommandHandlerTest\n```\n\n### Staged files\n\n- `src/test/java/com/example/habitzone/command/CommandHandlerTest.java`\n- `logs/log-prompt.md`
 ````
 
 ### Actions taken
@@ -699,13 +699,13 @@ Implemented Phase 5, Issue 9. The handler architecture was already in place from
 ### Conversation history
 
 ```text
-User: Implement Phase 6 Issue 10 in PLAN.md\nTrace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.\nFollow log-prompt.md's guidelines.\nGuide me on how to run and test in gitbash once you have completed.\nStage the changed files that are relevant to this issue.\n\nAssistant: Iâ€™ll implement Phase 6 Issue 10, trace the relevant code paths, record this thread following the projectâ€™s logging guidelines, verify the change, and stage only the issue-related files.\n\nAssistant: Iâ€™m using the projectâ€™s log-prompt skill because you explicitly asked for its guidelines; it requires one final conversation entry after the implementation and verification are complete. PLAN.md is not at the repository root, so Iâ€™m locating the project instructions and plan next.\n\nAssistant: The existing application is only a title/placeholder. Iâ€™m adding a presentation-only controller and JavaFX view, keeping command execution behind a small UI interface so its behavior is testable with fakes; the application entry point will supply the existing command layer for the requested live command interaction.\n\nAssistant: The implementation is in place: a styled top bar, side-by-side habit/history panels, persistent feedback, and an Enter-driven command field. Iâ€™ve also added a controller test that uses a fake executorâ€”no JavaFX runtime is needed for that unit test.\n\nAssistant: Focused and full tests are passing. I found the existing prompt log is clean in Git, so the required new conversation entry can safely be staged with the Issue 10 files.
+User: Implement Phase 6 Issue 10 in PLAN.md\nTrace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.\nFollow log-prompt.md's guidelines.\nGuide me on how to run and test in gitbash once you have completed.\nStage the changed files that are relevant to this issue.\n\nAssistant: IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ll implement Phase 6 Issue 10, trace the relevant code paths, record this thread following the projectÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢s logging guidelines, verify the change, and stage only the issue-related files.\n\nAssistant: IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢m using the projectÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢s log-prompt skill because you explicitly asked for its guidelines; it requires one final conversation entry after the implementation and verification are complete. PLAN.md is not at the repository root, so IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢m locating the project instructions and plan next.\n\nAssistant: The existing application is only a title/placeholder. IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢m adding a presentation-only controller and JavaFX view, keeping command execution behind a small UI interface so its behavior is testable with fakes; the application entry point will supply the existing command layer for the requested live command interaction.\n\nAssistant: The implementation is in place: a styled top bar, side-by-side habit/history panels, persistent feedback, and an Enter-driven command field. IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ve also added a controller test that uses a fake executorÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Âno JavaFX runtime is needed for that unit test.\n\nAssistant: Focused and full tests are passing. I found the existing prompt log is clean in Git, so the required new conversation entry can safely be staged with the Issue 10 files.
 ```
 
 ### Assistant reply
 
 ````text
-Implemented Phase 6 Issue 10. HabitZone now launches as a modern command-driven JavaFX window, accepts Enter-submitted commands, displays feedback, and refreshes its habit/history panels. The focused UI-controller tests and full suite pass; all relevant files are staged.\n\n## Code trace\n\n### `HabitZoneApplication.java`\n\n`start` is the composition root: it creates the JSON repository, system-date clock, existing `CommandRegistry`, controller, and JavaFX view. `executeAndRefresh` preserves the command result message/history but obtains `list` data after every successful non-exit command, so mutations immediately redraw the habit list.\n\n```java\nCommandResult result = commandRegistry.execute(input);\nCommandResult habits = commandRegistry.execute("list");\nreturn new CommandResult(result.message(), false, false, habits.habits(), result.history());\n```\n\n### `CommandExecutor.java` and `MainWindowController.java`\n\n`CommandExecutor` is the small UI seam around command submission. `MainWindowController.submit` calls it, copies the display-safe feedback/error state, replaces habit data when supplied, accepts history when supplied, and invokes the injected close action only when `CommandResult.exit()` is true. It contains no validation, persistence, or habit business rules.\n\n```java\nfeedback = result.message();\nfeedbackIsError = result.error();\nif (!result.habits().isEmpty()) habits = result.habits();\nif (result.history().isPresent()) history = result.history();\n```\n\n### `HabitZoneView.java` and `habit-zone.css`\n\nThe view builds the requested layout: a top bar with title/current date, two equal main panels, and a bottom feedback/command area. Pressing Enter calls `submitCommand`, clears the field, and rerenders controller state. The stylesheet supplies the polished card, spacing, typography, and error-feedback treatment.\n\n```java\ncommandInput.setOnAction(event -> submitCommand());\ncontroller.submit(commandInput.getText());\ncommandInput.clear();\nrefresh();\n```\n\n### `MainWindowControllerTest.java`\n\nThe test injects a fake executor, verifies raw input is delegated, then checks returned feedback and habit snapshots become controller state. A second test verifies an exit result triggers only the supplied exit actionâ€”without launching JavaFX.\n\n## Verify in Git Bash\n\n```bash\ncd /c/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone\nexport GRADLE_USER_HOME="$PWD/.gradle-user"\n./gradlew test --tests 'com.example.habitzone.ui.MainWindowControllerTest'\n./gradlew test\n./gradlew run\n```\n\nFor the manual smoke test, type `help` then Enter and confirm the command list appears in the feedback area. Then try `add exercise`, `list`, and `history exercise`; `exit` closes the window. Data is persisted under `data/habits.json`.\n\n## Staged files\n\n- `src/main/java/com/example/habitzone/app/HabitZoneApplication.java`\n- `src/main/java/com/example/habitzone/ui/CommandExecutor.java`\n- `src/main/java/com/example/habitzone/ui/MainWindowController.java`\n- `src/main/java/com/example/habitzone/ui/HabitZoneView.java`\n- `src/main/resources/com/example/habitzone/ui/habit-zone.css`\n- `src/test/java/com/example/habitzone/ui/MainWindowControllerTest.java`\n- `logs/log-prompt.md`
+Implemented Phase 6 Issue 10. HabitZone now launches as a modern command-driven JavaFX window, accepts Enter-submitted commands, displays feedback, and refreshes its habit/history panels. The focused UI-controller tests and full suite pass; all relevant files are staged.\n\n## Code trace\n\n### `HabitZoneApplication.java`\n\n`start` is the composition root: it creates the JSON repository, system-date clock, existing `CommandRegistry`, controller, and JavaFX view. `executeAndRefresh` preserves the command result message/history but obtains `list` data after every successful non-exit command, so mutations immediately redraw the habit list.\n\n```java\nCommandResult result = commandRegistry.execute(input);\nCommandResult habits = commandRegistry.execute("list");\nreturn new CommandResult(result.message(), false, false, habits.habits(), result.history());\n```\n\n### `CommandExecutor.java` and `MainWindowController.java`\n\n`CommandExecutor` is the small UI seam around command submission. `MainWindowController.submit` calls it, copies the display-safe feedback/error state, replaces habit data when supplied, accepts history when supplied, and invokes the injected close action only when `CommandResult.exit()` is true. It contains no validation, persistence, or habit business rules.\n\n```java\nfeedback = result.message();\nfeedbackIsError = result.error();\nif (!result.habits().isEmpty()) habits = result.habits();\nif (result.history().isPresent()) history = result.history();\n```\n\n### `HabitZoneView.java` and `habit-zone.css`\n\nThe view builds the requested layout: a top bar with title/current date, two equal main panels, and a bottom feedback/command area. Pressing Enter calls `submitCommand`, clears the field, and rerenders controller state. The stylesheet supplies the polished card, spacing, typography, and error-feedback treatment.\n\n```java\ncommandInput.setOnAction(event -> submitCommand());\ncontroller.submit(commandInput.getText());\ncommandInput.clear();\nrefresh();\n```\n\n### `MainWindowControllerTest.java`\n\nThe test injects a fake executor, verifies raw input is delegated, then checks returned feedback and habit snapshots become controller state. A second test verifies an exit result triggers only the supplied exit actionÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Âwithout launching JavaFX.\n\n## Verify in Git Bash\n\n```bash\ncd /c/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone\nexport GRADLE_USER_HOME="$PWD/.gradle-user"\n./gradlew test --tests 'com.example.habitzone.ui.MainWindowControllerTest'\n./gradlew test\n./gradlew run\n```\n\nFor the manual smoke test, type `help` then Enter and confirm the command list appears in the feedback area. Then try `add exercise`, `list`, and `history exercise`; `exit` closes the window. Data is persisted under `data/habits.json`.\n\n## Staged files\n\n- `src/main/java/com/example/habitzone/app/HabitZoneApplication.java`\n- `src/main/java/com/example/habitzone/ui/CommandExecutor.java`\n- `src/main/java/com/example/habitzone/ui/MainWindowController.java`\n- `src/main/java/com/example/habitzone/ui/HabitZoneView.java`\n- `src/main/resources/com/example/habitzone/ui/habit-zone.css`\n- `src/test/java/com/example/habitzone/ui/MainWindowControllerTest.java`\n- `logs/log-prompt.md`
 ````
 
 ### Actions taken
@@ -723,7 +723,7 @@ Implemented Phase 6 Issue 10. HabitZone now launches as a modern command-driven 
 ````text
 User: should i gitignore the data/ directory?
 
-Assistant: Yesâ€”generally, ignore `data/` because it contains machine-local runtime habit data and shouldnâ€™t be committed.
+Assistant: YesÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Âgenerally, ignore `data/` because it contains machine-local runtime habit data and shouldnÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢t be committed.
 
 Add to `.gitignore`:
 
@@ -738,7 +738,7 @@ If you want the directory to exist in fresh clones, commit an empty placeholder 
 !/data/.gitkeep
 ```
 
-For this app, Iâ€™d use the second option so the expected storage location is visible without committing usersâ€™ habits.
+For this app, IÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢d use the second option so the expected storage location is visible without committing usersÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ habits.
 
 User: help me implement the second option then log any new parts of the conversation
 ````
@@ -773,11 +773,11 @@ Follow log-prompt.md's guidelines.
 Guide me on how to run and test in gitbash once you have completed.
 Stage the changed files that are relevant to this issue.
 
-Assistant: I’ll trace the Phase 6 Issue 11 requirements through the codebase, implement and test the scoped changes, record this conversation per the project’s logging guidelines, then stage only the files relevant to the issue.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ll trace the Phase 6 Issue 11 requirements through the codebase, implement and test the scoped changes, record this conversation per the projectÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s logging guidelines, then stage only the files relevant to the issue.
 
-Assistant: I’m using the project’s `log-prompt` skill because you asked to follow its logging guidelines.
+Assistant: IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m using the projectÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s `log-prompt` skill because you asked to follow its logging guidelines.
 
-Assistant: The existing Issue 10 window already delegates to the command registry, but its refresh contract cannot distinguish “no list payload” from “an updated, empty list.” That leaves a deleted final habit visible. I’m tightening that command-to-UI result contract and adding an end-to-end adapter test for the required MVP flow.
+Assistant: The existing Issue 10 window already delegates to the command registry, but its refresh contract cannot distinguish ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œno list payloadÃƒÂ¢Ã¢â€šÂ¬Ã‚Â from ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œan updated, empty list.ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â That leaves a deleted final habit visible. IÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢m tightening that command-to-UI result contract and adding an end-to-end adapter test for the required MVP flow.
 
 Assistant: The focused implementation is now applied: a concrete command-registry adapter owns the refresh behavior, and the controller accepts explicit empty-list updates.
 
@@ -813,7 +813,7 @@ That makes `add`, `done`, `undone`, `delete`, and `history` refresh the habit pa
 
 ### `CommandResult.java`
 
-Added `includesHabitList`, an explicit payload marker. An empty list is meaningful after deleting the final habit, whereas `List.of()` also previously meant “this command supplied no list.” `habits(...)` and `withHabitList(...)` set the marker; ordinary successes, errors, history, and exit do not.
+Added `includesHabitList`, an explicit payload marker. An empty list is meaningful after deleting the final habit, whereas `List.of()` also previously meant ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œthis command supplied no list.ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â `habits(...)` and `withHabitList(...)` set the marker; ordinary successes, errors, history, and exit do not.
 
 ```java
 public CommandResult withHabitList(List<HabitSnapshot> habits) {
@@ -867,3 +867,88 @@ For the JavaFX smoke test, press Enter after each command: `add exercise`, `done
 - Added controller and command-adapter tests for the required MVP flow.
 - Ran focused UI tests and the complete Gradle test suite successfully.
 - Appended and verified this conversation entry, then staged only Issue 11 files.
+
+## Conversation - 2026-08-20 17:21:50 +08:00
+
+### Conversation history
+
+```text
+Implement Phase 7 Issue 12 in PLAN.md
+Trace the code line by line and Explain the changes you made to all the files relevant for this issue with code examples, in a structured manner.
+Follow log-prompt.md's guidelines.
+Guide me on how to run and test in gitbash once you have completed.
+Stage the changed files that are relevant to this issue.
+```
+
+### Assistant reply
+
+````text
+Implemented Phase 7 Issue 12 and staged the issue files. `./gradlew test` passes.
+
+## Code trace
+
+### Error translation - `CommandSupport.java`
+
+`executeUseCase` still converts a failed use-case result into the consistent user-facing message defined by `CommandMessages`. The catch now targets `StorageException` specifically, so an unavailable JSON repository becomes the friendly storage message, while programming mistakes are not misreported as storage failures.
+
+```java
+} catch (StorageException exception) {
+    return CommandResult.failure(CommandMessages.STORAGE_FAILURE);
+}
+```
+
+This works with the existing validation path: `CommandRegistry` rejects blank and unknown commands, each command rejects missing names/dates before invoking a use case, and `CommandMessages` maps duplicate/missing-habit use-case errors. Invalid input therefore makes no repository mutation.
+
+### Parser, command safety, and storage tests - `CommandRegistryTest.java`
+
+Added parser coverage for `null` and whitespace-only input; both produce the empty parsed command which the registry turns into `Please enter a command.`
+
+```java
+assertEquals(new CommandParser.ParsedCommand("", ""), parser.parse(null));
+```
+
+Added a no-mutation regression test. It sends empty, unknown, invalid-date, and missing-name commands against an existing habit, then verifies one unchanged, incomplete habit remains. This proves invalid commands do not alter saved data.
+
+```java
+registry.execute("done Read not-a-date");
+assertFalse(repository.loadAll().getFirst().isCompleteOn(today));
+```
+
+The storage fake now throws the real `StorageException`, matching production `JsonHabitRepository` behavior and verifying that it is rendered as the standard storage error. Existing tests cover duplicate and missing habits, missing names, invalid dates, empty commands, and unknown commands.
+
+### UI feedback state - `MainWindowControllerTest.java`
+
+Added a presentation test that supplies a failed `CommandResult`, submits it through the controller, and asserts both the feedback text and the error flag. `HabitZoneView.refresh()` already reads these exact values and applies its error pseudo-class, so the message is displayed in the feedback area.
+
+```java
+assertEquals("Please enter a command.", controller.feedback());
+assertTrue(controller.feedbackIsError());
+```
+
+## Run and test in Git Bash
+
+```bash
+cd /c/Users/isaac/Documents/local/NUS/Y4S1_local/CS3227/Assignments/MP1/HabitZone
+export GRADLE_USER_HOME="$PWD/.gradle-user"
+./gradlew test --tests 'com.example.habitzone.command.CommandRegistryTest' --tests 'com.example.habitzone.ui.MainWindowControllerTest'
+./gradlew test
+./gradlew run
+```
+
+In the app, try ` ` (blank), `dance`, `add`, `done Read yesterday`, and `delete Read`; each should show a clear error in the feedback area. Then run `add Read` twice to see the duplicate error. Use `exit` to close the app.
+
+## Staged files
+
+- `src/main/java/com/example/habitzone/command/CommandSupport.java`
+- `src/test/java/com/example/habitzone/command/CommandRegistryTest.java`
+- `src/test/java/com/example/habitzone/ui/MainWindowControllerTest.java`
+- `logs/log-prompt.md`
+````
+
+### Actions taken
+
+- Read the log-prompt skill and Phase 7 Issue 12 in docs/PLAN.md.
+- Traced validation, error mapping, command execution, storage, and UI feedback paths.
+- Restricted friendly storage translation to StorageException and added parser, no-mutation, storage, and UI-feedback coverage.
+- Ran the complete Gradle test suite successfully with the project-local Gradle cache.
+- Appended and verified this conversation entry, then staged only Issue 12 files.

@@ -54,4 +54,17 @@ class MainWindowControllerTest {
 
         assertTrue(controller.habits().isEmpty());
     }
+
+    @Test
+    void displaysCommandErrorsInFeedbackState() {
+        MainWindowController controller = new MainWindowController(
+                input -> CommandResult.failure("Please enter a command."),
+                () -> fail("exit should not run")
+        );
+
+        controller.submit(" ");
+
+        assertEquals("Please enter a command.", controller.feedback());
+        assertTrue(controller.feedbackIsError());
+    }
 }

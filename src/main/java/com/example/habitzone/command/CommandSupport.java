@@ -1,5 +1,6 @@
 package com.example.habitzone.command;
 
+import com.example.habitzone.infrastructure.StorageException;
 import com.example.habitzone.usecase.UseCaseResult;
 
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ final class CommandSupport {
                 return CommandResult.failure(CommandMessages.fromUseCaseError(result.error()));
             }
             return onSuccess.apply(result.data());
-        } catch (RuntimeException exception) {
+        } catch (StorageException exception) {
             return CommandResult.failure(CommandMessages.STORAGE_FAILURE);
         }
     }
