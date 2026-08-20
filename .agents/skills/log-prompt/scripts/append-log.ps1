@@ -1,5 +1,7 @@
 [CmdletBinding()]
 param(
+    [string] $InputPath,
+
     [Parameter(Mandatory = $true)]
     [string] $Prompt,
 
@@ -14,6 +16,14 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ($InputPath) {
+    $payload = Get-Content -LiteralPath $InputPath -Raw | ConvertFrom-Json
+    if ($payload.PSObject.Properties.Name -contains 'Prompt') { $Prompt = [string] $payload.Prompt }
+    if ($payload.PSObject.Properties.Name -contains 'Reply') { $Reply = [string] $payload.Reply }
+    if ($payload.PSObject.Properties.Name -contains 'Action') { $Action = @($payload.Action | ForEach-Object { [string] $_ }) }
+    if ($payload.PSObject.Properties.Name -contains 'LogPath') { $LogPath = [string] $payload.LogPath }
+}
 
 if (-not $LogPath) {
     $repositoryRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
