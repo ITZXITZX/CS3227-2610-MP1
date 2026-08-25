@@ -18,7 +18,8 @@ param(
 $ErrorActionPreference = 'Stop'
 
 if ($InputPath) {
-    $payload = Get-Content -LiteralPath $InputPath -Raw | ConvertFrom-Json
+    $payloadJson = [System.IO.File]::ReadAllText($InputPath, [System.Text.UTF8Encoding]::new($false))
+    $payload = $payloadJson | ConvertFrom-Json
     if ($payload.PSObject.Properties.Name -contains 'Prompt') { $Prompt = [string] $payload.Prompt }
     if ($payload.PSObject.Properties.Name -contains 'Reply') { $Reply = [string] $payload.Reply }
     if ($payload.PSObject.Properties.Name -contains 'Action') { $Action = @($payload.Action | ForEach-Object { [string] $_ }) }
@@ -74,6 +75,13 @@ if (Test-Path -LiteralPath $resolvedLogPath) {
     [System.IO.File]::AppendAllText($resolvedLogPath, [Environment]::NewLine + $entry, [System.Text.UTF8Encoding]::new($false))
 } else {
     [System.IO.File]::WriteAllText($resolvedLogPath, "# Prompt-Reply Log`r`n`r`n$entry", [System.Text.UTF8Encoding]::new($false))
+}
+
+# Read back as UTF-8 and catch the characteristic markers produced when UTF-8
+# text is decoded as ANSI/Windows-1252 before being saved again.
+$writtenText = [System.IO.File]::ReadAllText($resolvedLogPath, [System.Text.UTF8Encoding]::new($false))
+if ($writtenText -match '[\u00C3\u00E2\u00C2\u0192\uFFFD]') {
+    throw "Encoding validation failed: possible UTF-8 mojibake was detected in $resolvedLogPath"
 }
 
 Write-Output $resolvedLogPath
