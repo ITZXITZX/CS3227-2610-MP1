@@ -3,6 +3,7 @@ package com.example.habitzone.ui;
 import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.geometry.Pos;
+import javafx.scene.input.KeyCode;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -14,6 +15,8 @@ import javafx.scene.layout.VBox;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 /** Main JavaFX layout; it renders controller state and forwards input unchanged. */
@@ -24,6 +27,8 @@ public final class HabitZoneView extends BorderPane {
     private final ListView<String> historyList = new ListView<>();
     private final Label feedback = new Label();
     private final TextField commandInput = new TextField();
+    private final List<String> commandHistory = new ArrayList<>();
+    private int commandHistoryIndex;
 
     public HabitZoneView(MainWindowController controller) {
         this(controller, () -> LocalDate.now(Clock.systemDefaultZone()));
@@ -75,15 +80,61 @@ public final class HabitZoneView extends BorderPane {
         commandInput.setPromptText("Enter a command, e.g. help or list");
         commandInput.getStyleClass().add("command-input");
         commandInput.setOnAction(event -> submitCommand());
+        commandInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.UP) {
+                showPreviousCommand();
+                event.consume();
+            } else if (event.getCode() == KeyCode.DOWN) {
+                showNextCommand();
+                event.consume();
+            }
+        });
         VBox bottom = new VBox(10, feedback, commandInput);
         bottom.getStyleClass().add("command-area");
         return bottom;
     }
 
     private void submitCommand() {
-        controller.submit(commandInput.getText());
+        String input = commandInput.getText();
+        rememberCommand(input);
+        controller.submit(input);
         commandInput.clear();
         refresh();
+    }
+
+    private void rememberCommand(String input) {
+        if (!input.isBlank()) {
+            commandHistory.remove(input);
+            commandHistory.add(input);
+        }
+        commandHistoryIndex = commandHistory.size();
+    }
+
+    private void showPreviousCommand() {
+        if (commandHistoryIndex == 0) {
+            return;
+        }
+
+        commandHistoryIndex--;
+        String previousCommand = commandHistory.get(commandHistoryIndex);
+        commandInput.setText(previousCommand);
+        commandInput.positionCaret(previousCommand.length());
+    }
+
+    private void showNextCommand() {
+        if (commandHistoryIndex >= commandHistory.size()) {
+            return;
+        }
+
+        commandHistoryIndex++;
+        if (commandHistoryIndex == commandHistory.size()) {
+            commandInput.clear();
+            return;
+        }
+
+        String nextCommand = commandHistory.get(commandHistoryIndex);
+        commandInput.setText(nextCommand);
+        commandInput.positionCaret(nextCommand.length());
     }
 
     private void refresh() {
