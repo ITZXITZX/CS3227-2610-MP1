@@ -100,4 +100,40 @@ class JsonHabitRepositoryTest {
 
         assertThrows(StorageException.class, repository::loadAll);
     }
+
+    @Test
+    void roundTripsEscapedTextAndMultipleHabits() {
+        Path path = tempDir.resolve("habits.json");
+        JsonHabitRepository repository = new JsonHabitRepository(path);
+        repository.saveAll(List.of(
+                new Habit(new HabitId("one"), "Read \"docs\"\\notes", List.of(), null, new HabitCategory("A\nB"), HabitPriority.LOW, null),
+                new Habit(new HabitId("two"), "Run", List.of(), null, null, HabitPriority.NORMAL, null)
+        ));
+
+        List<Habit> loaded = repository.loadAll();
+        assertEquals(2, loaded.size());
+        assertEquals("Read \"docs\"\\notes", loaded.getFirst().name());
+        assertEquals("A\nB", loaded.getFirst().category().orElseThrow().name());
+    }
+
+    @Test
+    void loadsLegacyDataWithoutOptionalFields() throws IOException {
+        Path path = tempDir.resolve("habits.json");
+        Files.writeString(path, "[{\"id\":\"one\",\"name\":\"Read\"}]", StandardCharsets.UTF_8);
+
+        Habit habit = new JsonHabitRepository(path).loadAll().getFirst();
+        assertEquals(HabitPriority.NORMAL, habit.priority());
+        assertTrue(habit.expiryDate().isEmpty());
+        assertTrue(habit.category().isEmpty());
+    }
+
+    @Test
+    void wrapsInvalidShapeAndFieldValuesInStorageException() throws IOException {
+        Path path = tempDir.resolve("habits.json");
+        Files.writeString(path, "{\"id\":\"one\"}", StandardCharsets.UTF_8);
+        assertThrows(StorageException.class, () -> new JsonHabitRepository(path).loadAll());
+
+        Files.writeString(path, "[{\"id\":\"one\",\"name\":\"Read\",\"completionDates\":\"today\"}]", StandardCharsets.UTF_8);
+        assertThrows(StorageException.class, () -> new JsonHabitRepository(path).loadAll());
+    }
 }

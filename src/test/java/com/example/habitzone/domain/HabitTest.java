@@ -108,4 +108,26 @@ class HabitTest {
                 habit.completionHistoryDescending()
         );
     }
+
+    @Test
+    void suppliedCompletionDatesAreSortedAndDeduplicated() {
+        LocalDate early = LocalDate.of(2026, 8, 17);
+        LocalDate late = LocalDate.of(2026, 8, 19);
+        Habit habit = new Habit(new HabitId("habit-1"), "Read", List.of(late, early, late), null, null, null, null);
+
+        assertEquals(List.of(early, late), habit.completionDatesAscending());
+        assertThrows(UnsupportedOperationException.class, () -> habit.completionDatesAscending().add(early));
+    }
+
+    @Test
+    void rejectsNullRequiredValues() {
+        Habit habit = new Habit(new HabitId("habit-1"), "Read");
+
+        assertThrows(NullPointerException.class, () -> new Habit(null, "Read"));
+        assertThrows(NullPointerException.class, () -> new Habit(new HabitId("id"), null));
+        assertThrows(NullPointerException.class, () -> habit.markComplete(null));
+        assertThrows(NullPointerException.class, () -> habit.setExpiryDate(null));
+        assertThrows(NullPointerException.class, () -> habit.setCategory(null));
+        assertThrows(NullPointerException.class, () -> habit.setPriority(null));
+    }
 }

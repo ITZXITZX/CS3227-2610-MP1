@@ -157,6 +157,24 @@ class CommandRegistryTest {
     }
 
     @Test
+    void commandNamesAreCaseInsensitiveAndNullInputIsEmptyCommand() {
+        FakeHabitRepository repository = new FakeHabitRepository();
+
+        assertFalse(registry(repository).execute("ADD Read").error());
+        assertEquals("Read", repository.loadAll().getFirst().name());
+        assertEquals(CommandMessages.EMPTY_COMMAND, registry(repository).execute(null).message());
+    }
+
+    @Test
+    void datedCommandsAcceptWhitespaceBetweenNameAndDate() {
+        FakeHabitRepository repository = new FakeHabitRepository();
+        repository.seed(new Habit(new HabitId("habit-1"), "Read"));
+
+        assertFalse(registry(repository).execute("done Read\t2026-08-19").error());
+        assertTrue(repository.loadAll().getFirst().isCompleteOn(today));
+    }
+
+    @Test
     void invalidCommandsDoNotModifyExistingHabits() {
         FakeHabitRepository repository = new FakeHabitRepository();
         Habit read = new Habit(new HabitId("habit-1"), "Read");

@@ -47,16 +47,19 @@ public class MarkCompleteCommand implements Command {
             }
 
             String trimmed = arguments.trim();
-            int lastSpace = trimmed.lastIndexOf(' ');
-            if (lastSpace < 0) {
+            int lastWhitespace = trimmed.length() - 1;
+            while (lastWhitespace >= 0 && !Character.isWhitespace(trimmed.charAt(lastWhitespace))) {
+                lastWhitespace--;
+            }
+            if (lastWhitespace < 0) {
                 Optional<LocalDate> date = CommandSupport.parseIsoDate(trimmed);
                 return date.isPresent()
                         ? new ParsedDatedHabit("", date)
                         : new ParsedDatedHabit(trimmed, Optional.empty());
             }
 
-            String habitName = trimmed.substring(0, lastSpace).trim();
-            String dateText = trimmed.substring(lastSpace + 1).trim();
+            String habitName = trimmed.substring(0, lastWhitespace).trim();
+            String dateText = trimmed.substring(lastWhitespace + 1).trim();
             return new ParsedDatedHabit(habitName, CommandSupport.parseIsoDate(dateText));
         }
 

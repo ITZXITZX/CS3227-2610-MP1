@@ -67,4 +67,22 @@ class MainWindowControllerTest {
         assertEquals("Please enter a command.", controller.feedback());
         assertTrue(controller.feedbackIsError());
     }
+
+    @Test
+    void keepsExistingHabitsWhenAResultDoesNotContainAHabitList() {
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        MainWindowController controller = new MainWindowController(
+                input -> "list".equals(input)
+                        ? CommandResult.habits("1 habit.", List.of(exercise))
+                        : CommandResult.success("Updated."),
+                () -> fail("exit should not run")
+        );
+
+        controller.submit("list");
+        controller.submit("set-category Exercise Health");
+
+        assertEquals(List.of(exercise), controller.habits());
+        assertEquals("Updated.", controller.feedback());
+        assertFalse(controller.feedbackIsError());
+    }
 }
