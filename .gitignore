@@ -47,3 +47,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Local agent-generated conversation payloads and temporary helpers
+/.agents/*-log-payload*.json
+/.agents/log-payload-current.json
+/.agents/tmp_append_log.ps1
