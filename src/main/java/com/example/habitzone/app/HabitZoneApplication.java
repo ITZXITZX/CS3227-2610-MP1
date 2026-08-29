@@ -7,6 +7,7 @@ import com.example.habitzone.ui.CommandRegistryExecutor;
 import com.example.habitzone.ui.HabitZoneView;
 import com.example.habitzone.ui.MainWindowController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -33,7 +34,12 @@ public class HabitZoneApplication extends Application {
         stage.setMinWidth(780);
         stage.setMinHeight(560);
         stage.setScene(scene);
-        stage.setOnShown(event -> root.focusCommandInput());
         stage.show();
+        stage.toFront();
+        stage.requestFocus();
+        Platform.runLater(() -> {
+            stage.requestFocus();
+            root.focusCommandInput();
+        });
     }
 }
