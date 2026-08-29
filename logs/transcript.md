@@ -1376,7 +1376,7 @@ Now, when HabitZone opens, the caret is immediately in the command input and the
 
 ### Conversation history
 
-````markdown
+```markdown
 **User:** Currently, even though the caret appears on the command terminal when the app is first launched, but when I start typing, nothing is entered into the command terminal. I still need to click on the app to be able to type. The goal is to be able to start typing immediately upon app launch. Fix, explain your code changes
 
 **Assistant (5.6 Terra, light):** I'll trace the launch/focus path and adjust the initial focus handling so keyboard input reaches the terminal immediately.
@@ -1423,7 +1423,7 @@ Try this first:
 
 ```bash
 ./gradlew --no-daemon run
-```
+
 
 `--no-daemon` avoids launching the app from Gradle's background daemon, which can improve the behavior. Test by typing immediately once the app appears, without clicking it.
 
@@ -1431,18 +1431,18 @@ For the real launch behavior, test the packaged application rather than Gradle:
 
 ```bash
 ./gradlew installDist
-```
+
 
 Then launch the generated app from File Explorer, not from a terminal. Look under:
 
 ```text
 build/install/<application-name>/bin/
-```
+
 
 Double-click its launcher. That is the meaningful user-facing test: the operating system treats it as an app launch rather than a Gradle child process.
 
 The important limitation is that no JavaFX code can guarantee stealing Windows foreground focus from a terminal or another active application. `stage.requestFocus()` and focusing the text field are the strongest correct requests, but Windows has final control. If it still fails when launched from File Explorer/a packaged shortcut, then we should inspect the launcher packaging and Windows focus policy rather than the text-field code.
-````
+```
 
 ### Summary of Actions Taken
 
