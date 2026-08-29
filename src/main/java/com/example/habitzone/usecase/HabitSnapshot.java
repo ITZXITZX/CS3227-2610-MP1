@@ -14,16 +14,22 @@ public record HabitSnapshot(
         HabitId id,
         String name,
         List<LocalDate> completionDates,
+        boolean completedToday,
         Optional<LocalDate> expiryDate,
         Optional<HabitCategory> category,
         HabitPriority priority,
         Optional<LocalTime> reminderTime
 ) {
     public static HabitSnapshot from(Habit habit) {
+        return from(habit, false);
+    }
+
+    public static HabitSnapshot from(Habit habit, boolean completedToday) {
         return new HabitSnapshot(
                 habit.id(),
                 habit.name(),
                 habit.completionDatesAscending(),
+                completedToday,
                 habit.expiryDate(),
                 habit.category(),
                 habit.priority(),
