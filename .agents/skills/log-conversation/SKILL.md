@@ -53,6 +53,13 @@ For each assistant message, obtain the model name and reasoning setting from the
 4. If it exists, replace the complete block after the header through (but not including) the next `## Conversation -` header, or through end of file.
 5. If it does not exist, append a new entry at the end of the file.
 6. Preserve all other entries unchanged.
+7. Write the transcript explicitly as UTF-8 without a BOM. Re-read the written entry as UTF-8 before reporting success.
+
+## Text encoding and portability
+
+- Never let UTF-8 content pass through a legacy Windows code page. Strings such as `â€™`, `â€œ`, `â€`, or `â€”` are mojibake and must not be written to the transcript.
+- After writing or updating an entry, scan that entry for the mojibake prefix `â` and the Unicode replacement character `U+FFFD`. If either is found, repair the entry before continuing.
+- When the available write path cannot preserve typographic Unicode characters reliably, use equivalent ASCII punctuation (`'`, `"`, and `-`) in the transcript. Preserve wording and meaning; do not leave corrupted bytes behind.
 
 ## Required entry format
 
