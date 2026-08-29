@@ -7,6 +7,7 @@ import com.example.habitzone.ui.CommandRegistryExecutor;
 import com.example.habitzone.ui.HabitZoneView;
 import com.example.habitzone.ui.MainWindowController;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -26,9 +27,13 @@ public class HabitZoneApplication extends Application {
         scene.getStylesheets().add(HabitZoneApplication.class.getResource("/com/example/habitzone/ui/habit-zone.css")
                 .toExternalForm());
         stage.setTitle("HabitZone");
+        stage.getIcons().add(new Image(HabitZoneApplication.class
+                .getResource("/com/example/habitzone/ui/icons/habitzone-check.png")
+                .toExternalForm()));
         stage.setMinWidth(780);
         stage.setMinHeight(560);
         stage.setScene(scene);
+        stage.setOnShown(event -> root.focusCommandInput());
         stage.show();
     }
 }

@@ -56,7 +56,11 @@
             - What success looks like
             - Tests
     - my prompt evaluation
-        - passed 1 issue to gemini chatbot to verify that the issues were clear
+        - passed 1 issue to gemini chatbot to verify that the issues were clear.
+        - However, when I passed just the issue titles to gemini, and told it that I felt it was unclear, it then agreed that the issues are unclear. 
+            - Problem 1: Implementation without scope. For example, issue 6 is `Implement MVP use cases` but does not specify which use cases
+            - Problem 2: Broad Architectural Jargon. For example, issue 2 is `Establish package boundaries` that could be a refactoring task or a design rule.
+        - Thus, while the entire MVP development is broken down into phases/issues with a clear structure of task, goal, test, it does not follow the best practice in naming the github issue to be descriptive.
 - Production
     - Asked agent to create issues on github first based on the issues generated during the plan stage
         

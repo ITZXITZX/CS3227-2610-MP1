@@ -28,7 +28,7 @@ if ($InputPath) {
 
 if (-not $LogPath) {
     $repositoryRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
-    $LogPath = Join-Path $repositoryRoot 'logs\log-prompt.md'
+    $LogPath = Join-Path $repositoryRoot 'logs\transcript.md'
 }
 
 function Get-MarkdownFence {
@@ -56,16 +56,12 @@ $entry = @"
 ### Conversation history
 
 ${promptFence}text
-$Prompt
+User: $Prompt
+
+Assistant: $Reply
 $promptFence
 
-### Assistant reply
-
-${replyFence}text
-$Reply
-$replyFence
-
-### Actions taken
+### Summary of Actions taken
 
 $actionLines
 
@@ -74,11 +70,9 @@ $actionLines
 if (Test-Path -LiteralPath $resolvedLogPath) {
     [System.IO.File]::AppendAllText($resolvedLogPath, [Environment]::NewLine + $entry, [System.Text.UTF8Encoding]::new($false))
 } else {
-    [System.IO.File]::WriteAllText($resolvedLogPath, "# Prompt-Reply Log`r`n`r`n$entry", [System.Text.UTF8Encoding]::new($false))
+    [System.IO.File]::WriteAllText($resolvedLogPath, "# Transcript`r`n`r`n$entry", [System.Text.UTF8Encoding]::new($false))
 }
 
-# Read back as UTF-8 and catch the characteristic markers produced when UTF-8
-# text is decoded as ANSI/Windows-1252 before being saved again.
 $writtenText = [System.IO.File]::ReadAllText($resolvedLogPath, [System.Text.UTF8Encoding]::new($false))
 if ($writtenText -match '[\u00C3\u00E2\u00C2\u0192\uFFFD]') {
     throw "Encoding validation failed: possible UTF-8 mojibake was detected in $resolvedLogPath"

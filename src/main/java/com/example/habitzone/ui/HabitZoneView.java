@@ -3,17 +3,21 @@ package com.example.habitzone.ui;
 import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.geometry.Pos;
+import javafx.scene.input.KeyCode;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 /** Main JavaFX layout; it renders controller state and forwards input unchanged. */
@@ -24,6 +28,8 @@ public final class HabitZoneView extends BorderPane {
     private final ListView<String> historyList = new ListView<>();
     private final Label feedback = new Label();
     private final TextField commandInput = new TextField();
+    private final List<String> commandHistory = new ArrayList<>();
+    private int commandHistoryIndex;
 
     public HabitZoneView(MainWindowController controller) {
         this(controller, () -> LocalDate.now(Clock.systemDefaultZone()));
@@ -43,11 +49,13 @@ public final class HabitZoneView extends BorderPane {
         title.getStyleClass().add("app-title");
         Label date = new Label(today.format(DATE_FORMAT));
         date.getStyleClass().add("current-date");
-        HBox topBar = new HBox(title, date);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox topBar = new HBox(title, spacer, date);
         topBar.getStyleClass().add("top-bar");
         topBar.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(date, Priority.ALWAYS);
-        date.setAlignment(Pos.CENTER_RIGHT);
+        date.setAlignment(Pos.CENTER);
         return topBar;
     }
 
@@ -75,15 +83,66 @@ public final class HabitZoneView extends BorderPane {
         commandInput.setPromptText("Enter a command, e.g. help or list");
         commandInput.getStyleClass().add("command-input");
         commandInput.setOnAction(event -> submitCommand());
+        commandInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.UP) {
+                showPreviousCommand();
+                event.consume();
+            } else if (event.getCode() == KeyCode.DOWN) {
+                showNextCommand();
+                event.consume();
+            }
+        });
         VBox bottom = new VBox(10, feedback, commandInput);
         bottom.getStyleClass().add("command-area");
         return bottom;
     }
 
+    /** Gives the user immediate access to command entry when the window opens. */
+    public void focusCommandInput() {
+        commandInput.requestFocus();
+    }
+
     private void submitCommand() {
-        controller.submit(commandInput.getText());
+        String input = commandInput.getText();
+        rememberCommand(input);
+        controller.submit(input);
         commandInput.clear();
         refresh();
+    }
+
+    private void rememberCommand(String input) {
+        if (!input.isBlank()) {
+            commandHistory.remove(input);
+            commandHistory.add(input);
+        }
+        commandHistoryIndex = commandHistory.size();
+    }
+
+    private void showPreviousCommand() {
+        if (commandHistoryIndex == 0) {
+            return;
+        }
+
+        commandHistoryIndex--;
+        String previousCommand = commandHistory.get(commandHistoryIndex);
+        commandInput.setText(previousCommand);
+        commandInput.positionCaret(previousCommand.length());
+    }
+
+    private void showNextCommand() {
+        if (commandHistoryIndex >= commandHistory.size()) {
+            return;
+        }
+
+        commandHistoryIndex++;
+        if (commandHistoryIndex == commandHistory.size()) {
+            commandInput.clear();
+            return;
+        }
+
+        String nextCommand = commandHistory.get(commandHistoryIndex);
+        commandInput.setText(nextCommand);
+        commandInput.positionCaret(nextCommand.length());
     }
 
     private void refresh() {
