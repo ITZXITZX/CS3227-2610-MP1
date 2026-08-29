@@ -16,7 +16,7 @@ public final class ClearExpiryCommand implements Command {
 
     @Override
     public CommandResult execute(String arguments) {
-        if (CommandSupport.isBlank(arguments)) return CommandResult.failure(CommandMessages.MISSING_HABIT_NAME);
+        if (CommandSupport.isBlank(arguments)) return CommandResult.failure(CommandMessages.requiredInput(usage()));
         return CommandSupport.executeUseCase(
                 () -> clearHabitExpiryUseCase.execute(arguments),
                 habit -> CommandResult.success("Cleared expiry for '" + habit.name() + "'.")

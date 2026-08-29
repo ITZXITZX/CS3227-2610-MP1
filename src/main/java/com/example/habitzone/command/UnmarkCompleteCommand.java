@@ -26,7 +26,7 @@ public class UnmarkCompleteCommand implements Command {
     public CommandResult execute(String arguments) {
         MarkCompleteCommand.ParsedDatedHabit parsed = MarkCompleteCommand.ParsedDatedHabit.from(arguments);
         if (parsed.missingName()) {
-            return CommandResult.failure(CommandMessages.MISSING_HABIT_NAME);
+            return CommandResult.failure(CommandMessages.requiredInput(usage()));
         }
         if (parsed.invalidDate()) {
             return CommandResult.failure(CommandMessages.INVALID_DATE);

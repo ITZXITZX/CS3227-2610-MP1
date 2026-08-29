@@ -220,11 +220,13 @@ class CommandRegistryTest {
     void missingArgumentsReturnFriendlyErrors() {
         CommandRegistry registry = registry(new FakeHabitRepository());
 
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("add").message());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("delete").message());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("history").message());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("done 2026-08-19").message());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("undone 2026-08-19").message());
+        assertEquals("Please input: add HABIT_NAME", registry.execute("add").message());
+        assertEquals("Please input: delete HABIT_NAME", registry.execute("delete").message());
+        assertEquals("Please input: history HABIT_NAME", registry.execute("history").message());
+        assertEquals("Please input: done HABIT_NAME [YYYY-MM-DD]", registry.execute("done").message());
+        assertEquals("Please input: done HABIT_NAME [YYYY-MM-DD]", registry.execute("done 2026-08-19").message());
+        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", registry.execute("undone").message());
+        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", registry.execute("undone 2026-08-19").message());
     }
 
     @Test

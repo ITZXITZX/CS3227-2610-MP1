@@ -12,6 +12,10 @@ final class CommandMessages {
     private CommandMessages() {
     }
 
+    static String requiredInput(String usage) {
+        return "Please input: " + usage;
+    }
+
     static String fromUseCaseError(UseCaseError error) {
         return switch (error) {
             case DUPLICATE_HABIT -> "That habit already exists.";

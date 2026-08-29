@@ -27,7 +27,7 @@ public class MarkCompleteCommand implements Command {
     public CommandResult execute(String arguments) {
         ParsedDatedHabit parsed = ParsedDatedHabit.from(arguments);
         if (parsed.missingName()) {
-            return CommandResult.failure(CommandMessages.MISSING_HABIT_NAME);
+            return CommandResult.failure(CommandMessages.requiredInput(usage()));
         }
         if (parsed.invalidDate()) {
             return CommandResult.failure(CommandMessages.INVALID_DATE);

@@ -30,7 +30,7 @@ class CommandHandlerTest {
 
         assertFalse(command.execute("Morning Run").error());
         assertEquals("Morning Run", repository.loadAll().getFirst().name());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, command.execute(" ").message());
+        assertEquals("Please input: add HABIT_NAME", command.execute(" ").message());
     }
 
     @Test
@@ -84,7 +84,7 @@ class CommandHandlerTest {
 
         assertFalse(command.execute("Read 2026-08-19").error());
         assertFalse(repository.loadAll().getFirst().isCompleteOn(DATE));
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, command.execute("2026-08-19").message());
+        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", command.execute("2026-08-19").message());
     }
 
     @Test

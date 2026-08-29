@@ -24,7 +24,7 @@ public class AddHabitCommand implements Command {
     @Override
     public CommandResult execute(String arguments) {
         if (CommandSupport.isBlank(arguments)) {
-            return CommandResult.failure(CommandMessages.MISSING_HABIT_NAME);
+            return CommandResult.failure(CommandMessages.requiredInput(usage()));
         }
 
         return CommandSupport.executeUseCase(

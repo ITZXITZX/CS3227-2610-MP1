@@ -1527,3 +1527,80 @@ The important limitation is that no JavaFX code can guarantee stealing Windows f
 - Updated the JavaFX stage startup path to request native stage focus before focusing the command field.
 - Explained why Gradle-run launches are not a reliable test of Windows foreground-focus behavior and provided packaged-launch testing guidance.
 - Attempted Gradle verification; it was blocked by unreadable dependency-cache JARs and build-directory access restrictions in the environment.
+
+## Conversation - 2026-08-30 02:59:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** when marking 'done' or 'undone' incorrectly, the error message is ambiguous(Please provide a habit name). I want you to show an example of what the command should look like instead. Maybe something like: please input: done <habit_name> [YYYY-MM-DD]?
+
+**Assistant (5.6 Terra, light):** I’ll update the command validation message so it shows the expected `done`/`undone` syntax, then run the relevant tests.
+
+**Assistant (5.6 Terra, light):** The missing-name path for these two commands now returns the exact command pattern (including the optional date); other commands retain their existing generic habit-name message.
+
+**Assistant (5.6 Terra, light):** Updated `done` and `undone` validation to show the required syntax:
+
+- `Please input: done HABIT_NAME [YYYY-MM-DD]`
+- `Please input: undone HABIT_NAME [YYYY-MM-DD]`
+
+This applies to both empty input and date-only input. Added regression coverage in CommandRegistryTest.java.
+
+I attempted the targeted Gradle test, but the local Gradle process did not reach test execution after configuration.
+
+**User:** How come the error message is updated even though you only updated the test code?
+
+**Assistant (5.6 Terra, light):** I updated both the application code and the test code.
+
+The behavior change is in:
+
+- MarkCompleteCommand.java
+- UnmarkCompleteCommand.java
+
+Both now return `"Please input: " + usage()` when the habit name is missing. The tests were updated separately to verify that behavior.
+
+**User:** Why are there so many .gradle-user-home? remove all of them, and remember this detail when implementing subsequent code changes for this project. I am not sure if you need to create some .md as memory
+
+I do not like your changes made because you did not use CommandMessages.java. Please use CommandMessages.java to show the right error message instead
+
+**Assistant (5.6 Terra, light):** I’ll remove the Gradle cache directories I created, record the project-specific testing constraint in the repository’s agent guidance if available, and centralize the new messages in `CommandMessages`.
+
+**Assistant (5.6 Terra, light):** The cache is currently locked by Gradle daemons started during the earlier test attempt. I’ll stop only the daemons using this project-local cache, then remove the remaining directory.
+
+**Assistant (5.6 Terra, light):** Removed the project-local `.gradle-user-home` directory.
+
+The messages now come from CommandMessages.java via `requiredInput(usage)`, which both `done` and `undone` use.
+
+I also added AGENTS.md to retain the instruction not to create project-local Gradle cache directories in future changes.
+
+**User:** I want to repeat this error message pattern for all other commands. Help me make the ammendments
+
+**Assistant (5.6 Terra, light):** I’ll apply the same command-specific input guidance to every command that requires a habit name—`add`, `delete`, and `history`—while retaining the existing behavior for commands that take no arguments.
+
+**Assistant (5.6 Terra, light):** All commands that require arguments now delegate their missing/partial-input feedback to the shared `CommandMessages.requiredInput(usage())` helper. I’ve added coverage for the advanced commands too.
+
+**Assistant (5.6 Terra, light):** Applied the syntax-guidance pattern to every command that needs arguments:
+
+`add`, `delete`, `history`, `done`, `undone`, `set-expiry`, `clear-expiry`, `set-priority`, `set-category`, and `streak`.
+
+For example, an incomplete `set-category` now shows:
+
+`Please input: set-category HABIT_NAME CATEGORY`
+
+All messages are built through the shared helper in CommandMessages.java, and tests cover the updated responses. The project contains no `.gradle-user-home` directory.
+
+**Assistant (5.6 Terra, light):** I’m using the `log-conversation` skill to save the current conversation as the project’s Markdown transcript.
+
+**Assistant (5.6 Terra, light):** To log this conversation accurately, please provide the thread’s start timestamp and the model/reasoning label to use for my messages (for example, `2026-08-30 03:00:00 +08:00; 5.6 Terra, Light reasoning`).
+
+**User:** 5.6 Terra, light, today 2:59 AM
+
+**Assistant (5.6 Terra, light):** Thanks — I’ll use `2026-08-30 02:59:00 +08:00` and `5.6 Terra, light`, then append this thread in chronological order.
+```
+
+### Summary of Actions Taken
+
+- Updated missing or incomplete argument feedback for all commands that require arguments to display the applicable usage pattern.
+- Centralized the guidance-message construction in `CommandMessages.requiredInput`.
+- Added regression assertions for the standard and advanced commands.
+- Removed the project-local `.gradle-user-home` cache and added project guidance not to recreate it.
