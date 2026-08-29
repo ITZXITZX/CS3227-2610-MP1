@@ -7,7 +7,7 @@ description: Save or update a clean Markdown transcript of the current conversat
 
 ## Goal
 
-Maintain exactly one transcript entry per conversation thread in `logs/transcript.md`.
+Maintain exactly one transcript entry per conversation thread in `logs/transcript.md`. Keep entries in ascending chronological order: the earliest date/time is at the top and the latest is at the bottom.
 
 A conversation entry represents the entire active thread: every accessible, visible user and assistant message, from the first conversational message through the current request. Each assistant message records the model and reasoning setting used for that message. Re-running this skill in the same thread must update that entry rather than create a duplicate.
 
@@ -51,8 +51,8 @@ For each assistant message, obtain the model name and reasoning setting from the
 2. Determine the exact thread header using the thread identity discovery procedure above.
 3. Search `logs/transcript.md` for that exact header.
 4. If it exists, replace the complete block after the header through (but not including) the next `## Conversation -` header, or through end of file.
-5. If it does not exist, append a new entry at the end of the file.
-6. Preserve all other entries unchanged.
+5. If it does not exist, compare its full header timestamp (date first, then time) with the existing entry timestamps and insert it immediately before the first later entry. Append it only when it is later than every existing entry.
+6. Preserve all existing entries unchanged and keep the complete transcript in ascending chronological order.
 7. Write the transcript explicitly as UTF-8 without a BOM. Re-read the written entry as UTF-8 before reporting success.
 
 ## Text encoding and portability
