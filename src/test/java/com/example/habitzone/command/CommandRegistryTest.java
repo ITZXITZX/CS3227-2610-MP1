@@ -123,8 +123,8 @@ class CommandRegistryTest {
         assertTrue(result.message().contains("add HABIT_NAME"));
         assertTrue(result.message().contains("delete HABIT_NAME"));
         assertTrue(result.message().contains("list"));
-        assertTrue(result.message().contains("done HABIT_NAME YYYY-MM-DD"));
-        assertTrue(result.message().contains("undone HABIT_NAME YYYY-MM-DD"));
+        assertTrue(result.message().contains("done HABIT_NAME [YYYY-MM-DD]"));
+        assertTrue(result.message().contains("undone HABIT_NAME [YYYY-MM-DD]"));
         assertTrue(result.message().contains("history HABIT_NAME"));
         assertTrue(result.message().contains("help"));
         assertTrue(result.message().contains("exit"));
@@ -200,11 +200,20 @@ class CommandRegistryTest {
     }
 
     @Test
-    void doneAndUndoneWithHabitButNoDateReportAnInvalidDate() {
-        CommandRegistry registry = registry(new FakeHabitRepository());
+    void doneAndUndoneWithoutDatesUseToday() {
+        FakeHabitRepository repository = new FakeHabitRepository();
+        repository.seed(new Habit(new HabitId("habit-1"), "Morning Run"));
+        CommandRegistry registry = registry(repository);
 
-        assertEquals(CommandMessages.INVALID_DATE, registry.execute("done exercise").message());
-        assertEquals(CommandMessages.INVALID_DATE, registry.execute("undone exercise").message());
+        CommandResult done = registry.execute("done Morning Run");
+        assertFalse(done.error());
+        assertEquals("Marked 'Morning Run' complete today.", done.message());
+        assertTrue(repository.loadAll().getFirst().isCompleteOn(today));
+
+        CommandResult undone = registry.execute("undone Morning Run");
+        assertFalse(undone.error());
+        assertEquals("Unmarked 'Morning Run' complete today.", undone.message());
+        assertFalse(repository.loadAll().getFirst().isCompleteOn(today));
     }
 
     @Test

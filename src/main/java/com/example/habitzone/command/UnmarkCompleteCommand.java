@@ -19,7 +19,7 @@ public class UnmarkCompleteCommand implements Command {
 
     @Override
     public String usage() {
-        return "undone HABIT_NAME YYYY-MM-DD";
+        return "undone HABIT_NAME [YYYY-MM-DD]";
     }
 
     @Override
@@ -28,8 +28,15 @@ public class UnmarkCompleteCommand implements Command {
         if (parsed.missingName()) {
             return CommandResult.failure(CommandMessages.MISSING_HABIT_NAME);
         }
-        if (parsed.date().isEmpty()) {
+        if (parsed.invalidDate()) {
             return CommandResult.failure(CommandMessages.INVALID_DATE);
+        }
+
+        if (parsed.date().isEmpty()) {
+            return CommandSupport.executeUseCase(
+                    () -> unmarkHabitCompleteUseCase.execute(parsed.habitName()),
+                    habit -> CommandResult.success("Unmarked '" + habit.name() + "' complete today.")
+            );
         }
 
         LocalDate date = parsed.date().get();
