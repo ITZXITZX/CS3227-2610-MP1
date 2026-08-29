@@ -33,6 +33,7 @@ public class HabitZoneApplication extends Application {
         stage.setMinWidth(780);
         stage.setMinHeight(560);
         stage.setScene(scene);
+        stage.setOnShown(event -> root.focusCommandInput());
         stage.show();
     }
 }

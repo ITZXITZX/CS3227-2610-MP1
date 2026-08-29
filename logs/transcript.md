@@ -1354,6 +1354,15 @@ Code changes in HabitZoneApplication.java:
 **User:** 12:33 AM, today, 5.6 Terra light
 
 **Assistant (5.6 Terra, light):** I’ll use `2026-08-30 00:33:00 +08:00`, with assistant turns labeled `5.6 Terra, light`. I’m updating the single matching transcript entry and keeping it in chronological order.
+
+**User:** When I open the app, I want my cursor to have already clicked the region to type commands in, and not have to click it myself. Make the fix and explain the code changes of before and after
+
+**Assistant (5.6 Terra, light):** Implemented automatic command-field focus.
+Before: the app displayed the stage with stage.show() but did not explicitly select any control, so JavaFX could leave focus elsewhere.
+After:
+- HabitZoneApplication.java registers an onShown handler. Once the window is visible, it requests focus for command entry.
+- HabitZoneView.java adds focusCommandInput(), keeping access to the private text field inside the view.
+Now, when HabitZone opens, the caret is immediately in the command input and the user can type straight away.
 ```
 
 ### Summary of Actions Taken
@@ -1361,3 +1370,4 @@ Code changes in HabitZoneApplication.java:
 - Positioned the top-bar date at the far right using an expanding JavaFX spacer.
 - Added a generated green check-mark application icon and assigned it to the JavaFX stage.
 - Reordered all transcript entries into ascending chronological order and logged this conversation.
+- Caret is in the command input and user can type straightaway.

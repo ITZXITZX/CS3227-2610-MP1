@@ -97,6 +97,11 @@ public final class HabitZoneView extends BorderPane {
         return bottom;
     }
 
+    /** Gives the user immediate access to command entry when the window opens. */
+    public void focusCommandInput() {
+        commandInput.requestFocus();
+    }
+
     private void submitCommand() {
         String input = commandInput.getText();
         rememberCommand(input);
