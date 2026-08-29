@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 /** Main JavaFX layout; it renders controller state and forwards input unchanged. */
 public final class HabitZoneView extends BorderPane {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMMM uuuu");
+    private static final String COMPLETED_TODAY_LABEL = " (done)";
+    private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
     private final MainWindowController controller;
     private final ListView<HabitSnapshot> habitList = new ListView<>();
     private final ListView<String> historyList = new ListView<>();
@@ -150,7 +152,8 @@ public final class HabitZoneView extends BorderPane {
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
             @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
                 super.updateItem(habit, empty);
-                setText(empty || habit == null ? null : habit.name());
+                setText(empty || habit == null ? null : habit.name()
+                        + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
             }
         });
         historyList.getItems().setAll(controller.history().map(this::historyLines).orElseGet(java.util.List::of));

@@ -45,7 +45,7 @@ class CommandHandlerTest {
 
     @Test
     void listHandlerReturnsStructuredHabitSnapshots() {
-        ListHabitsCommand command = new ListHabitsCommand(new ViewHabitsUseCase(repositoryWith("Read")));
+        ListHabitsCommand command = new ListHabitsCommand(new ViewHabitsUseCase(repositoryWith("Read"), fixedClock()));
 
         CommandResult result = command.execute("");
 

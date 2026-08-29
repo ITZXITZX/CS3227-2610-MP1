@@ -55,7 +55,7 @@ public class CommandRegistry {
         CommandRegistry registry = withUseCases(
                 new AddHabitUseCase(repository),
                 new DeleteHabitUseCase(repository),
-                new ViewHabitsUseCase(repository),
+                new ViewHabitsUseCase(repository, clockProvider),
                 new MarkHabitCompleteUseCase(repository, clockProvider),
                 new UnmarkHabitCompleteUseCase(repository, clockProvider),
                 new ViewHabitHistoryUseCase(repository)

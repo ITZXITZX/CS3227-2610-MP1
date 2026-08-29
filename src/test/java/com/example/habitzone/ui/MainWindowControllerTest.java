@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainWindowControllerTest {
     @Test
     void submitsInputThenRendersFeedbackAndReturnedHabits() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
         MainWindowController controller = new MainWindowController(input -> {
             assertEquals("list", input);
             return CommandResult.habits("1 habit.", List.of(exercise));
@@ -41,7 +41,7 @@ class MainWindowControllerTest {
 
     @Test
     void clearsTheHabitListWhenExecutorReturnsAnEmptySnapshot() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
         MainWindowController controller = new MainWindowController(
                 input -> "list".equals(input)
                         ? CommandResult.habits("No habits.", List.of())
@@ -70,7 +70,7 @@ class MainWindowControllerTest {
 
     @Test
     void keepsExistingHabitsWhenAResultDoesNotContainAHabitList() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
         MainWindowController controller = new MainWindowController(
                 input -> "list".equals(input)
                         ? CommandResult.habits("1 habit.", List.of(exercise))

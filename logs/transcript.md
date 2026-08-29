@@ -1371,3 +1371,81 @@ Now, when HabitZone opens, the caret is immediately in the command input and the
 - Added a generated green check-mark application icon and assigned it to the JavaFX stage.
 - Reordered all transcript entries into ascending chronological order and logged this conversation.
 - Caret is in the command input and user can type straightaway.
+
+## Conversation - 2026-08-30 01:17:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** For the list command, besides listing the habits, I also want to include information on whether the habit has been completed as of today. Perhaps you can show it as (done) or (undone) just beside the habit.
+
+Follow the architecture and existing design principles
+
+Explain your code changes and how you kept to the architecture and existing design principles
+
+**Assistant (5.6 Terra, light):** I'll trace the existing list-command flow and completion model first, then make the smallest architecture-consistent change and run the relevant tests.
+
+**Assistant (5.6 Terra, light):** The application already separates command execution from JavaFX rendering. I'll add the "completed today" value to the list use-case's read model using the existing ClockProvider, then let the view render that value as (done) or (undone)-keeping date-dependent logic out of the UI.
+
+**Assistant (5.6 Terra, light):** The implementation is in place, including a deterministic use-case test for a habit completed on the configured "today." I'm compiling and running the complete test suite now to catch any integration impacts from the enriched list snapshot.
+
+**Assistant (5.6 Terra, light):** The first test attempt was blocked before compilation because Gradle tried to create its cache under C:\\.gradle, which is not writable in this environment. I'll rerun with Gradle's cache located inside the project workspace.
+
+**Assistant (5.6 Terra, light):** The Gradle wrapper download could not complete within the sandboxed runner (it left only a partial archive), so I'm performing a direct compilation of the changed clean-architecture layers as an additional local verification.
+
+**Assistant (5.6 Terra, light):** Implemented daily completion status in the habit list:
+
+- Habit names now render as `Exercise (done)` or `Exercise (undone)`.
+- The list use case calculates today's status through the existing `ClockProvider`.
+- Added `completedToday` to `HabitSnapshot` and tests for completed/undone habits.
+
+Architecture alignment:
+
+- `ViewHabitsUseCase.java` owns date-dependent application logic.
+- `HabitSnapshot.java` carries the UI-ready read model.
+- `HabitZoneView.java` only formats and renders the supplied state; it contains no completion rule or clock access.
+- `CommandRegistry.java` wires the existing clock dependency into the list use case.
+
+Verification: the affected main layers compile successfully with `javac`. The full Gradle test suite could not run because Gradle's pinned distribution download did not complete in this environment.
+
+**User:** why are there so many .gradle-user-home files edited or created? I want to untrack all those changes, and also not repeat this behaviour
+
+Please trace and explain the changes to the logic flow for the classes you modified for this feature
+
+**Assistant (5.6 Terra, light):** Those files were an unintended local Gradle cache: I redirected Gradle there after its default cache path was unwritable. It is not part of the feature and should not be tracked. I'll remove that generated cache now, then trace the feature's runtime flow class by class.
+
+**Assistant (5.6 Terra, light):** The cache removal is currently blocked by the Gradle daemon that the prior test attempt started. I'll stop that project-local Gradle daemon, then remove only the verified `.gradle-user-home` directory.
+
+**Assistant (5.6 Terra, light):** Removed `.gradle-user-home`; it no longer appears in `git status` and was never tracked.
+
+It was created because I redirected Gradle's cache into the repository after the default cache location was not writable. That was a poor choice for a shared worktree. I won't place build-tool caches inside the repository again; I'll use the normal user cache or an external temporary directory.
+
+Feature logic flow:
+
+1. `CommandRegistry.withRepository(...)` now passes the existing `ClockProvider` into `ViewHabitsUseCase`.
+2. When `list` runs, `ViewHabitsUseCase.execute()` obtains today once from that clock, loads/sorts habits, and asks each domain `Habit` whether it `isCompleteOn(today)`.
+3. The resulting `HabitSnapshot` now contains `completedToday`. This keeps the list's date-specific state in the use-case read model.
+4. `ListHabitsCommand` returns those snapshots unchanged.
+5. `CommandRegistryExecutor` refreshes the list after a successful command by executing `list`, so the UI always receives current completion states.
+6. `HabitZoneView` only renders the supplied state: `name (done)` when `completedToday` is true; otherwise `name (undone)`.
+
+This preserves the layer boundaries: domain owns the completion check, the use case coordinates it with the injected clock, the command layer delegates, and JavaFX only displays the result.
+
+**User:** I do not want to have hardcoded "done" and "undone" as magic values. Refactor
+
+**Assistant (5.6 Terra, light):** I'll replace the display literals with named presentation constants, keeping them confined to the JavaFX view since they are UI labels rather than domain concepts.
+
+**Assistant (5.6 Terra, light):** Refactored the UI labels into named constants in HabitZoneView.java:
+
+- `COMPLETED_TODAY_LABEL`
+- `NOT_COMPLETED_TODAY_LABEL`
+
+The renderer now uses those constants instead of inline magic strings. This keeps UI wording localized to the presentation layer.
+```
+
+### Summary of Actions Taken
+
+- Added today's completion state to list snapshots and rendered it as done or undone in the JavaFX habit list.
+- Added deterministic use-case coverage for today's completion state and updated affected constructors/tests.
+- Removed the generated `.gradle-user-home` cache directory; it was never tracked.
+- Replaced inline status labels with named UI constants.
