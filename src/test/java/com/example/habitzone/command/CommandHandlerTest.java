@@ -30,7 +30,7 @@ class CommandHandlerTest {
 
         assertFalse(command.execute("Morning Run").error());
         assertEquals("Morning Run", repository.loadAll().getFirst().name());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, command.execute(" ").message());
+        assertEquals("Please input: add HABIT_NAME", command.execute(" ").message());
     }
 
     @Test
@@ -61,7 +61,19 @@ class CommandHandlerTest {
 
         assertFalse(command.execute("Read 2026-08-19").error());
         assertTrue(repository.loadAll().getFirst().isCompleteOn(DATE));
-        assertEquals(CommandMessages.INVALID_DATE, command.execute("Read yesterday").message());
+        assertEquals(CommandMessages.INVALID_DATE, command.execute("Read 19-08-2026").message());
+    }
+
+    @Test
+    void markHandlerCompletesHabitTodayWhenDateIsOmitted() {
+        InMemoryHabitRepository repository = repositoryWith("Morning Run");
+        MarkCompleteCommand command = new MarkCompleteCommand(new MarkHabitCompleteUseCase(repository, fixedClock()));
+
+        CommandResult result = command.execute("Morning Run");
+
+        assertFalse(result.error());
+        assertEquals("Marked 'Morning Run' complete today.", result.message());
+        assertTrue(repository.loadAll().getFirst().isCompleteOn(DATE));
     }
 
     @Test
@@ -72,7 +84,20 @@ class CommandHandlerTest {
 
         assertFalse(command.execute("Read 2026-08-19").error());
         assertFalse(repository.loadAll().getFirst().isCompleteOn(DATE));
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, command.execute("2026-08-19").message());
+        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", command.execute("2026-08-19").message());
+    }
+
+    @Test
+    void unmarkHandlerRemovesTodaysCompletionWhenDateIsOmitted() {
+        InMemoryHabitRepository repository = repositoryWith("Morning Run");
+        repository.loadAll().getFirst().markComplete(DATE);
+        UnmarkCompleteCommand command = new UnmarkCompleteCommand(new UnmarkHabitCompleteUseCase(repository, fixedClock()));
+
+        CommandResult result = command.execute("Morning Run");
+
+        assertFalse(result.error());
+        assertEquals("Unmarked 'Morning Run' complete today.", result.message());
+        assertFalse(repository.loadAll().getFirst().isCompleteOn(DATE));
     }
 
     @Test

@@ -34,10 +34,12 @@ class AdvancedCommandTest {
         CommandRegistry registry = CommandRegistry.withRepository(repository, () -> LocalDate.now());
 
         assertTrue(registry.execute("set-expiry Read nope").error());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("clear-expiry").message());
+        assertEquals("Please input: set-expiry HABIT_NAME YYYY-MM-DD", registry.execute("set-expiry").message());
+        assertEquals("Please input: clear-expiry HABIT_NAME", registry.execute("clear-expiry").message());
+        assertEquals("Please input: set-priority HABIT_NAME low|normal|high", registry.execute("set-priority").message());
         assertEquals("Please provide a priority: low, normal, or high.", registry.execute("set-priority Read urgent").message());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("set-category Read").message());
-        assertEquals(CommandMessages.MISSING_HABIT_NAME, registry.execute("streak").message());
+        assertEquals("Please input: set-category HABIT_NAME CATEGORY", registry.execute("set-category Read").message());
+        assertEquals("Please input: streak HABIT_NAME", registry.execute("streak").message());
         assertEquals(HabitPriority.NORMAL, repository.loadAll().getFirst().priority());
     }
 
