@@ -61,16 +61,16 @@ For each assistant message, obtain the model name and reasoning setting from the
 ### Conversation history
 
 ```markdown
-User: <message>
+**User:** <message>
 
-Assistant (<model>, <reasoning setting>): <message>
+**Assistant (<model>, <reasoning setting>):** <message>
 ```
 
 ### Summary of Actions Taken
 
 - <completed action, or `No actions taken.`>
 
-Keep all conversation history between the `### Conversation history` and `### Summary of Actions Taken` headings inside one fenced `markdown` block. Keep turns in chronological order, separated by blank lines, and use the plain `User:` and `Assistant (<model>, <reasoning setting>):` labels exactly as shown.
+Keep all conversation history between the `### Conversation history` and `### Summary of Actions Taken` headings inside one fenced `markdown` block. Keep turns in chronological order, separated by blank lines, and use the bold `**User:**` and `**Assistant (<model>, <reasoning setting>):**` labels exactly as shown.
 
 ## Accuracy rules
 - Preserve the full meaning of every logged message; do not summarize conversation history.
