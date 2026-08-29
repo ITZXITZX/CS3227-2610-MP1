@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.time.Clock;
@@ -48,11 +49,13 @@ public final class HabitZoneView extends BorderPane {
         title.getStyleClass().add("app-title");
         Label date = new Label(today.format(DATE_FORMAT));
         date.getStyleClass().add("current-date");
-        HBox topBar = new HBox(title, date);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox topBar = new HBox(title, spacer, date);
         topBar.getStyleClass().add("top-bar");
         topBar.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(date, Priority.ALWAYS);
-        date.setAlignment(Pos.CENTER_RIGHT);
+        date.setAlignment(Pos.CENTER);
         return topBar;
     }
 
