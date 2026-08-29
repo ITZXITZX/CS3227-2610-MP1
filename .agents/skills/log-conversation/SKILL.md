@@ -35,6 +35,7 @@ Do not log:
 - System, developer, tool, or hidden agent messages
 - Tool calls, command output, raw command links, client metadata, UI indicators, or status updates
 - Skill invocation syntax such as `[$log-conversation](...)`
+- URLs in embedded Markdown links. Preserve the visible link label only; for example, log `[architecture.md](C:\\project\\docs\\architecture.md)` as `architecture.md`.
 
 ## Assistant model details
 
