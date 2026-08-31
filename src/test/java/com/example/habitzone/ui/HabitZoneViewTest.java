@@ -76,7 +76,7 @@ class HabitZoneViewTest {
     }
 
     @Test
-    void doesNotScrollWhenClickedHabitIsAlreadyVisible() throws Exception {
+    void doesNotScrollWhenSelectedHabitIsAlreadyVisible() throws Exception {
         List<HabitSnapshot> habits = habits(60);
         HabitSnapshot clicked = habits.get(23);
         ListView<HabitSnapshot> list = showInteractiveView(habits, 280);
@@ -86,13 +86,61 @@ class HabitZoneViewTest {
             list.getParent().layout();
             int firstVisible = firstVisibleIndex(list);
             list.getSelectionModel().select(clicked);
-            list.getOnMouseClicked().handle(null);
             list.getParent().layout();
             return firstVisible;
         });
 
         assertEquals(firstVisibleBeforeClick, runOnFxThread(() -> firstVisibleIndex(list)));
         assertEquals(clicked, list.getSelectionModel().getSelectedItem());
+    }
+
+    @Test
+    void updatesCalendarWhenSelectionMovesDownAndUp() throws Exception {
+        List<HabitSnapshot> habits = habits(3);
+        LocalDate firstHabitCompletion = LocalDate.of(2026, 8, 10);
+        LocalDate secondHabitCompletion = LocalDate.of(2026, 8, 20);
+        MainWindowController[] controllerHolder = new MainWindowController[1];
+        HabitHistoryCalendar[] calendarHolder = new HabitHistoryCalendar[1];
+
+        ListView<HabitSnapshot> list = runOnFxThread(() -> {
+            MainWindowController controller = new MainWindowController(input -> {
+                if (input.equals("list")) {
+                    return CommandResult.habits("Habits", habits);
+                }
+                String habitName = input.substring("history ".length());
+                HabitSnapshot habit = habits.stream().filter(candidate -> candidate.name().equals(habitName))
+                        .findFirst().orElseThrow();
+                LocalDate completion = habit.equals(habits.getFirst())
+                        ? firstHabitCompletion : secondHabitCompletion;
+                return CommandResult.history("History", new HabitHistory(
+                        habit.id(), habit.name(), List.of(new CompletionLog(completion))));
+            }, () -> { });
+            controllerHolder[0] = controller;
+            controller.loadInitialHabits();
+            HabitZoneView view = new HabitZoneView(controller);
+            calendarHolder[0] = view.historyCalendarForTesting();
+            stage = new Stage();
+            stage.setScene(new Scene(view, 800, 500));
+            stage.show();
+            return view.habitListForTesting();
+        });
+
+        runOnFxThread(() -> {
+            list.getSelectionModel().selectFirst();
+            list.getSelectionModel().selectNext();
+            return null;
+        });
+
+        assertEquals(Optional.of(habits.get(1).id()), controllerHolder[0].displayedHistoryHabitId());
+        assertEquals(List.of(secondHabitCompletion), completedDates(calendarHolder[0]));
+
+        runOnFxThread(() -> {
+            list.getSelectionModel().selectPrevious();
+            return null;
+        });
+
+        assertEquals(Optional.of(habits.getFirst().id()), controllerHolder[0].displayedHistoryHabitId());
+        assertEquals(List.of(firstHabitCompletion), completedDates(calendarHolder[0]));
     }
 
     @Test
@@ -186,15 +234,7 @@ class HabitZoneViewTest {
 
     private ListView<HabitSnapshot> showInteractiveView(List<HabitSnapshot> habits, double height) throws Exception {
         return runOnFxThread(() -> {
-            MainWindowController controller = new MainWindowController(input -> {
-                if (input.equals("list")) {
-                    return CommandResult.habits("Habits", habits);
-                }
-                String habitName = input.substring("history ".length());
-                HabitSnapshot habit = habits.stream().filter(candidate -> candidate.name().equals(habitName))
-                        .findFirst().orElseThrow();
-                return CommandResult.history("History", new HabitHistory(habit.id(), habit.name(), List.of()));
-            }, () -> { });
+            MainWindowController controller = interactiveController(habits);
             controller.loadInitialHabits();
 
             HabitZoneView view = new HabitZoneView(controller);
@@ -205,6 +245,18 @@ class HabitZoneViewTest {
             view.layout();
             return view.habitListForTesting();
         });
+    }
+
+    private MainWindowController interactiveController(List<HabitSnapshot> habits) {
+        return new MainWindowController(input -> {
+            if (input.equals("list")) {
+                return CommandResult.habits("Habits", habits);
+            }
+            String habitName = input.substring("history ".length());
+            HabitSnapshot habit = habits.stream().filter(candidate -> candidate.name().equals(habitName))
+                    .findFirst().orElseThrow();
+            return CommandResult.history("History", new HabitHistory(habit.id(), habit.name(), List.of()));
+        }, () -> { });
     }
 
     private static int firstVisibleIndex(ListView<HabitSnapshot> list) {
@@ -224,6 +276,13 @@ class HabitZoneViewTest {
                     List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty()));
         }
         return habits;
+    }
+
+    private static List<LocalDate> completedDates(HabitHistoryCalendar calendar) throws Exception {
+        return runOnFxThread(() -> calendar.monthsForTesting().lookupAll(".calendar-day.completed").stream()
+                .map(node -> (LocalDate) node.getUserData())
+                .sorted()
+                .toList());
     }
 
     private static HabitHistory history(LocalDate... dates) {

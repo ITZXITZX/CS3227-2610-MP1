@@ -43,7 +43,8 @@ public final class HabitZoneView extends BorderPane {
         setTop(createTopBar(historyCalendar.today()));
         setCenter(createMainArea());
         setBottom(createCommandArea());
-        habitList.setOnMouseClicked(event -> showSelectedHabitHistory());
+        habitList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, previousHabit, selectedHabit) -> showHabitHistory(selectedHabit));
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
             @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
                 super.updateItem(habit, empty);
@@ -191,12 +192,20 @@ public final class HabitZoneView extends BorderPane {
         return habitList;
     }
 
-    private void showSelectedHabitHistory() {
-        HabitSnapshot selectedHabit = habitList.getSelectionModel().getSelectedItem();
-        if (selectedHabit != null) {
-            controller.showHabitHistory(selectedHabit);
-            refresh();
+    HabitHistoryCalendar historyCalendarForTesting() {
+        return historyCalendar;
+    }
+
+    private void showHabitHistory(HabitSnapshot selectedHabit) {
+        if (selectedHabit == null
+                || controller.displayedHistoryHabitId()
+                        .filter(selectedHabit.id()::equals)
+                        .isPresent()) {
+            return;
         }
+
+        controller.showHabitHistory(selectedHabit);
+        refresh();
     }
 
 }

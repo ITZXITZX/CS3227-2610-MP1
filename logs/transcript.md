@@ -1751,6 +1751,26 @@ Habit selection
 No domain, persistence, use-case, or command contracts were changed. The calendar is strictly a presentation-layer transformation, consistent with the project’s Clean Architecture rules.
 
 Verification: the complete Gradle test suite passes with `BUILD SUCCESSFUL`. No new project-local Gradle cache directory was created.
+
+**User:** Currently, when I click on a habit in the Your habits container, it the highlight will move up or down depending on the arrow key I press. However the selected habit history is not updating its view based on the up/down navigation.
+
+I want you to implement the feature such that the habit that is highlighted will have his calendar history view shown on the right panel. So in a sense the calendar view will be invoked for the habit that is selected(light hightlight) on the left panel.
+
+Follow architecture.md, trace and explain your code changes
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll trace the selection and calendar-history data flow against `architecture.md`, then update the smallest appropriate layer so keyboard navigation and mouse selection drive the same selected-habit state. I’ll verify the behavior with the project’s existing tests/build and summarize the exact code path changed.
+
+**Assistant (5.6 Sol, Light reasoning):** The trace found the mismatch: the UI only asks the controller for history inside a mouse-click handler. JavaFX’s arrow keys update the `ListView` selection model directly, so the highlight changes without entering that handler. I’m consolidating this around the selection model itself—the UI-owned presentation event—while retaining the controller/command/use-case boundary required by the architecture.
+
+**Assistant (5.6 Sol, Light reasoning):** The implementation and regression test are in place. The first test run reached the configured global Gradle cache at `C:\.gradle`, which the workspace sandbox cannot write; I’m rerunning the same existing Gradle setup with permission rather than creating a project-local cache.
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented selection-driven calendar history updates.
+
+The view now listens to the `ListView` selection model, so mouse clicks and Up/Down navigation both invoke the selected habit’s history and refresh the calendar. A guard prevents reloading history when the displayed habit is already selected. Added a regression test for keyboard selection movement; the full Gradle test suite passes.
+
+**User:** suitable commit name?
+
+**Assistant (5.6 Sol, Light reasoning):** `feat: update habit history calendar on selection change`
 ````
 
 ### Summary of Actions Taken
@@ -1761,3 +1781,6 @@ Verification: the complete Gradle test suite passes with `BUILD SUCCESSFUL`. No 
 - Added JavaFX tests for month range, completion marking, future completion handling, and initial scroll position.
 - Updated `architecture.md` to document the calendar as a UI-layer concern.
 - Verified the complete Gradle test suite passes.
+- Updated habit-history rendering to follow the `ListView` selection model for both mouse and keyboard navigation.
+- Added a regression test confirming that moving the selection updates the displayed history habit.
+- Re-ran the full Gradle test suite successfully.
