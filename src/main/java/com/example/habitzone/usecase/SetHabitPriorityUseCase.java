@@ -1,4 +1,0 @@
-package com.example.habitzone.usecase;
-import com.example.habitzone.domain.*; import com.example.habitzone.port.HabitRepository; import java.util.*;
-public final class SetHabitPriorityUseCase { private final HabitRepository repository; public SetHabitPriorityUseCase(HabitRepository repository) { this.repository=Objects.requireNonNull(repository); }
- public UseCaseResult<HabitSnapshot> execute(String name, HabitPriority priority) { if(HabitLookup.isInvalidName(name)) return UseCaseResult.failure(UseCaseError.INVALID_HABIT_NAME); List<Habit> habits=repository.loadAll(); return HabitLookup.findByName(habits,name).map(h->{h.setPriority(priority);repository.saveAll(habits);return UseCaseResult.success(HabitSnapshot.from(h));}).orElseGet(()->UseCaseResult.failure(UseCaseError.HABIT_NOT_FOUND)); } }

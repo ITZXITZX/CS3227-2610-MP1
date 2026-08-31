@@ -1,11 +1,14 @@
 package com.example.habitzone.ui;
 
-import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
+import javafx.css.PseudoClass;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -25,13 +28,21 @@ public final class HabitZoneView extends BorderPane {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMMM uuuu");
     private static final String COMPLETED_TODAY_LABEL = " (done)";
     private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
+    private static final int HORIZONTAL_SCROLL_SPEED_MULTIPLIER = 16;
+    private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
     private final MainWindowController controller;
     private final ListView<HabitSnapshot> habitList = new ListView<>();
-    private final ListView<String> historyList = new ListView<>();
+    private final HabitHistoryCalendar historyCalendar;
     private final Label feedback = new Label();
     private final TextField commandInput = new TextField();
+    private VBox habitPanel;
+    private VBox historyPanel;
+    private VBox commandPanel;
     private final List<String> commandHistory = new ArrayList<>();
     private int commandHistoryIndex;
+    private UpperPanel lastFocusedUpperPanel = UpperPanel.LEFT;
+
+    private enum UpperPanel { LEFT, RIGHT }
 
     public HabitZoneView(MainWindowController controller) {
         this(controller, () -> LocalDate.now(Clock.systemDefaultZone()));
@@ -39,11 +50,113 @@ public final class HabitZoneView extends BorderPane {
 
     public HabitZoneView(MainWindowController controller, Supplier<LocalDate> dateSupplier) {
         this.controller = controller;
+        this.historyCalendar = new HabitHistoryCalendar(dateSupplier.get());
         getStyleClass().add("app-root");
-        setTop(createTopBar(dateSupplier.get()));
+        setTop(createTopBar(historyCalendar.today()));
         setCenter(createMainArea());
         setBottom(createCommandArea());
+        installPanelFocusNavigation();
+        installHabitListHorizontalScrolling();
+        habitList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, previousHabit, selectedHabit) -> showHabitHistory(selectedHabit));
+        habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
+            @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
+                super.updateItem(habit, empty);
+                setText(empty || habit == null ? null : habit.name()
+                        + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
+            }
+        });
         refresh();
+    }
+
+    private void installPanelFocusNavigation() {
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (!event.isShiftDown()) {
+                return;
+            }
+
+            boolean focusChanged = switch (event.getCode()) {
+                case LEFT -> focusUpperPanel(UpperPanel.LEFT);
+                case RIGHT -> focusUpperPanel(UpperPanel.RIGHT);
+                case DOWN -> focusCommandPanel();
+                case UP -> focusUpperPanel(lastFocusedUpperPanel);
+                default -> false;
+            };
+            if (focusChanged) {
+                event.consume();
+            }
+        });
+        habitList.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                lastFocusedUpperPanel = UpperPanel.LEFT;
+                selectPanel(habitPanel);
+            }
+        });
+        historyCalendar.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                lastFocusedUpperPanel = UpperPanel.RIGHT;
+                selectPanel(historyPanel);
+            }
+        });
+        commandInput.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                selectPanel(commandPanel);
+            }
+        });
+    }
+
+    private void installHabitListHorizontalScrolling() {
+        habitList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isShiftDown() || event.isControlDown() || event.isAltDown() || event.isMetaDown()) {
+                return;
+            }
+
+            boolean scrolled = switch (event.getCode()) {
+                case LEFT -> scrollHabitListHorizontally(false);
+                case RIGHT -> scrollHabitListHorizontally(true);
+                default -> false;
+            };
+            if (scrolled) {
+                event.consume();
+            }
+        });
+    }
+
+    private boolean scrollHabitListHorizontally(boolean right) {
+        return habitList.lookupAll(".scroll-bar").stream()
+                .filter(ScrollBar.class::isInstance)
+                .map(ScrollBar.class::cast)
+                .filter(scrollBar -> scrollBar.getOrientation() == Orientation.HORIZONTAL && scrollBar.isVisible())
+                .findFirst()
+                .map(scrollBar -> {
+                    double direction = right ? 1 : -1;
+                    double newValue = scrollBar.getValue()
+                            + direction * scrollBar.getUnitIncrement() * HORIZONTAL_SCROLL_SPEED_MULTIPLIER;
+                    scrollBar.setValue(Math.max(scrollBar.getMin(), Math.min(scrollBar.getMax(), newValue)));
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    private void selectPanel(VBox selectedPanel) {
+        habitPanel.pseudoClassStateChanged(SELECTED_PANEL, selectedPanel == habitPanel);
+        historyPanel.pseudoClassStateChanged(SELECTED_PANEL, selectedPanel == historyPanel);
+        commandPanel.pseudoClassStateChanged(SELECTED_PANEL, selectedPanel == commandPanel);
+    }
+
+    private boolean focusUpperPanel(UpperPanel panel) {
+        lastFocusedUpperPanel = panel;
+        if (panel == UpperPanel.LEFT) {
+            habitList.requestFocus();
+        } else {
+            historyCalendar.requestFocus();
+        }
+        return true;
+    }
+
+    private boolean focusCommandPanel() {
+        commandInput.requestFocus();
+        return true;
     }
 
     private HBox createTopBar(LocalDate today) {
@@ -62,16 +175,16 @@ public final class HabitZoneView extends BorderPane {
     }
 
     private HBox createMainArea() {
-        VBox habits = panel("Your habits", habitList);
-        VBox history = panel("Selected habit history", historyList);
-        HBox mainArea = new HBox(habits, history);
+        habitPanel = panel("Your habits", habitList);
+        historyPanel = panel("Selected habit history", historyCalendar);
+        HBox mainArea = new HBox(habitPanel, historyPanel);
         mainArea.getStyleClass().add("main-area");
-        HBox.setHgrow(habits, Priority.ALWAYS);
-        HBox.setHgrow(history, Priority.ALWAYS);
+        HBox.setHgrow(habitPanel, Priority.ALWAYS);
+        HBox.setHgrow(historyPanel, Priority.ALWAYS);
         return mainArea;
     }
 
-    private VBox panel(String heading, ListView<?> content) {
+    private VBox panel(String heading, Region content) {
         Label label = new Label(heading);
         label.getStyleClass().add("panel-heading");
         VBox panel = new VBox(12, label, content);
@@ -94,9 +207,9 @@ public final class HabitZoneView extends BorderPane {
                 event.consume();
             }
         });
-        VBox bottom = new VBox(10, feedback, commandInput);
-        bottom.getStyleClass().add("command-area");
-        return bottom;
+        commandPanel = new VBox(10, feedback, commandInput);
+        commandPanel.getStyleClass().add("command-area");
+        return commandPanel;
     }
 
     /** Gives the user immediate access to command entry when the window opens. */
@@ -148,20 +261,59 @@ public final class HabitZoneView extends BorderPane {
     }
 
     private void refresh() {
-        habitList.getItems().setAll(controller.habits());
-        habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
-            @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
-                super.updateItem(habit, empty);
-                setText(empty || habit == null ? null : habit.name()
-                        + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
-            }
-        });
-        historyList.getItems().setAll(controller.history().map(this::historyLines).orElseGet(java.util.List::of));
+        if (!habitList.getItems().equals(controller.habits())) {
+            habitList.getItems().setAll(controller.habits());
+        }
+        controller.history().ifPresentOrElse(historyCalendar::show, historyCalendar::clear);
+        highlightAndRevealDisplayedHabit();
         feedback.setText(controller.feedback());
         feedback.pseudoClassStateChanged(javafx.css.PseudoClass.getPseudoClass("error"), controller.feedbackIsError());
     }
 
-    private java.util.List<String> historyLines(HabitHistory history) {
-        return history.completions().stream().map(completion -> completion.date().toString()).toList();
+    private void highlightAndRevealDisplayedHabit() {
+        controller.displayedHistoryHabitId().ifPresent(displayedHabitId -> {
+            for (int index = 0; index < habitList.getItems().size(); index++) {
+                if (habitList.getItems().get(index).id().equals(displayedHabitId)) {
+                    habitList.getSelectionModel().select(index);
+                    if (!isHabitVisible(index)) {
+                        habitList.scrollTo(index);
+                    }
+                    return;
+                }
+            }
+        });
     }
+
+    private boolean isHabitVisible(int index) {
+        return habitList.lookupAll(".list-cell").stream()
+                .filter(javafx.scene.control.ListCell.class::isInstance)
+                .map(javafx.scene.control.ListCell.class::cast)
+                .anyMatch(cell -> !cell.isEmpty() && cell.getIndex() == index
+                        && cell.getParent().getLayoutBounds().intersects(cell.getBoundsInParent()));
+    }
+
+    ListView<HabitSnapshot> habitListForTesting() {
+        return habitList;
+    }
+
+    HabitHistoryCalendar historyCalendarForTesting() {
+        return historyCalendar;
+    }
+
+    TextField commandInputForTesting() {
+        return commandInput;
+    }
+
+    private void showHabitHistory(HabitSnapshot selectedHabit) {
+        if (selectedHabit == null
+                || controller.displayedHistoryHabitId()
+                        .filter(selectedHabit.id()::equals)
+                        .isPresent()) {
+            return;
+        }
+
+        controller.showHabitHistory(selectedHabit);
+        refresh();
+    }
+
 }

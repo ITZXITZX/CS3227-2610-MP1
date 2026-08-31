@@ -459,51 +459,24 @@ list
 
 ## Phase 8: Future Feature Extension Points
 
-### Issue 14: Prepare expiry feature
+### Issue 14: Prepare expiry clearing
 
 **Task**
 
 Add use case and command design, not necessarily full UI polish yet:
 
 ```text
-set-expiry HABIT_NAME YYYY-MM-DD
 clear-expiry HABIT_NAME
 ```
 
 **Success Looks Like**
 
-- Expiry can be added without changing core command infrastructure.
 - Expired habits can later be hidden, highlighted, or blocked according to product decision.
 
 **Tests**
 
-- Set expiry.
 - Clear expiry.
 - Persist expiry.
-
-### Issue 15: Prepare priority and category features
-
-**Task**
-
-Add commands:
-
-```text
-set-priority HABIT_NAME low|normal|high
-set-category HABIT_NAME CATEGORY
-```
-
-**Success Looks Like**
-
-- Habit list can display priority/category.
-- Storage persists both.
-- Domain model remains UI-independent.
-
-**Tests**
-
-- Set priority.
-- Reject invalid priority.
-- Set category.
-- Persist both.
 
 ### Issue 16: Prepare streak feature
 

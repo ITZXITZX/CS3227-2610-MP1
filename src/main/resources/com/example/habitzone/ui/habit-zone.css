@@ -4,9 +4,20 @@
 .current-date { -fx-text-fill: #dce7ff; -fx-font-size: 14px; }
 .main-area { -fx-padding: 24 28 16; -fx-spacing: 18; }
 .panel { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 18; -fx-effect: dropshadow(gaussian, #00000016, 10, 0, 0, 2); }
+.panel:selected, .command-area:selected { -fx-effect: dropshadow(gaussian, rgba(62, 66, 250, 0.50), 6, 0.05, 0, 0); }
 .panel-heading { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
 .list-view { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-background-radius: 8; }
+.list-view .list-cell:selected { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }
 .command-area { -fx-background-color: white; -fx-padding: 16 28 24; -fx-border-color: #e2e8f0 transparent transparent transparent; }
 .command-input { -fx-font-size: 15px; -fx-padding: 12 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #a9b8d5; }
 .feedback { -fx-text-fill: #334155; -fx-font-size: 13px; }
 .feedback:error { -fx-text-fill: #b42318; }
+.history-calendar { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; }
+.history-calendar > .viewport { -fx-background-color: transparent; }
+.history-calendar .scroll-bar:vertical { -fx-pref-width: 12; }
+.calendar-month { -fx-padding: 16; -fx-background-color: #f8fafc; -fx-background-radius: 8; }
+.calendar-month-heading { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
+.calendar-grid { -fx-hgap: 4; -fx-vgap: 4; }
+.calendar-weekday { -fx-font-size: 11px; -fx-text-fill: #64748b; -fx-padding: 3; }
+.calendar-day { -fx-min-height: 34; -fx-background-radius: 17; -fx-text-fill: #334155; }
+.calendar-day.completed { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }

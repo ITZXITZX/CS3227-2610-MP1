@@ -1,11 +1,14 @@
 package com.example.habitzone.ui;
 
 import com.example.habitzone.command.CommandResult;
+import com.example.habitzone.domain.CompletionLog;
 import com.example.habitzone.domain.HabitId;
 import com.example.habitzone.domain.HabitPriority;
+import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,6 +16,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainWindowControllerTest {
+    @Test
+    void loadsHabitsForTheInitialView() {
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        MainWindowController controller = new MainWindowController(input -> {
+            assertEquals("list", input);
+            return CommandResult.habits("1 habit.", List.of(exercise));
+        }, () -> fail("exit should not run"));
+
+        controller.loadInitialHabits();
+
+        assertEquals(List.of(exercise), controller.habits());
+        assertEquals("1 habit.", controller.feedback());
+    }
+
     @Test
     void submitsInputThenRendersFeedbackAndReturnedHabits() {
         HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
@@ -26,6 +43,22 @@ class MainWindowControllerTest {
         assertEquals("1 habit.", controller.feedback());
         assertFalse(controller.feedbackIsError());
         assertEquals(List.of(exercise), controller.habits());
+    }
+
+    @Test
+    void showsHistoryForTheSelectedHabitUsingTheHistoryCommand() {
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        MainWindowController controller = new MainWindowController(input -> {
+            assertEquals("history Exercise", input);
+            return CommandResult.history("Showing history for 'Exercise'.", new HabitHistory(
+                    exercise.id(), exercise.name(), List.of(new CompletionLog(LocalDate.of(2026, 8, 18)))));
+        }, () -> fail("exit should not run"));
+
+        controller.showHabitHistory(exercise);
+
+        assertEquals("Showing history for 'Exercise'.", controller.feedback());
+        assertEquals(LocalDate.of(2026, 8, 18), controller.history().orElseThrow().completions().getFirst().date());
+        assertEquals(exercise.id(), controller.displayedHistoryHabitId().orElseThrow());
     }
 
     @Test
@@ -79,7 +112,7 @@ class MainWindowControllerTest {
         );
 
         controller.submit("list");
-        controller.submit("set-category Exercise Health");
+        controller.submit("done Exercise");
 
         assertEquals(List.of(exercise), controller.habits());
         assertEquals("Updated.", controller.feedback());

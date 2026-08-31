@@ -1,6 +1,7 @@
 package com.example.habitzone.ui;
 
 import com.example.habitzone.command.CommandResult;
+import com.example.habitzone.domain.HabitId;
 import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 
@@ -22,8 +23,22 @@ public final class MainWindowController {
         this.exitAction = Objects.requireNonNull(exitAction, "exitAction");
     }
 
+    /** Loads the saved habits for the initial view without requiring user input. */
+    public void loadInitialHabits() {
+        applyResult(commandExecutor.execute("list"));
+    }
+
     public void submit(String input) {
-        CommandResult result = commandExecutor.execute(input);
+        applyResult(commandExecutor.execute(input));
+    }
+
+    /** Shows the completion history for the habit selected in the list. */
+    public void showHabitHistory(HabitSnapshot habit) {
+        Objects.requireNonNull(habit, "habit");
+        applyResult(commandExecutor.execute("history " + habit.name()));
+    }
+
+    private void applyResult(CommandResult result) {
         feedback = result.message();
         feedbackIsError = result.error();
         if (result.includesHabitList()) {
@@ -40,6 +55,8 @@ public final class MainWindowController {
 
     public List<HabitSnapshot> habits() { return habits; }
     public Optional<HabitHistory> history() { return history; }
+    /** Identifies the habit represented by the history panel, if it is open. */
+    public Optional<HabitId> displayedHistoryHabitId() { return history.map(HabitHistory::habitId); }
     public String feedback() { return feedback; }
     public boolean feedbackIsError() { return feedbackIsError; }
 }

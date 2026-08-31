@@ -1604,3 +1604,231 @@ All messages are built through the shared helper in CommandMessages.java, and te
 - Centralized the guidance-message construction in `CommandMessages.requiredInput`.
 - Added regression assertions for the standard and advanced commands.
 - Removed the project-local `.gradle-user-home` cache and added project guidance not to recreate it.
+
+## Conversation - 2026-09-01 00:24:00 +08:00
+
+### Conversation history
+
+````markdown
+**User:** I want to remove the commands `set-category`, `set-expiry`, `set-priority` completely from this codebase, including the test cases. Help me remove and verify that the app does not break
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll trace these commands through parsing, models, execution, help/docs, and tests, then remove the full feature surface and run the relevant Gradle verification using the existing configuration.
+
+**Assistant (5.6 Sol, Light reasoning):** The three command classes are thin wrappers over three dedicated setter use cases, with no other production callers. I’m treating “completely” as removing both layers, their registrations/imports, command-focused tests, and current planning/docs references, while preserving the underlying habit fields and persistence compatibility. `clear-expiry` remains a separate supported command.
+
+**Assistant (5.6 Sol, Light reasoning):** The removals are now applied across production registration, dedicated use cases, tests, and feature documentation. I’m checking for stale references next, then I’ll compile and run the full test suite.
+
+**Assistant (5.6 Sol, Light reasoning):** The patching backend is processing individual deletions unusually slowly, but the registry change is intact. I’m continuing with small, auditable patches so no unrelated files are disturbed.
+
+**Assistant (5.6 Sol, Light reasoning):** A repository-wide scan is clean: none of the three command names or their dedicated class/use-case names remain. The diff also passes whitespace validation. I’m at the final verification step now: full Gradle tests and build.
+
+**Assistant (5.6 Sol, Light reasoning):** Removed the three commands completely, including command implementations and registry entries, dedicated use cases, associated tests, help assertions and incidental test usage, and planning/transcript references. Preserved the underlying category, priority, and expiry data model for storage compatibility. `clear-expiry` remains supported. Repository-wide stale-reference scan and `git diff --check` passed. The full `gradlew test` suite completed successfully with `BUILD SUCCESSFUL`; no project-local Gradle cache was created during verification.
+```
+
+### Summary of Actions Taken
+
+- Removed the `set-category`, `set-expiry`, and `set-priority` command implementations, registrations, use cases, and tests.
+- Removed stale command references from current documentation and the transcript.
+- Verified no stale references remain and the full Gradle test suite passes.
+
+## Conversation - 2026-09-01 01:00:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** Implement this feature, keeping to the architecture.md
+
+'Your habits' panel should show all the habits by default upon app launch without needing to enter the command 'list'
+
+**Assistant (5.6 Terra, light):** I’ll trace the app’s startup flow and the habit-panel rendering path, then make the smallest architecture-aligned change and run the relevant checks.
+
+**Assistant (5.6 Terra, light):** The architecture places this at the UI-to-command boundary: the UI controller can request the existing `list` command and render its snapshot, without reaching into storage or use cases. I’m adding an explicit startup refresh before the view is created, plus a controller test.
+
+**Assistant (5.6 Terra, light):** The change is in place and clean. The focused test could not start because Gradle is currently resolving its cache to `C:\.gradle`, where it cannot create its lock file; I’ll retry using the existing user Gradle cache (not a project-local cache).
+
+**Assistant (5.6 Terra, light):** Implemented startup habit loading.
+
+- The app now runs the existing `list` command during startup, before rendering the view.
+- The “Your habits” panel therefore shows saved habits immediately.
+- Added a controller test for initial loading.
+
+Verified with:
+
+`\.gradlew.bat test --tests com.example.habitzone.ui.MainWindowControllerTest` ✅
+
+**User:** 5.6 Terra light, today 1:00 AM
+```
+
+### Summary of Actions Taken
+
+- Added an explicit initial habit load through the existing command executor.
+- Updated application startup to populate the habit panel before display.
+- Added and passed a focused controller test.
+
+## Conversation - 2026-09-01 01:14:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want you to implement the feature: When a habit's history is being displayed, then I want the habit in the 'Your Habits' section to be highlighted and be visible on the screen if it was not visible as the list is very long and out of the screen view. Include test cases for this UI. Explain your code changes like a teacher afterwards
+
+**Assistant (Sol, light):** Implemented the habit-history highlighting and auto-scroll feature. The controller exposes the ID of the habit whose history is displayed. The view reselects that habit after refresh, scrolls to it when needed, and applies selected-row styling. Added JavaFX UI tests for highlighting and bringing an off-screen habit into view. The full Gradle test suite passed.
+
+**User:** When I click on click on some habits, it will auto scroll down so that the habit appears at the top of the visible container? I do not want this to happen if the habit is already visible within the container. Trace the code changes you made and explain
+
+**Assistant (Sol, light):** The cause was an unconditional `ListView.scrollTo(index)` during refresh. It could reposition an already-visible row. The fix is to check whether the rendered cell is already visible and call `scrollTo` only when it is outside the viewport. The existing UI tests did not cover preserving the viewport for an already-visible row.
+
+**User:** help implement the code changes
+
+**Assistant (Sol, light):** Updated the view to avoid rebuilding unchanged habit cells, added an `isHabitVisible` check before scrolling, and added a regression UI test confirming that clicking an already-visible habit preserves the first visible row. The off-screen scrolling test remains in place. `gradlew test` completed successfully.
+```
+
+### Summary of Actions Taken
+
+- Added conditional scrolling for displayed habit history.
+- Preserved list cells when habit data is unchanged.
+- Added a regression test for already-visible habits.
+- Verified the full Gradle test suite passed.
+
+## Conversation - 2026-09-01 02:06:00 +08:00
+
+### Conversation history
+
+````markdown
+**User:** I want you to implement the feature whereby calendar view is shown for the selected habit history, instead of the current list of dates. The corresponding dates should be marked as completed on the calendar. The earliest date in the history should be accessible by the calendar, but should default to showing the current month. Calendar should be a month view, but scrollable (up down) to navigate between months where the habit is marked done.
+
+Implement the code changes  and test code following architecture.md, and then trace the code changes you made and explain them to me
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll first map the existing habit-history flow and read `architecture.md`, then I’ll implement the calendar and its tests within the project’s established patterns. After verification, I’ll give you a file-by-file trace of the change.
+
+**Assistant (5.6 Sol, Light reasoning):** The history data already crosses the layers cleanly as `HabitHistory`; the date list is purely a JavaFX presentation detail. I’m keeping the domain/use-case/command contracts unchanged and replacing only that UI representation with a dedicated month-calendar control, plus focused JavaFX tests for range, completion marking, and initial positioning.
+
+**Assistant (5.6 Sol, Light reasoning):** The calendar now renders every month from the earliest completion through the current month, with future completion months included if present. Completed days carry both a visual marker and accessible text, and the initial scroll targets the current month. I’m at the verification stage now; the first Gradle invocation exposed a machine-level cache path issue, so I’m using the repository’s already-existing Gradle configuration (without creating a new project cache).
+
+**Assistant (5.6 Sol, Light reasoning):** The focused JavaFX suite passes, including the new calendar behavior. One edge case surfaced during review: if completion data contains a future date, the current month still needs to exist so it can be the default view. I’m tightening that range calculation, adding coverage for it, then running the complete test suite.
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented the selected-habit history as a vertically scrollable monthly calendar.
+
+What changed:
+
+- HabitHistoryCalendar.java
+  - Builds standard Sunday–Saturday month grids.
+  - Displays every month from the earliest completion through the current month.
+  - Includes future months when future completions exist.
+  - Marks completed dates with a `completed` CSS class and accessible text.
+  - Automatically scrolls to the current month when opened.
+  - Supports vertical scrolling back to the earliest recorded completion.
+
+- HabitZoneView.java
+  - Replaced the old `ListView<String>` date history with `HabitHistoryCalendar`.
+  - Continues receiving `HabitHistory` from the controller.
+  - Clears or renders the calendar according to controller state.
+
+- habit-zone.css
+  - Added month-card, weekday, day-cell, scrollbar, and completed-date styling.
+
+- HabitZoneViewTest.java
+  - Tests the earliest-to-current month range.
+  - Tests completion-date marking.
+  - Tests future completion handling.
+  - Tests that the initial scroll position shows the current month.
+
+- architecture.md
+  - Documents that calendar layout and navigation remain UI concerns.
+
+Architecture trace:
+
+```text
+Habit selection
+→ MainWindowController
+→ "history HABIT_NAME" command
+→ ViewHabitHistoryUseCase
+→ HabitHistory completion data
+→ HabitZoneView
+→ HabitHistoryCalendar rendering
+```
+
+No domain, persistence, use-case, or command contracts were changed. The calendar is strictly a presentation-layer transformation, consistent with the project’s Clean Architecture rules.
+
+Verification: the complete Gradle test suite passes with `BUILD SUCCESSFUL`. No new project-local Gradle cache directory was created.
+
+**User:** Currently, when I click on a habit in the Your habits container, it the highlight will move up or down depending on the arrow key I press. However the selected habit history is not updating its view based on the up/down navigation.
+
+I want you to implement the feature such that the habit that is highlighted will have his calendar history view shown on the right panel. So in a sense the calendar view will be invoked for the habit that is selected(light hightlight) on the left panel.
+
+Follow architecture.md, trace and explain your code changes
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll trace the selection and calendar-history data flow against `architecture.md`, then update the smallest appropriate layer so keyboard navigation and mouse selection drive the same selected-habit state. I’ll verify the behavior with the project’s existing tests/build and summarize the exact code path changed.
+
+**Assistant (5.6 Sol, Light reasoning):** The trace found the mismatch: the UI only asks the controller for history inside a mouse-click handler. JavaFX’s arrow keys update the `ListView` selection model directly, so the highlight changes without entering that handler. I’m consolidating this around the selection model itself—the UI-owned presentation event—while retaining the controller/command/use-case boundary required by the architecture.
+
+**Assistant (5.6 Sol, Light reasoning):** The implementation and regression test are in place. The first test run reached the configured global Gradle cache at `C:\.gradle`, which the workspace sandbox cannot write; I’m rerunning the same existing Gradle setup with permission rather than creating a project-local cache.
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented selection-driven calendar history updates.
+
+The view now listens to the `ListView` selection model, so mouse clicks and Up/Down navigation both invoke the selected habit’s history and refresh the calendar. A guard prevents reloading history when the displayed habit is already selected. Added a regression test for keyboard selection movement; the full Gradle test suite passes.
+
+**User:** suitable commit name?
+
+**Assistant (5.6 Sol, Light reasoning):** `feat: update habit history calendar on selection change`
+````
+
+### Summary of Actions Taken
+
+- Replaced the selected habit's date-list history with a vertically scrollable monthly calendar.
+- Marked completed dates visually and with accessible text.
+- Made the full range from the earliest completion through the current month accessible while defaulting to the current month.
+- Added JavaFX tests for month range, completion marking, future completion handling, and initial scroll position.
+- Updated `architecture.md` to document the calendar as a UI-layer concern.
+- Verified the complete Gradle test suite passes.
+- Updated habit-history rendering to follow the `ListView` selection model for both mouse and keyboard navigation.
+- Added a regression test confirming that moving the selection updates the displayed history habit.
+- Re-ran the full Gradle test suite successfully.
+
+## Conversation - 2026-09-01 02:50:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want to implement a feature whereby Shift + arrow to toggle focus between 3 panels(left, right, bottom) so that arrow up/down within the left/right panel can scroll the left and right panels, and arrow up/down when the command line is selected navigates between old and new commands entered. Follow architecture.md if applicable. include test cases. Explain your code changes by showing me the code changes
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented keyboard focus navigation entirely within the JavaFX `ui` layer, consistent with `architecture.md`. Shift+Left focuses the habits panel, Shift+Right focuses history, Shift+Down focuses the command input, and Shift+Up returns to the most recently focused upper panel. Plain arrows retain native panel scrolling and command-history navigation. Added JavaFX tests and verified the complete Gradle test suite.
+
+**User:** For the panel that is selected, can it have a blue shadow around the container?
+
+**Assistant (5.6 Sol, Light reasoning):** Connected focus state to the three panel containers using a shared `:selected` pseudo-class and added a blue shadow style. Added a test confirming the highlight follows keyboard focus and that only one container is selected. All 93 tests passed.
+
+**User:** The drop shadow is too thick. I need it to be a lot more subtle, more transparent, less think, modern and futuristic
+
+**Assistant (5.6 Sol, Light reasoning):** Refined the selected-panel glow to use a smaller blur radius, lower opacity, and minimal spread: `rgba(62, 66, 250, 0.24)` with a 6px Gaussian blur and 0.05 spread. The focused-panel UI tests pass.
+```
+
+### Summary of Actions Taken
+
+- Added Shift+Arrow focus navigation across the habits, history, and command panels.
+- Preserved plain-arrow scrolling and command-history behavior.
+- Added selected-panel blue glow styling and focus-state tests.
+- Refined the glow to be thinner, subtler, and more transparent.
+- Verified the focused UI test suite passes.
+
+## Conversation - 2026-09-01 03:18:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want the left panel, Your habits, to scroll left/right when I press the corresponding left/right arrow key. Include test code. Explain your code changes
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented horizontal arrow-key scrolling for the “Your habits” panel. Added a keyboard event filter scoped to the habit list, preserving Shift+arrow panel navigation and Up/Down habit selection. Added a UI test with a long habit name to verify right scrolling and left scrolling back. The Gradle test suite passed.
+
+**User:** Make the horizontal scolling be faster, and show me what code changes you made to do that
+
+**Assistant (5.6 Sol, Light reasoning):** Increased horizontal scrolling to four times the standard scrollbar unit increment using a named speed multiplier. Updated the test to verify that each arrow press moves exactly four standard increments, with bounds clamping at the scrollbar limits. The Gradle test suite passes successfully.
+```
+
+### Summary of Actions Taken
+
+- Added keyboard-controlled horizontal scrolling to the Your habits list.
+- Added and verified UI tests for left/right scrolling.
+- Increased scrolling speed to four standard increments per key press.
+- Updated tests to assert the faster movement and boundary behavior.
+- Verified the complete Gradle test suite passes.
