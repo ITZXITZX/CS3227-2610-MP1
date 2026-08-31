@@ -1,9 +1,7 @@
 package com.example.habitzone.infrastructure;
 
 import com.example.habitzone.domain.Habit;
-import com.example.habitzone.domain.HabitCategory;
 import com.example.habitzone.domain.HabitId;
-import com.example.habitzone.domain.HabitPriority;
 import com.example.habitzone.port.HabitRepository;
 
 import java.io.IOException;
@@ -11,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,20 +94,7 @@ public class JsonHabitRepository implements HabitRepository {
         String id = requiredString(habitObject, "id");
         String name = requiredString(habitObject, "name");
         List<LocalDate> completionDates = completionDates(habitObject.get("completionDates"));
-        LocalDate expiryDate = optionalDate(habitObject.get("expiryDate"));
-        HabitCategory category = optionalCategory(habitObject.get("category"));
-        HabitPriority priority = optionalPriority(habitObject.get("priority"));
-        LocalTime reminderTime = optionalTime(habitObject.get("reminderTime"));
-
-        return new Habit(
-                new HabitId(id),
-                name,
-                completionDates,
-                expiryDate,
-                category,
-                priority,
-                reminderTime
-        );
+        return new Habit(new HabitId(id), name, completionDates);
     }
 
     private static String requiredString(Map<?, ?> object, String key) {
@@ -139,46 +123,6 @@ public class JsonHabitRepository implements HabitRepository {
         return dates;
     }
 
-    private static LocalDate optionalDate(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof String dateString) {
-            return LocalDate.parse(dateString);
-        }
-        throw new JsonParseException("Expected date string or null");
-    }
-
-    private static HabitCategory optionalCategory(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof String categoryName) {
-            return new HabitCategory(categoryName);
-        }
-        throw new JsonParseException("Expected category string or null");
-    }
-
-    private static HabitPriority optionalPriority(Object value) {
-        if (value == null) {
-            return HabitPriority.NORMAL;
-        }
-        if (value instanceof String priorityName) {
-            return HabitPriority.valueOf(priorityName);
-        }
-        throw new JsonParseException("Expected priority string or null");
-    }
-
-    private static LocalTime optionalTime(Object value) {
-        if (value == null) {
-            return null;
-        }
-        if (value instanceof String timeString) {
-            return LocalTime.parse(timeString);
-        }
-        throw new JsonParseException("Expected time string or null");
-    }
-
     private static String toJson(List<Habit> habits) {
         StringBuilder json = new StringBuilder();
         json.append("[\n");
@@ -188,10 +132,6 @@ public class JsonHabitRepository implements HabitRepository {
             appendStringField(json, "id", habit.id().value(), true);
             appendStringField(json, "name", habit.name(), true);
             appendCompletionDates(json, habit.completionDatesAscending());
-            appendOptionalStringField(json, "expiryDate", habit.expiryDate().map(LocalDate::toString).orElse(null), true);
-            appendOptionalStringField(json, "category", habit.category().map(HabitCategory::name).orElse(null), true);
-            appendStringField(json, "priority", habit.priority().name(), true);
-            appendOptionalStringField(json, "reminderTime", habit.reminderTime().map(LocalTime::toString).orElse(null), false);
             json.append("  }");
             if (i < habits.size() - 1) {
                 json.append(',');
@@ -210,19 +150,6 @@ public class JsonHabitRepository implements HabitRepository {
         json.append('\n');
     }
 
-    private static void appendOptionalStringField(StringBuilder json, String name, String value, boolean trailingComma) {
-        json.append("    \"").append(name).append("\": ");
-        if (value == null) {
-            json.append("null");
-        } else {
-            json.append('"').append(escape(value)).append('"');
-        }
-        if (trailingComma) {
-            json.append(',');
-        }
-        json.append('\n');
-    }
-
     private static void appendCompletionDates(StringBuilder json, List<LocalDate> dates) {
         json.append("    \"completionDates\": [");
         for (int i = 0; i < dates.size(); i++) {
@@ -231,7 +158,7 @@ public class JsonHabitRepository implements HabitRepository {
                 json.append(", ");
             }
         }
-        json.append("],\n");
+        json.append("]\n");
     }
 
     private static String escape(String value) {

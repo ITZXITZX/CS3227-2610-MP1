@@ -16,7 +16,6 @@ class AdvancedCommandTest {
 
         assertEquals("Current streak: 0 day(s).", registry.execute("streak Morning Run").message());
         String help = registry.execute("help").message();
-        assertTrue(help.contains("clear-expiry HABIT_NAME"));
         assertTrue(help.contains("streak HABIT_NAME"));
     }
 
@@ -26,9 +25,7 @@ class AdvancedCommandTest {
         repository.habits.add(new Habit(new HabitId("id"), "Read"));
         CommandRegistry registry = CommandRegistry.withRepository(repository, () -> LocalDate.now());
 
-        assertEquals("Please input: clear-expiry HABIT_NAME", registry.execute("clear-expiry").message());
         assertEquals("Please input: streak HABIT_NAME", registry.execute("streak").message());
-        assertEquals(HabitPriority.NORMAL, repository.loadAll().getFirst().priority());
     }
 
     private static final class MemoryRepository implements HabitRepository {

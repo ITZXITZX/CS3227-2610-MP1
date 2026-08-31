@@ -23,7 +23,7 @@ The MVP should be developed incrementally so each phase leaves the app runnable,
 - `usecase` must not depend on JavaFX or concrete storage.
 - `command` converts text input into use case calls; it should not contain business rules.
 - `ui` only displays state and forwards user commands.
-- `infrastructure` implements ports such as `HabitRepository`, `ClockProvider`, and later `ReminderScheduler`.
+- `infrastructure` implements ports such as `HabitRepository` and `ClockProvider`.
 - Every feature should include focused tests before moving to the next phase.
 
 Recommended package structure:
@@ -134,40 +134,6 @@ Use `LocalDate` for completion dates.
 - Unmark complete.
 - Unmark missing date.
 - History sorted ascending or descending, but choose one and keep it consistent.
-
-### Issue 4: Add future-ready optional habit fields
-
-**Task**
-
-Add optional domain fields without implementing full behavior yet:
-
-```text
-expiryDate
-category
-priority
-reminderTime
-```
-
-Create simple value types/enums where useful:
-
-```text
-HabitPriority
-HabitCategory
-```
-
-Default priority can be `NORMAL`.
-
-**Success Looks Like**
-
-- MVP behavior does not depend on these fields.
-- Fields can be persisted later.
-- Future features have a clear place to attach behavior.
-
-**Tests**
-
-- Habit can be created without expiry/category/reminder.
-- Default priority is stable.
-- Existing domain tests still pass.
 
 ## Phase 3: Use Cases And Ports
 
@@ -457,26 +423,7 @@ list
 
 - Run the script manually before declaring MVP done.
 
-## Phase 8: Future Feature Extension Points
-
-### Issue 14: Prepare expiry clearing
-
-**Task**
-
-Add use case and command design, not necessarily full UI polish yet:
-
-```text
-clear-expiry HABIT_NAME
-```
-
-**Success Looks Like**
-
-- Expired habits can later be hidden, highlighted, or blocked according to product decision.
-
-**Tests**
-
-- Clear expiry.
-- Persist expiry.
+## Phase 8: Advanced Features
 
 ### Issue 16: Prepare streak feature
 
@@ -502,43 +449,6 @@ streak HABIT_NAME
 - Consecutive dates calculate correctly.
 - Missing day breaks streak.
 - Fake clock controls current date.
-
-### Issue 17: Prepare reminder feature
-
-**Task**
-
-Add reminder port:
-
-```text
-port/ReminderScheduler
-```
-
-MVP implementation can be:
-
-```text
-infrastructure/NoOpReminderScheduler
-```
-
-Later implementation can use Java scheduling APIs.
-
-Command design:
-
-```text
-set-reminder HABIT_NAME HH:mm
-clear-reminder HABIT_NAME
-```
-
-**Success Looks Like**
-
-- Reminder data can be stored before actual desktop notifications exist.
-- Real reminder scheduling can be added through infrastructure.
-- Use cases depend only on `ReminderScheduler`.
-
-**Tests**
-
-- Set reminder time.
-- Clear reminder time.
-- Fake scheduler receives expected scheduling request.
 
 ## Final MVP Acceptance Criteria
 

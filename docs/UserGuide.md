@@ -12,7 +12,6 @@ HabitZone is a desktop habit tracker operated through typed commands. It stores 
 | `undone HABIT_NAME [YYYY-MM-DD]` | Remove today's completion or the completion on the specified date. |
 | `history HABIT_NAME` | Display a habit's completion calendar. |
 | `streak HABIT_NAME` | Show the consecutive completion streak ending today. |
-| `clear-expiry HABIT_NAME` | Remove a habit's stored expiry metadata. |
 | `delete HABIT_NAME` | Permanently delete a habit and its completion history. |
 | `help` | Display the available command formats. |
 | `exit` | Close HabitZone. |
@@ -168,14 +167,6 @@ streak Morning Run
 
 The result is the number of consecutive completed days ending on today. If today is not complete, the current streak is `0`, even when earlier consecutive dates exist. This command reports the streak in the feedback area; it does not add streak information to the habit row or calendar.
 
-### Clear a habit's expiry
-
-```text
-clear-expiry HABIT_NAME
-```
-
-This removes expiry metadata from the matching stored habit. Habits created through the current user interface do not have an expiry, and the interface neither displays nor sets one, so running this command on a normally created habit succeeds without a visible change.
-
 ### Delete a habit
 
 ```text
@@ -214,7 +205,7 @@ An empty command reports `Please enter a command.` An unrecognized command repor
 
 ## Saved data
 
-HabitZone saves data in `data/habits.json`, relative to the directory from which it is launched. Changes made by `add`, `done`, `undone`, `clear-expiry`, and `delete` are written immediately and are loaded on the next launch.
+HabitZone saves data in `data/habits.json`, relative to the directory from which it is launched. Changes made by `add`, `done`, `undone`, and `delete` are written immediately and are loaded on the next launch.
 
 Do not edit `habits.json` while HabitZone is open. Malformed or unsupported content prevents the application from loading the habit list and produces a storage error. To reset HabitZone for testing, close every HabitZone window, then move or delete `data/habits.json`; the application creates a new empty file on its next read. Back up the file first if its contents matter.
 

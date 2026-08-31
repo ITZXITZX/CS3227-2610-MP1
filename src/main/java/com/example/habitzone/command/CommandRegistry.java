@@ -3,7 +3,6 @@ package com.example.habitzone.command;
 import com.example.habitzone.port.ClockProvider;
 import com.example.habitzone.port.HabitRepository;
 import com.example.habitzone.usecase.AddHabitUseCase;
-import com.example.habitzone.usecase.ClearHabitExpiryUseCase;
 import com.example.habitzone.usecase.DeleteHabitUseCase;
 import com.example.habitzone.usecase.MarkHabitCompleteUseCase;
 import com.example.habitzone.usecase.UnmarkHabitCompleteUseCase;
@@ -57,7 +56,6 @@ public class CommandRegistry {
                 new UnmarkHabitCompleteUseCase(repository, clockProvider),
                 new ViewHabitHistoryUseCase(repository)
         );
-        registry.register(new ClearExpiryCommand(new ClearHabitExpiryUseCase(repository)));
         registry.register(new StreakCommand(new ViewHabitStreakUseCase(repository, clockProvider)));
         return registry;
     }

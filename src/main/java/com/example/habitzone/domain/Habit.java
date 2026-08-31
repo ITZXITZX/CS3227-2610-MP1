@@ -1,44 +1,26 @@
 package com.example.habitzone.domain;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.TreeSet;
 
 public class Habit {
     private final HabitId id;
     private final String name;
     private final NavigableSet<LocalDate> completionDates;
-    private LocalDate expiryDate;
-    private HabitCategory category;
-    private HabitPriority priority;
-    private final LocalTime reminderTime;
 
     public Habit(HabitId id, String name) {
-        this(id, name, List.of(), null, null, HabitPriority.NORMAL, null);
+        this(id, name, List.of());
     }
 
-    public Habit(
-            HabitId id,
-            String name,
-            List<LocalDate> completionDates,
-            LocalDate expiryDate,
-            HabitCategory category,
-            HabitPriority priority,
-            LocalTime reminderTime
-    ) {
+    public Habit(HabitId id, String name, List<LocalDate> completionDates) {
         this.id = Objects.requireNonNull(id, "id");
         this.name = normalizeName(name);
         this.completionDates = new TreeSet<>(Objects.requireNonNull(completionDates, "completionDates"));
-        this.expiryDate = expiryDate;
-        this.category = category;
-        this.priority = Objects.requireNonNullElse(priority, HabitPriority.NORMAL);
-        this.reminderTime = reminderTime;
     }
 
     private static String normalizeName(String name) {
@@ -56,34 +38,6 @@ public class Habit {
 
     public String name() {
         return name;
-    }
-
-    public Optional<LocalDate> expiryDate() {
-        return Optional.ofNullable(expiryDate);
-    }
-
-    public void setExpiryDate(LocalDate expiryDate) {
-        this.expiryDate = Objects.requireNonNull(expiryDate, "expiryDate");
-    }
-
-    public void clearExpiryDate() {
-        expiryDate = null;
-    }
-
-    public Optional<HabitCategory> category() {
-        return Optional.ofNullable(category);
-    }
-
-    public void setCategory(HabitCategory category) { this.category = Objects.requireNonNull(category, "category"); }
-
-    public HabitPriority priority() {
-        return priority;
-    }
-
-    public void setPriority(HabitPriority priority) { this.priority = Objects.requireNonNull(priority, "priority"); }
-
-    public Optional<LocalTime> reminderTime() {
-        return Optional.ofNullable(reminderTime);
     }
 
     public void markComplete(LocalDate date) {

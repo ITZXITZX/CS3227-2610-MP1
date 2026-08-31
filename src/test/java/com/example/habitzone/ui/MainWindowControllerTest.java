@@ -3,14 +3,12 @@ package com.example.habitzone.ui;
 import com.example.habitzone.command.CommandResult;
 import com.example.habitzone.domain.CompletionLog;
 import com.example.habitzone.domain.HabitId;
-import com.example.habitzone.domain.HabitPriority;
 import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainWindowControllerTest {
     @Test
     void loadsHabitsForTheInitialView() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false);
         MainWindowController controller = new MainWindowController(input -> {
             assertEquals("list", input);
             return CommandResult.habits("1 habit.", List.of(exercise));
@@ -32,7 +30,7 @@ class MainWindowControllerTest {
 
     @Test
     void submitsInputThenRendersFeedbackAndReturnedHabits() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false);
         MainWindowController controller = new MainWindowController(input -> {
             assertEquals("list", input);
             return CommandResult.habits("1 habit.", List.of(exercise));
@@ -47,7 +45,7 @@ class MainWindowControllerTest {
 
     @Test
     void showsHistoryForTheSelectedHabitUsingTheHistoryCommand() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false);
         MainWindowController controller = new MainWindowController(input -> {
             assertEquals("history Exercise", input);
             return CommandResult.history("Showing history for 'Exercise'.", new HabitHistory(
@@ -74,7 +72,7 @@ class MainWindowControllerTest {
 
     @Test
     void clearsTheHabitListWhenExecutorReturnsAnEmptySnapshot() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false);
         MainWindowController controller = new MainWindowController(
                 input -> "list".equals(input)
                         ? CommandResult.habits("No habits.", List.of())
@@ -103,7 +101,7 @@ class MainWindowControllerTest {
 
     @Test
     void keepsExistingHabitsWhenAResultDoesNotContainAHabitList() {
-        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitSnapshot exercise = new HabitSnapshot(new HabitId("id"), "Exercise", List.of(), false);
         MainWindowController controller = new MainWindowController(
                 input -> "list".equals(input)
                         ? CommandResult.habits("1 habit.", List.of(exercise))

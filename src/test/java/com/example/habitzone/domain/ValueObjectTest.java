@@ -11,11 +11,4 @@ class ValueObjectTest {
         assertThrows(IllegalArgumentException.class, () -> new HabitId(" \t"));
         assertNotEquals(HabitId.newId(), HabitId.newId());
     }
-
-    @Test
-    void categoryTrimsAndRejectsInvalidNames() {
-        assertEquals("Health", new HabitCategory(" Health ").name());
-        assertThrows(NullPointerException.class, () -> new HabitCategory(null));
-        assertThrows(IllegalArgumentException.class, () -> new HabitCategory(" "));
-    }
 }

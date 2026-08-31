@@ -3,7 +3,6 @@ package com.example.habitzone.ui;
 import com.example.habitzone.command.CommandResult;
 import com.example.habitzone.domain.CompletionLog;
 import com.example.habitzone.domain.HabitId;
-import com.example.habitzone.domain.HabitPriority;
 import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.application.Platform;
@@ -220,7 +219,7 @@ class HabitZoneViewTest {
     @Test
     void leftAndRightArrowsScrollTheHabitListHorizontally() throws Exception {
         HabitSnapshot longHabit = new HabitSnapshot(new HabitId("long-habit"), "A".repeat(150),
-                List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+                List.of(), false);
         HabitZoneView view = showInteractiveHabitZoneView(List.of(longHabit), 300);
         ListView<HabitSnapshot> list = view.habitListForTesting();
         ScrollBar horizontalBar = runOnFxThread(() -> horizontalScrollBar(list));
@@ -232,12 +231,12 @@ class HabitZoneViewTest {
         });
         press(list, KeyCode.RIGHT, false);
         double valueAfterRight = runOnFxThread(horizontalBar::getValue);
-        assertEquals(horizontalBar.getMin() + horizontalBar.getUnitIncrement() * 4, valueAfterRight,
-                0.0001, "Right should scroll four standard increments at a time");
+        assertEquals(horizontalBar.getMin() + horizontalBar.getUnitIncrement() * 16, valueAfterRight,
+                0.0001, "Right should scroll sixteen standard increments at a time");
 
         press(list, KeyCode.LEFT, false);
         assertEquals(horizontalBar.getMin(), runOnFxThread(horizontalBar::getValue),
-                0.0001, "Left should scroll four standard increments back to the left");
+                0.0001, "Left should scroll sixteen standard increments back to the left");
     }
 
     @Test
@@ -423,7 +422,7 @@ class HabitZoneViewTest {
         List<HabitSnapshot> habits = new ArrayList<>();
         for (int index = 0; index < count; index++) {
             habits.add(new HabitSnapshot(new HabitId("id-" + index), "Habit " + index,
-                    List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty()));
+                    List.of(), false));
         }
         return habits;
     }
