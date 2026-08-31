@@ -2025,3 +2025,31 @@ I updated all three sequence diagrams with wrapping, `useMaxWidth: false`, width
 - Added Windows and macOS/Linux test commands to Developer Guide Section 6 and verified the saved content after restoring an overwritten edit.
 - Increased Mermaid diagram text to 40px, enabled wrapping, inserted explicit label breaks, and changed the architecture diagram to a top-to-bottom layout.
 - Split the result/refresh sequence into three smaller diagrams and disabled maximum-width scaling so the displayed font remains at its configured size.
+
+## Conversation - 2026-09-01 06:07:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** Help me to write a reflection document (docs/Reflections.md). This should contain your reflections on doing AI-assisted SE using LLM & Prompting. Give at least 3 examples of interesting prompts and explain them in detail.
+
+You may refer to the transcript.md
+
+Here are some sample questions that you can use to guide your reflections.
+
+- Why was the prompt formulated that way?
+- What assumptions did the LLM make?
+- What did it get wrong?
+- How did I verify the result?
+- How did the prompt evolve?
+- When was prompting less effective than manual work?
+- What engineering judgement was still required?
+- What would I do differently next time?
+
+**Assistant (5.6 Sol, light):** Created `docs/Reflections.md` with four detailed prompt examples covering architecture evolution, incremental planning, manual smoke testing, and JavaFX/Windows focus limitations. The reflection also discusses verification, incorrect LLM assumptions, engineering judgement, manual versus AI-assisted work, and future prompting improvements. `git diff --check` passes.
+```
+
+### Summary of Actions Taken
+
+- Created and verified `docs/Reflections.md` from the project transcript.
+- Note: Earlier turns were unavailable in the current context.
