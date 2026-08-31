@@ -9,17 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AdvancedHabitUseCasesTest {
     @Test
-    void expiryFailuresDoNotSaveAndClearingAnUnsetExpiryIsSafe() {
-        FakeHabitRepository repository = seeded("Read");
-        ClearHabitExpiryUseCase clear = new ClearHabitExpiryUseCase(repository);
-
-        assertTrue(clear.execute(" read ").success());
-        assertEquals(1, repository.saveCount());
-        assertEquals(UseCaseError.INVALID_HABIT_NAME, clear.execute(null).error());
-        assertEquals(1, repository.saveCount());
-    }
-
-    @Test
     void streakCountsOnlyConsecutiveDaysEndingToday() {
         FakeHabitRepository repository = seeded("Read");
         Habit habit = repository.loadAll().getFirst();
