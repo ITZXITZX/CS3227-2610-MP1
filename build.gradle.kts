@@ -60,3 +60,32 @@ jlink {
         name = "app"
     }
 }
+
+tasks.register<Jar>("fatJar") {
+    archiveFileName.set("HabitZone.jar")
+    group = "build"
+    description = "Builds an executable JAR containing all runtime dependencies"
+
+    archiveClassifier.set("all")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes["Main-Class"] = "com.example.habitzone.app.Main"
+    }
+
+    from(sourceSets.main.get().output)
+
+    dependsOn(configurations.runtimeClasspath)
+
+    from({
+        configurations.runtimeClasspath.get()
+            .filter { it.exists() }
+            .map { zipTree(it) }
+    }) {
+        exclude("META-INF/*.SF")
+        exclude("META-INF/*.RSA")
+        exclude("META-INF/*.DSA")
+        exclude("module-info.class")
+        exclude("META-INF/versions/*/module-info.class")
+    }
+}
