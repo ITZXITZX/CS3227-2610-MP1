@@ -79,7 +79,7 @@ class MainWindowControllerTest {
         );
 
         controller.submit("list");
-        controller.submit("set-category Exercise Health");
+        controller.submit("done Exercise");
 
         assertEquals(List.of(exercise), controller.habits());
         assertEquals("Updated.", controller.feedback());
