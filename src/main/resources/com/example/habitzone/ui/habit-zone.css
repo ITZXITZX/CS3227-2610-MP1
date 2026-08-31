@@ -6,6 +6,7 @@
 .panel { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 18; -fx-effect: dropshadow(gaussian, #00000016, 10, 0, 0, 2); }
 .panel-heading { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
 .list-view { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-background-radius: 8; }
+.list-view .list-cell:selected { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }
 .command-area { -fx-background-color: white; -fx-padding: 16 28 24; -fx-border-color: #e2e8f0 transparent transparent transparent; }
 .command-input { -fx-font-size: 15px; -fx-padding: 12 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #a9b8d5; }
 .feedback { -fx-text-fill: #334155; -fx-font-size: 13px; }

@@ -22,6 +22,7 @@ public class HabitZoneApplication extends Application {
                 (ClockProvider) LocalDate::now
         );
         MainWindowController controller = new MainWindowController(new CommandRegistryExecutor(commandRegistry), stage::close);
+        controller.loadInitialHabits();
         HabitZoneView root = new HabitZoneView(controller, LocalDate::now);
 
         Scene scene = new Scene(root, 980, 680);

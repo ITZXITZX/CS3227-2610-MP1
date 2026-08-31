@@ -1630,3 +1630,62 @@ All messages are built through the shared helper in CommandMessages.java, and te
 - Removed the `set-category`, `set-expiry`, and `set-priority` command implementations, registrations, use cases, and tests.
 - Removed stale command references from current documentation and the transcript.
 - Verified no stale references remain and the full Gradle test suite passes.
+
+## Conversation - 2026-09-01 01:00:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** Implement this feature, keeping to the architecture.md
+
+'Your habits' panel should show all the habits by default upon app launch without needing to enter the command 'list'
+
+**Assistant (5.6 Terra, light):** I’ll trace the app’s startup flow and the habit-panel rendering path, then make the smallest architecture-aligned change and run the relevant checks.
+
+**Assistant (5.6 Terra, light):** The architecture places this at the UI-to-command boundary: the UI controller can request the existing `list` command and render its snapshot, without reaching into storage or use cases. I’m adding an explicit startup refresh before the view is created, plus a controller test.
+
+**Assistant (5.6 Terra, light):** The change is in place and clean. The focused test could not start because Gradle is currently resolving its cache to `C:\.gradle`, where it cannot create its lock file; I’ll retry using the existing user Gradle cache (not a project-local cache).
+
+**Assistant (5.6 Terra, light):** Implemented startup habit loading.
+
+- The app now runs the existing `list` command during startup, before rendering the view.
+- The “Your habits” panel therefore shows saved habits immediately.
+- Added a controller test for initial loading.
+
+Verified with:
+
+`\.gradlew.bat test --tests com.example.habitzone.ui.MainWindowControllerTest` ✅
+
+**User:** 5.6 Terra light, today 1:00 AM
+```
+
+### Summary of Actions Taken
+
+- Added an explicit initial habit load through the existing command executor.
+- Updated application startup to populate the habit panel before display.
+- Added and passed a focused controller test.
+
+## Conversation - 2026-09-01 01:14:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want you to implement the feature: When a habit's history is being displayed, then I want the habit in the 'Your Habits' section to be highlighted and be visible on the screen if it was not visible as the list is very long and out of the screen view. Include test cases for this UI. Explain your code changes like a teacher afterwards
+
+**Assistant (Sol, light):** Implemented the habit-history highlighting and auto-scroll feature. The controller exposes the ID of the habit whose history is displayed. The view reselects that habit after refresh, scrolls to it when needed, and applies selected-row styling. Added JavaFX UI tests for highlighting and bringing an off-screen habit into view. The full Gradle test suite passed.
+
+**User:** When I click on click on some habits, it will auto scroll down so that the habit appears at the top of the visible container? I do not want this to happen if the habit is already visible within the container. Trace the code changes you made and explain
+
+**Assistant (Sol, light):** The cause was an unconditional `ListView.scrollTo(index)` during refresh. It could reposition an already-visible row. The fix is to check whether the rendered cell is already visible and call `scrollTo` only when it is outside the viewport. The existing UI tests did not cover preserving the viewport for an already-visible row.
+
+**User:** help implement the code changes
+
+**Assistant (Sol, light):** Updated the view to avoid rebuilding unchanged habit cells, added an `isHabitVisible` check before scrolling, and added a regression UI test confirming that clicking an already-visible habit preserves the first visible row. The off-screen scrolling test remains in place. `gradlew test` completed successfully.
+```
+
+### Summary of Actions Taken
+
+- Added conditional scrolling for displayed habit history.
+- Preserved list cells when habit data is unchanged.
+- Added a regression test for already-visible habits.
+- Verified the full Gradle test suite passed.

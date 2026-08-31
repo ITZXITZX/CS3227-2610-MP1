@@ -43,6 +43,14 @@ public final class HabitZoneView extends BorderPane {
         setTop(createTopBar(dateSupplier.get()));
         setCenter(createMainArea());
         setBottom(createCommandArea());
+        habitList.setOnMouseClicked(event -> showSelectedHabitHistory());
+        habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
+            @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
+                super.updateItem(habit, empty);
+                setText(empty || habit == null ? null : habit.name()
+                        + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
+            }
+        });
         refresh();
     }
 
@@ -148,17 +156,47 @@ public final class HabitZoneView extends BorderPane {
     }
 
     private void refresh() {
-        habitList.getItems().setAll(controller.habits());
-        habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
-            @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
-                super.updateItem(habit, empty);
-                setText(empty || habit == null ? null : habit.name()
-                        + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
-            }
-        });
+        if (!habitList.getItems().equals(controller.habits())) {
+            habitList.getItems().setAll(controller.habits());
+        }
         historyList.getItems().setAll(controller.history().map(this::historyLines).orElseGet(java.util.List::of));
+        highlightAndRevealDisplayedHabit();
         feedback.setText(controller.feedback());
         feedback.pseudoClassStateChanged(javafx.css.PseudoClass.getPseudoClass("error"), controller.feedbackIsError());
+    }
+
+    private void highlightAndRevealDisplayedHabit() {
+        controller.displayedHistoryHabitId().ifPresent(displayedHabitId -> {
+            for (int index = 0; index < habitList.getItems().size(); index++) {
+                if (habitList.getItems().get(index).id().equals(displayedHabitId)) {
+                    habitList.getSelectionModel().select(index);
+                    if (!isHabitVisible(index)) {
+                        habitList.scrollTo(index);
+                    }
+                    return;
+                }
+            }
+        });
+    }
+
+    private boolean isHabitVisible(int index) {
+        return habitList.lookupAll(".list-cell").stream()
+                .filter(javafx.scene.control.ListCell.class::isInstance)
+                .map(javafx.scene.control.ListCell.class::cast)
+                .anyMatch(cell -> !cell.isEmpty() && cell.getIndex() == index
+                        && cell.getParent().getLayoutBounds().intersects(cell.getBoundsInParent()));
+    }
+
+    ListView<HabitSnapshot> habitListForTesting() {
+        return habitList;
+    }
+
+    private void showSelectedHabitHistory() {
+        HabitSnapshot selectedHabit = habitList.getSelectionModel().getSelectedItem();
+        if (selectedHabit != null) {
+            controller.showHabitHistory(selectedHabit);
+            refresh();
+        }
     }
 
     private java.util.List<String> historyLines(HabitHistory history) {
