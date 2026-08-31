@@ -1,12 +1,14 @@
 package com.example.habitzone.ui;
 
 import com.example.habitzone.usecase.HabitSnapshot;
-import javafx.geometry.Pos;
 import javafx.css.PseudoClass;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -26,6 +28,7 @@ public final class HabitZoneView extends BorderPane {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMMM uuuu");
     private static final String COMPLETED_TODAY_LABEL = " (done)";
     private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
+    private static final int HORIZONTAL_SCROLL_SPEED_MULTIPLIER = 16;
     private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
     private final MainWindowController controller;
     private final ListView<HabitSnapshot> habitList = new ListView<>();
@@ -53,6 +56,7 @@ public final class HabitZoneView extends BorderPane {
         setCenter(createMainArea());
         setBottom(createCommandArea());
         installPanelFocusNavigation();
+        installHabitListHorizontalScrolling();
         habitList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, previousHabit, selectedHabit) -> showHabitHistory(selectedHabit));
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
@@ -99,6 +103,39 @@ public final class HabitZoneView extends BorderPane {
                 selectPanel(commandPanel);
             }
         });
+    }
+
+    private void installHabitListHorizontalScrolling() {
+        habitList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isShiftDown() || event.isControlDown() || event.isAltDown() || event.isMetaDown()) {
+                return;
+            }
+
+            boolean scrolled = switch (event.getCode()) {
+                case LEFT -> scrollHabitListHorizontally(false);
+                case RIGHT -> scrollHabitListHorizontally(true);
+                default -> false;
+            };
+            if (scrolled) {
+                event.consume();
+            }
+        });
+    }
+
+    private boolean scrollHabitListHorizontally(boolean right) {
+        return habitList.lookupAll(".scroll-bar").stream()
+                .filter(ScrollBar.class::isInstance)
+                .map(ScrollBar.class::cast)
+                .filter(scrollBar -> scrollBar.getOrientation() == Orientation.HORIZONTAL && scrollBar.isVisible())
+                .findFirst()
+                .map(scrollBar -> {
+                    double direction = right ? 1 : -1;
+                    double newValue = scrollBar.getValue()
+                            + direction * scrollBar.getUnitIncrement() * HORIZONTAL_SCROLL_SPEED_MULTIPLIER;
+                    scrollBar.setValue(Math.max(scrollBar.getMin(), Math.min(scrollBar.getMax(), newValue)));
+                    return true;
+                })
+                .orElse(false);
     }
 
     private void selectPanel(VBox selectedPanel) {

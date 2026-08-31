@@ -8,9 +8,11 @@ import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.application.Platform;
 import javafx.css.PseudoClass;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -216,6 +218,29 @@ class HabitZoneViewTest {
     }
 
     @Test
+    void leftAndRightArrowsScrollTheHabitListHorizontally() throws Exception {
+        HabitSnapshot longHabit = new HabitSnapshot(new HabitId("long-habit"), "A".repeat(150),
+                List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty());
+        HabitZoneView view = showInteractiveHabitZoneView(List.of(longHabit), 300);
+        ListView<HabitSnapshot> list = view.habitListForTesting();
+        ScrollBar horizontalBar = runOnFxThread(() -> horizontalScrollBar(list));
+
+        runOnFxThread(() -> {
+            horizontalBar.setValue(horizontalBar.getMin());
+            list.requestFocus();
+            return null;
+        });
+        press(list, KeyCode.RIGHT, false);
+        double valueAfterRight = runOnFxThread(horizontalBar::getValue);
+        assertEquals(horizontalBar.getMin() + horizontalBar.getUnitIncrement() * 4, valueAfterRight,
+                0.0001, "Right should scroll four standard increments at a time");
+
+        press(list, KeyCode.LEFT, false);
+        assertEquals(horizontalBar.getMin(), runOnFxThread(horizontalBar::getValue),
+                0.0001, "Left should scroll four standard increments back to the left");
+    }
+
+    @Test
     void unmodifiedArrowScrollsTheFocusedHistoryPanel() throws Exception {
         HabitZoneView view = showInteractiveHabitZoneView(habits(1), 300);
         HabitHistoryCalendar calendar = view.historyCalendarForTesting();
@@ -383,6 +408,15 @@ class HabitZoneViewTest {
                         && cell.getParent().getLayoutBounds().intersects(cell.getBoundsInParent()))
                 .mapToInt(ListCell::getIndex)
                 .min().orElseThrow();
+    }
+
+    private static ScrollBar horizontalScrollBar(ListView<HabitSnapshot> list) {
+        return list.lookupAll(".scroll-bar").stream()
+                .filter(ScrollBar.class::isInstance)
+                .map(ScrollBar.class::cast)
+                .filter(scrollBar -> scrollBar.getOrientation() == Orientation.HORIZONTAL && scrollBar.isVisible())
+                .findFirst()
+                .orElseThrow();
     }
 
     private static List<HabitSnapshot> habits(int count) {

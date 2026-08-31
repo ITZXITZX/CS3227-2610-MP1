@@ -1810,3 +1810,25 @@ The view now listens to the `ListView` selection model, so mouse clicks and Up/D
 - Added selected-panel blue glow styling and focus-state tests.
 - Refined the glow to be thinner, subtler, and more transparent.
 - Verified the focused UI test suite passes.
+
+## Conversation - 2026-09-01 03:18:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want the left panel, Your habits, to scroll left/right when I press the corresponding left/right arrow key. Include test code. Explain your code changes
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented horizontal arrow-key scrolling for the “Your habits” panel. Added a keyboard event filter scoped to the habit list, preserving Shift+arrow panel navigation and Up/Down habit selection. Added a UI test with a long habit name to verify right scrolling and left scrolling back. The Gradle test suite passed.
+
+**User:** Make the horizontal scolling be faster, and show me what code changes you made to do that
+
+**Assistant (5.6 Sol, Light reasoning):** Increased horizontal scrolling to four times the standard scrollbar unit increment using a named speed multiplier. Updated the test to verify that each arrow press moves exactly four standard increments, with bounds clamping at the scrollbar limits. The Gradle test suite passes successfully.
+```
+
+### Summary of Actions Taken
+
+- Added keyboard-controlled horizontal scrolling to the Your habits list.
+- Added and verified UI tests for left/right scrolling.
+- Increased scrolling speed to four standard increments per key press.
+- Updated tests to assert the faster movement and boundary behavior.
+- Verified the complete Gradle test suite passes.
