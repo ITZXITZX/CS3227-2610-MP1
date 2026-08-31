@@ -1784,3 +1784,29 @@ The view now listens to the `ListView` selection model, so mouse clicks and Up/D
 - Updated habit-history rendering to follow the `ListView` selection model for both mouse and keyboard navigation.
 - Added a regression test confirming that moving the selection updates the displayed history habit.
 - Re-ran the full Gradle test suite successfully.
+
+## Conversation - 2026-09-01 02:50:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want to implement a feature whereby Shift + arrow to toggle focus between 3 panels(left, right, bottom) so that arrow up/down within the left/right panel can scroll the left and right panels, and arrow up/down when the command line is selected navigates between old and new commands entered. Follow architecture.md if applicable. include test cases. Explain your code changes by showing me the code changes
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented keyboard focus navigation entirely within the JavaFX `ui` layer, consistent with `architecture.md`. Shift+Left focuses the habits panel, Shift+Right focuses history, Shift+Down focuses the command input, and Shift+Up returns to the most recently focused upper panel. Plain arrows retain native panel scrolling and command-history navigation. Added JavaFX tests and verified the complete Gradle test suite.
+
+**User:** For the panel that is selected, can it have a blue shadow around the container?
+
+**Assistant (5.6 Sol, Light reasoning):** Connected focus state to the three panel containers using a shared `:selected` pseudo-class and added a blue shadow style. Added a test confirming the highlight follows keyboard focus and that only one container is selected. All 93 tests passed.
+
+**User:** The drop shadow is too thick. I need it to be a lot more subtle, more transparent, less think, modern and futuristic
+
+**Assistant (5.6 Sol, Light reasoning):** Refined the selected-panel glow to use a smaller blur radius, lower opacity, and minimal spread: `rgba(62, 66, 250, 0.24)` with a 6px Gaussian blur and 0.05 spread. The focused-panel UI tests pass.
+```
+
+### Summary of Actions Taken
+
+- Added Shift+Arrow focus navigation across the habits, history, and command panels.
+- Preserved plain-arrow scrolling and command-history behavior.
+- Added selected-panel blue glow styling and focus-state tests.
+- Refined the glow to be thinner, subtler, and more transparent.
+- Verified the focused UI test suite passes.

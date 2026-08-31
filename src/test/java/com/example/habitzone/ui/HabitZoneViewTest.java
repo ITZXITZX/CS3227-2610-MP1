@@ -7,9 +7,13 @@ import com.example.habitzone.domain.HabitPriority;
 import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HabitZoneViewTest {
+    private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
     private Stage stage;
 
     @BeforeAll
@@ -144,6 +149,94 @@ class HabitZoneViewTest {
     }
 
     @Test
+    void shiftArrowsMoveFocusBetweenAllThreePanels() throws Exception {
+        HabitZoneView view = showInteractiveHabitZoneView(habits(3), 500);
+        ListView<HabitSnapshot> list = view.habitListForTesting();
+        HabitHistoryCalendar calendar = view.historyCalendarForTesting();
+        TextField commandInput = view.commandInputForTesting();
+
+        press(view, KeyCode.LEFT, true);
+        assertTrue(runOnFxThread(list::isFocused));
+
+        press(list, KeyCode.RIGHT, true);
+        assertTrue(runOnFxThread(calendar::isFocused));
+
+        press(calendar, KeyCode.DOWN, true);
+        assertTrue(runOnFxThread(commandInput::isFocused));
+
+        press(commandInput, KeyCode.UP, true);
+        assertTrue(runOnFxThread(calendar::isFocused),
+                "Shift+Up should restore the last focused upper panel");
+    }
+
+    @Test
+    void selectedPanelHighlightFollowsKeyboardFocus() throws Exception {
+        HabitZoneView view = showInteractiveHabitZoneView(habits(3), 500);
+
+        press(view, KeyCode.LEFT, true);
+        assertTrue(runOnFxThread(() -> view.habitListForTesting().getParent()
+                .getPseudoClassStates().contains(SELECTED_PANEL)));
+
+        press(view.habitListForTesting(), KeyCode.RIGHT, true);
+        assertTrue(runOnFxThread(() -> view.historyCalendarForTesting().getParent()
+                .getPseudoClassStates().contains(SELECTED_PANEL)));
+
+        press(view.historyCalendarForTesting(), KeyCode.DOWN, true);
+        assertTrue(runOnFxThread(() -> view.commandInputForTesting().getParent()
+                .getPseudoClassStates().contains(SELECTED_PANEL)));
+        assertEquals(1, runOnFxThread(() -> java.util.stream.Stream.concat(
+                        view.lookupAll(".panel").stream(), view.lookupAll(".command-area").stream())
+                .filter(node -> node.getPseudoClassStates().contains(SELECTED_PANEL)).count()));
+    }
+
+    @Test
+    void unmodifiedArrowsNavigateHabitsAndCommandHistory() throws Exception {
+        HabitZoneView view = showInteractiveHabitZoneView(habits(3), 500);
+        ListView<HabitSnapshot> list = view.habitListForTesting();
+        TextField commandInput = view.commandInputForTesting();
+
+        runOnFxThread(() -> {
+            list.getSelectionModel().selectFirst();
+            list.requestFocus();
+            return null;
+        });
+        press(list, KeyCode.DOWN, false);
+        assertEquals(1, runOnFxThread(() -> list.getSelectionModel().getSelectedIndex()));
+
+        submit(commandInput, "list");
+        submit(commandInput, "help");
+        press(commandInput, KeyCode.UP, false);
+        assertEquals("help", runOnFxThread(commandInput::getText));
+        press(commandInput, KeyCode.UP, false);
+        assertEquals("list", runOnFxThread(commandInput::getText));
+        press(commandInput, KeyCode.DOWN, false);
+        assertEquals("help", runOnFxThread(commandInput::getText));
+        press(commandInput, KeyCode.DOWN, false);
+        assertEquals("", runOnFxThread(commandInput::getText));
+    }
+
+    @Test
+    void unmodifiedArrowScrollsTheFocusedHistoryPanel() throws Exception {
+        HabitZoneView view = showInteractiveHabitZoneView(habits(1), 300);
+        HabitHistoryCalendar calendar = view.historyCalendarForTesting();
+        runOnFxThread(() -> {
+            calendar.show(history(LocalDate.of(2024, 1, 1)));
+            return null;
+        });
+        runOnFxThread(() -> null); // allow the calendar's deferred initial layout to finish
+        runOnFxThread(() -> {
+            calendar.setVvalue(0);
+            calendar.requestFocus();
+            return null;
+        });
+
+        press(calendar, KeyCode.DOWN, false);
+
+        assertTrue(runOnFxThread(() -> calendar.getVvalue() > 0),
+                "Down should scroll when the history panel has focus");
+    }
+
+    @Test
     void calendarCoversEveryMonthFromEarliestCompletionThroughCurrentMonth() throws Exception {
         LocalDate today = LocalDate.of(2026, 9, 1);
         HabitHistory history = history(LocalDate.of(2026, 6, 12), LocalDate.of(2026, 8, 30));
@@ -233,6 +326,10 @@ class HabitZoneViewTest {
     }
 
     private ListView<HabitSnapshot> showInteractiveView(List<HabitSnapshot> habits, double height) throws Exception {
+        return showInteractiveHabitZoneView(habits, height).habitListForTesting();
+    }
+
+    private HabitZoneView showInteractiveHabitZoneView(List<HabitSnapshot> habits, double height) throws Exception {
         return runOnFxThread(() -> {
             MainWindowController controller = interactiveController(habits);
             controller.loadInitialHabits();
@@ -243,7 +340,23 @@ class HabitZoneViewTest {
             stage.show();
             view.applyCss();
             view.layout();
-            return view.habitListForTesting();
+            return view;
+        });
+    }
+
+    private static void press(javafx.scene.Node target, KeyCode code, boolean shiftDown) throws Exception {
+        runOnFxThread(() -> {
+            target.fireEvent(new KeyEvent(KeyEvent.KEY_PRESSED, "", "", code,
+                    shiftDown, false, false, false));
+            return null;
+        });
+    }
+
+    private static void submit(TextField commandInput, String command) throws Exception {
+        runOnFxThread(() -> {
+            commandInput.setText(command);
+            commandInput.fireEvent(new javafx.event.ActionEvent());
+            return null;
         });
     }
 
@@ -251,6 +364,9 @@ class HabitZoneViewTest {
         return new MainWindowController(input -> {
             if (input.equals("list")) {
                 return CommandResult.habits("Habits", habits);
+            }
+            if (!input.startsWith("history ")) {
+                return CommandResult.success("Done");
             }
             String habitName = input.substring("history ".length());
             HabitSnapshot habit = habits.stream().filter(candidate -> candidate.name().equals(habitName))

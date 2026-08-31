@@ -2,7 +2,9 @@ package com.example.habitzone.ui;
 
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.geometry.Pos;
+import javafx.css.PseudoClass;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -24,13 +26,20 @@ public final class HabitZoneView extends BorderPane {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMMM uuuu");
     private static final String COMPLETED_TODAY_LABEL = " (done)";
     private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
+    private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
     private final MainWindowController controller;
     private final ListView<HabitSnapshot> habitList = new ListView<>();
     private final HabitHistoryCalendar historyCalendar;
     private final Label feedback = new Label();
     private final TextField commandInput = new TextField();
+    private VBox habitPanel;
+    private VBox historyPanel;
+    private VBox commandPanel;
     private final List<String> commandHistory = new ArrayList<>();
     private int commandHistoryIndex;
+    private UpperPanel lastFocusedUpperPanel = UpperPanel.LEFT;
+
+    private enum UpperPanel { LEFT, RIGHT }
 
     public HabitZoneView(MainWindowController controller) {
         this(controller, () -> LocalDate.now(Clock.systemDefaultZone()));
@@ -43,6 +52,7 @@ public final class HabitZoneView extends BorderPane {
         setTop(createTopBar(historyCalendar.today()));
         setCenter(createMainArea());
         setBottom(createCommandArea());
+        installPanelFocusNavigation();
         habitList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, previousHabit, selectedHabit) -> showHabitHistory(selectedHabit));
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
@@ -53,6 +63,63 @@ public final class HabitZoneView extends BorderPane {
             }
         });
         refresh();
+    }
+
+    private void installPanelFocusNavigation() {
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (!event.isShiftDown()) {
+                return;
+            }
+
+            boolean focusChanged = switch (event.getCode()) {
+                case LEFT -> focusUpperPanel(UpperPanel.LEFT);
+                case RIGHT -> focusUpperPanel(UpperPanel.RIGHT);
+                case DOWN -> focusCommandPanel();
+                case UP -> focusUpperPanel(lastFocusedUpperPanel);
+                default -> false;
+            };
+            if (focusChanged) {
+                event.consume();
+            }
+        });
+        habitList.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                lastFocusedUpperPanel = UpperPanel.LEFT;
+                selectPanel(habitPanel);
+            }
+        });
+        historyCalendar.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                lastFocusedUpperPanel = UpperPanel.RIGHT;
+                selectPanel(historyPanel);
+            }
+        });
+        commandInput.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                selectPanel(commandPanel);
+            }
+        });
+    }
+
+    private void selectPanel(VBox selectedPanel) {
+        habitPanel.pseudoClassStateChanged(SELECTED_PANEL, selectedPanel == habitPanel);
+        historyPanel.pseudoClassStateChanged(SELECTED_PANEL, selectedPanel == historyPanel);
+        commandPanel.pseudoClassStateChanged(SELECTED_PANEL, selectedPanel == commandPanel);
+    }
+
+    private boolean focusUpperPanel(UpperPanel panel) {
+        lastFocusedUpperPanel = panel;
+        if (panel == UpperPanel.LEFT) {
+            habitList.requestFocus();
+        } else {
+            historyCalendar.requestFocus();
+        }
+        return true;
+    }
+
+    private boolean focusCommandPanel() {
+        commandInput.requestFocus();
+        return true;
     }
 
     private HBox createTopBar(LocalDate today) {
@@ -71,12 +138,12 @@ public final class HabitZoneView extends BorderPane {
     }
 
     private HBox createMainArea() {
-        VBox habits = panel("Your habits", habitList);
-        VBox history = panel("Selected habit history", historyCalendar);
-        HBox mainArea = new HBox(habits, history);
+        habitPanel = panel("Your habits", habitList);
+        historyPanel = panel("Selected habit history", historyCalendar);
+        HBox mainArea = new HBox(habitPanel, historyPanel);
         mainArea.getStyleClass().add("main-area");
-        HBox.setHgrow(habits, Priority.ALWAYS);
-        HBox.setHgrow(history, Priority.ALWAYS);
+        HBox.setHgrow(habitPanel, Priority.ALWAYS);
+        HBox.setHgrow(historyPanel, Priority.ALWAYS);
         return mainArea;
     }
 
@@ -103,9 +170,9 @@ public final class HabitZoneView extends BorderPane {
                 event.consume();
             }
         });
-        VBox bottom = new VBox(10, feedback, commandInput);
-        bottom.getStyleClass().add("command-area");
-        return bottom;
+        commandPanel = new VBox(10, feedback, commandInput);
+        commandPanel.getStyleClass().add("command-area");
+        return commandPanel;
     }
 
     /** Gives the user immediate access to command entry when the window opens. */
@@ -194,6 +261,10 @@ public final class HabitZoneView extends BorderPane {
 
     HabitHistoryCalendar historyCalendarForTesting() {
         return historyCalendar;
+    }
+
+    TextField commandInputForTesting() {
+        return commandInput;
     }
 
     private void showHabitHistory(HabitSnapshot selectedHabit) {

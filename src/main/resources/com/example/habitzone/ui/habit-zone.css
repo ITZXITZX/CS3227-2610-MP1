@@ -4,6 +4,7 @@
 .current-date { -fx-text-fill: #dce7ff; -fx-font-size: 14px; }
 .main-area { -fx-padding: 24 28 16; -fx-spacing: 18; }
 .panel { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 18; -fx-effect: dropshadow(gaussian, #00000016, 10, 0, 0, 2); }
+.panel:selected, .command-area:selected { -fx-effect: dropshadow(gaussian, rgba(62, 66, 250, 0.50), 6, 0.05, 0, 0); }
 .panel-heading { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
 .list-view { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-background-radius: 8; }
 .list-view .list-cell:selected { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }
