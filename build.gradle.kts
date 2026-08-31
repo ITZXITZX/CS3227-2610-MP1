@@ -1,9 +1,9 @@
 plugins {
     java
     application
-    id("org.javamodularity.moduleplugin") version "1.8.15"
+    id("org.javamodularity.moduleplugin") version "2.0.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
-    id("org.beryx.jlink") version "3.0.1"
+    id("org.beryx.jlink") version "4.1.1"
 }
 
 group = "com.example"
@@ -17,7 +17,7 @@ val junitVersion = "5.12.1"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -31,7 +31,7 @@ application {
 }
 
 javafx {
-    version = "21.0.6"
+    version = "25.0.1"
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing")
 }
 
@@ -45,7 +45,7 @@ dependencies {
         exclude(group = "org.openjfx")
     }
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.1")
 }
 
