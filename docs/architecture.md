@@ -16,3 +16,6 @@ interfaces. This keeps the domain and application behavior independently testabl
 without JavaFX or file storage.
 
 Completion history is exposed in descending date order through `Habit.completionHistoryDescending()` and `ViewHabitHistoryUseCase`, so the most recent completion appears first.
+The JavaFX UI presents those completion values in a scrollable month calendar. Calendar layout,
+the visible month range, and completion-day styling remain presentation concerns in `ui`; no
+JavaFX calendar types or navigation state cross into the use-case or domain layers.

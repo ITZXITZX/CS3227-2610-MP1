@@ -11,3 +11,12 @@
 .command-input { -fx-font-size: 15px; -fx-padding: 12 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #a9b8d5; }
 .feedback { -fx-text-fill: #334155; -fx-font-size: 13px; }
 .feedback:error { -fx-text-fill: #b42318; }
+.history-calendar { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; }
+.history-calendar > .viewport { -fx-background-color: transparent; }
+.history-calendar .scroll-bar:vertical { -fx-pref-width: 12; }
+.calendar-month { -fx-padding: 16; -fx-background-color: #f8fafc; -fx-background-radius: 8; }
+.calendar-month-heading { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
+.calendar-grid { -fx-hgap: 4; -fx-vgap: 4; }
+.calendar-weekday { -fx-font-size: 11px; -fx-text-fill: #64748b; -fx-padding: 3; }
+.calendar-day { -fx-min-height: 34; -fx-background-radius: 17; -fx-text-fill: #334155; }
+.calendar-day.completed { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }

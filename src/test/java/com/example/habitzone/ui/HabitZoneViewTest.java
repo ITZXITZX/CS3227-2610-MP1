@@ -1,6 +1,7 @@
 package com.example.habitzone.ui;
 
 import com.example.habitzone.command.CommandResult;
+import com.example.habitzone.domain.CompletionLog;
 import com.example.habitzone.domain.HabitId;
 import com.example.habitzone.domain.HabitPriority;
 import com.example.habitzone.usecase.HabitHistory;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +95,73 @@ class HabitZoneViewTest {
         assertEquals(clicked, list.getSelectionModel().getSelectedItem());
     }
 
+    @Test
+    void calendarCoversEveryMonthFromEarliestCompletionThroughCurrentMonth() throws Exception {
+        LocalDate today = LocalDate.of(2026, 9, 1);
+        HabitHistory history = history(LocalDate.of(2026, 6, 12), LocalDate.of(2026, 8, 30));
+
+        HabitHistoryCalendar calendar = runOnFxThread(() -> {
+            HabitHistoryCalendar result = new HabitHistoryCalendar(today);
+            result.show(history);
+            return result;
+        });
+
+        assertEquals(List.of(
+                        YearMonth.of(2026, 6), YearMonth.of(2026, 7),
+                        YearMonth.of(2026, 8), YearMonth.of(2026, 9)),
+                runOnFxThread(() -> calendar.monthsForTesting().getChildren().stream()
+                        .map(node -> (YearMonth) node.getUserData()).toList()));
+    }
+
+    @Test
+    void calendarMarksOnlyCompletionDatesAsCompleted() throws Exception {
+        LocalDate completed = LocalDate.of(2026, 8, 18);
+        HabitHistoryCalendar calendar = runOnFxThread(() -> {
+            HabitHistoryCalendar result = new HabitHistoryCalendar(LocalDate.of(2026, 8, 20));
+            result.show(history(completed));
+            return result;
+        });
+
+        assertTrue(runOnFxThread(() -> calendar.monthsForTesting().lookupAll(".calendar-day.completed").stream()
+                .anyMatch(node -> completed.equals(node.getUserData()))));
+        assertEquals(1, runOnFxThread(() -> calendar.monthsForTesting()
+                .lookupAll(".calendar-day.completed").size()));
+    }
+
+    @Test
+    void calendarIncludesCurrentMonthWhenHistoryContainsAFutureCompletion() throws Exception {
+        HabitHistoryCalendar calendar = runOnFxThread(() -> {
+            HabitHistoryCalendar result = new HabitHistoryCalendar(LocalDate.of(2026, 9, 1));
+            result.show(history(LocalDate.of(2026, 11, 2)));
+            return result;
+        });
+
+        assertEquals(List.of(YearMonth.of(2026, 9), YearMonth.of(2026, 10), YearMonth.of(2026, 11)),
+                runOnFxThread(() -> calendar.monthsForTesting().getChildren().stream()
+                        .map(node -> (YearMonth) node.getUserData()).toList()));
+    }
+
+    @Test
+    void calendarDefaultsToCurrentMonthWhenPastHistoryRequiresScrolling() throws Exception {
+        LocalDate today = LocalDate.of(2026, 9, 1);
+        HabitHistory history = history(LocalDate.of(2025, 1, 10));
+
+        HabitHistoryCalendar calendar = runOnFxThread(() -> {
+            HabitHistoryCalendar result = new HabitHistoryCalendar(today);
+            result.show(history);
+            stage = new Stage();
+            stage.setScene(new Scene(result, 420, 300));
+            stage.show();
+            result.applyCss();
+            result.layout();
+            return result;
+        });
+        runOnFxThread(() -> null); // allow the calendar's deferred initial scroll to run
+
+        assertTrue(runOnFxThread(() -> calendar.getVvalue() > 0.9),
+                "the current month should be visible initially instead of the earliest completion");
+    }
+
     private ListView<HabitSnapshot> showView(List<HabitSnapshot> habits, HabitSnapshot displayed,
                                               double height) throws Exception {
         return runOnFxThread(() -> {
@@ -154,6 +224,11 @@ class HabitZoneViewTest {
                     List.of(), false, Optional.empty(), Optional.empty(), HabitPriority.NORMAL, Optional.empty()));
         }
         return habits;
+    }
+
+    private static HabitHistory history(LocalDate... dates) {
+        return new HabitHistory(new HabitId("history-id"), "Read",
+                java.util.Arrays.stream(dates).map(CompletionLog::new).toList());
     }
 
     private static <T> T runOnFxThread(java.util.concurrent.Callable<T> action) throws Exception {

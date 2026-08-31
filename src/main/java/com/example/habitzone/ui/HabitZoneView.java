@@ -1,6 +1,5 @@
 package com.example.habitzone.ui;
 
-import com.example.habitzone.usecase.HabitHistory;
 import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
@@ -27,7 +26,7 @@ public final class HabitZoneView extends BorderPane {
     private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
     private final MainWindowController controller;
     private final ListView<HabitSnapshot> habitList = new ListView<>();
-    private final ListView<String> historyList = new ListView<>();
+    private final HabitHistoryCalendar historyCalendar;
     private final Label feedback = new Label();
     private final TextField commandInput = new TextField();
     private final List<String> commandHistory = new ArrayList<>();
@@ -39,8 +38,9 @@ public final class HabitZoneView extends BorderPane {
 
     public HabitZoneView(MainWindowController controller, Supplier<LocalDate> dateSupplier) {
         this.controller = controller;
+        this.historyCalendar = new HabitHistoryCalendar(dateSupplier.get());
         getStyleClass().add("app-root");
-        setTop(createTopBar(dateSupplier.get()));
+        setTop(createTopBar(historyCalendar.today()));
         setCenter(createMainArea());
         setBottom(createCommandArea());
         habitList.setOnMouseClicked(event -> showSelectedHabitHistory());
@@ -71,7 +71,7 @@ public final class HabitZoneView extends BorderPane {
 
     private HBox createMainArea() {
         VBox habits = panel("Your habits", habitList);
-        VBox history = panel("Selected habit history", historyList);
+        VBox history = panel("Selected habit history", historyCalendar);
         HBox mainArea = new HBox(habits, history);
         mainArea.getStyleClass().add("main-area");
         HBox.setHgrow(habits, Priority.ALWAYS);
@@ -79,7 +79,7 @@ public final class HabitZoneView extends BorderPane {
         return mainArea;
     }
 
-    private VBox panel(String heading, ListView<?> content) {
+    private VBox panel(String heading, Region content) {
         Label label = new Label(heading);
         label.getStyleClass().add("panel-heading");
         VBox panel = new VBox(12, label, content);
@@ -159,7 +159,7 @@ public final class HabitZoneView extends BorderPane {
         if (!habitList.getItems().equals(controller.habits())) {
             habitList.getItems().setAll(controller.habits());
         }
-        historyList.getItems().setAll(controller.history().map(this::historyLines).orElseGet(java.util.List::of));
+        controller.history().ifPresentOrElse(historyCalendar::show, historyCalendar::clear);
         highlightAndRevealDisplayedHabit();
         feedback.setText(controller.feedback());
         feedback.pseudoClassStateChanged(javafx.css.PseudoClass.getPseudoClass("error"), controller.feedbackIsError());
@@ -199,7 +199,4 @@ public final class HabitZoneView extends BorderPane {
         }
     }
 
-    private java.util.List<String> historyLines(HabitHistory history) {
-        return history.completions().stream().map(completion -> completion.date().toString()).toList();
-    }
 }

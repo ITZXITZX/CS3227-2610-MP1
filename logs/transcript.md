@@ -1609,7 +1609,7 @@ All messages are built through the shared helper in CommandMessages.java, and te
 
 ### Conversation history
 
-```markdown
+````markdown
 **User:** I want to remove the commands `set-category`, `set-expiry`, `set-priority` completely from this codebase, including the test cases. Help me remove and verify that the app does not break
 
 **Assistant (5.6 Sol, Light reasoning):** I’ll trace these commands through parsing, models, execution, help/docs, and tests, then remove the full feature surface and run the relevant Gradle verification using the existing configuration.
@@ -1689,3 +1689,75 @@ Verified with:
 - Preserved list cells when habit data is unchanged.
 - Added a regression test for already-visible habits.
 - Verified the full Gradle test suite passed.
+
+## Conversation - 2026-09-01 02:06:00 +08:00
+
+### Conversation history
+
+````markdown
+**User:** I want you to implement the feature whereby calendar view is shown for the selected habit history, instead of the current list of dates. The corresponding dates should be marked as completed on the calendar. The earliest date in the history should be accessible by the calendar, but should default to showing the current month. Calendar should be a month view, but scrollable (up down) to navigate between months where the habit is marked done.
+
+Implement the code changes  and test code following architecture.md, and then trace the code changes you made and explain them to me
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll first map the existing habit-history flow and read `architecture.md`, then I’ll implement the calendar and its tests within the project’s established patterns. After verification, I’ll give you a file-by-file trace of the change.
+
+**Assistant (5.6 Sol, Light reasoning):** The history data already crosses the layers cleanly as `HabitHistory`; the date list is purely a JavaFX presentation detail. I’m keeping the domain/use-case/command contracts unchanged and replacing only that UI representation with a dedicated month-calendar control, plus focused JavaFX tests for range, completion marking, and initial positioning.
+
+**Assistant (5.6 Sol, Light reasoning):** The calendar now renders every month from the earliest completion through the current month, with future completion months included if present. Completed days carry both a visual marker and accessible text, and the initial scroll targets the current month. I’m at the verification stage now; the first Gradle invocation exposed a machine-level cache path issue, so I’m using the repository’s already-existing Gradle configuration (without creating a new project cache).
+
+**Assistant (5.6 Sol, Light reasoning):** The focused JavaFX suite passes, including the new calendar behavior. One edge case surfaced during review: if completion data contains a future date, the current month still needs to exist so it can be the default view. I’m tightening that range calculation, adding coverage for it, then running the complete test suite.
+
+**Assistant (5.6 Sol, Light reasoning):** Implemented the selected-habit history as a vertically scrollable monthly calendar.
+
+What changed:
+
+- HabitHistoryCalendar.java
+  - Builds standard Sunday–Saturday month grids.
+  - Displays every month from the earliest completion through the current month.
+  - Includes future months when future completions exist.
+  - Marks completed dates with a `completed` CSS class and accessible text.
+  - Automatically scrolls to the current month when opened.
+  - Supports vertical scrolling back to the earliest recorded completion.
+
+- HabitZoneView.java
+  - Replaced the old `ListView<String>` date history with `HabitHistoryCalendar`.
+  - Continues receiving `HabitHistory` from the controller.
+  - Clears or renders the calendar according to controller state.
+
+- habit-zone.css
+  - Added month-card, weekday, day-cell, scrollbar, and completed-date styling.
+
+- HabitZoneViewTest.java
+  - Tests the earliest-to-current month range.
+  - Tests completion-date marking.
+  - Tests future completion handling.
+  - Tests that the initial scroll position shows the current month.
+
+- architecture.md
+  - Documents that calendar layout and navigation remain UI concerns.
+
+Architecture trace:
+
+```text
+Habit selection
+→ MainWindowController
+→ "history HABIT_NAME" command
+→ ViewHabitHistoryUseCase
+→ HabitHistory completion data
+→ HabitZoneView
+→ HabitHistoryCalendar rendering
+```
+
+No domain, persistence, use-case, or command contracts were changed. The calendar is strictly a presentation-layer transformation, consistent with the project’s Clean Architecture rules.
+
+Verification: the complete Gradle test suite passes with `BUILD SUCCESSFUL`. No new project-local Gradle cache directory was created.
+````
+
+### Summary of Actions Taken
+
+- Replaced the selected habit's date-list history with a vertically scrollable monthly calendar.
+- Marked completed dates visually and with accessible text.
+- Made the full range from the earliest completion through the current month accessible while defaulting to the current month.
+- Added JavaFX tests for month range, completion marking, future completion handling, and initial scroll position.
+- Updated `architecture.md` to document the calendar as a UI-layer concern.
+- Verified the complete Gradle test suite passes.
