@@ -52,9 +52,9 @@ The window has three main areas:
 
 - **Your habits** lists saved habits alphabetically, ignoring letter case. Each is labelled `(done)` or `(undone)` according to its completion status for the current local date.
 - **Selected habit history** shows a calendar for one habit. Completed dates are highlighted.
-- The bottom area shows feedback and a command field. Type a command and press **Enter** to run it. The field is focused when the application opens.
+- The bottom area shows feedback, a command field, and a **Run** button. Type a command and press **Enter** or click **Run** to execute it. The field is focused when the application opens.
 
-The current date appears at the top right. On startup, saved habits are loaded automatically and the feedback reports either `You do not have any habits yet.` or the number found.
+The current date appears at the top right, followed by a **?** help button that displays the available commands. On startup, saved habits are loaded automatically and the feedback reports either `You do not have any habits yet.` or the number found.
 
 You can select a habit with the mouse or the list's normal Up/Down keys. Selecting it opens that habit's history. The calendar covers every month from the earliest relevant month through the latest, always including the current month, and initially scrolls to the current month.
 

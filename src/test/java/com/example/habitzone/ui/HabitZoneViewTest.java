@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.css.PseudoClass;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
@@ -183,7 +184,7 @@ class HabitZoneViewTest {
                 .getPseudoClassStates().contains(SELECTED_PANEL)));
 
         press(view.historyCalendarForTesting(), KeyCode.DOWN, true);
-        assertTrue(runOnFxThread(() -> view.commandInputForTesting().getParent()
+        assertTrue(runOnFxThread(() -> view.lookup(".command-area")
                 .getPseudoClassStates().contains(SELECTED_PANEL)));
         assertEquals(1, runOnFxThread(() -> java.util.stream.Stream.concat(
                         view.lookupAll(".panel").stream(), view.lookupAll(".command-area").stream())
@@ -214,6 +215,55 @@ class HabitZoneViewTest {
         assertEquals("help", runOnFxThread(commandInput::getText));
         press(commandInput, KeyCode.DOWN, false);
         assertEquals("", runOnFxThread(commandInput::getText));
+    }
+
+    @Test
+    void runButtonSubmitsAndRemembersCommandLikeEnter() throws Exception {
+        HabitZoneView view = showInteractiveHabitZoneView(habits(1), 500);
+        TextField commandInput = view.commandInputForTesting();
+        Button runButton = view.runCommandButtonForTesting();
+
+        runOnFxThread(() -> {
+            commandInput.setText("help");
+            runButton.fire();
+            return null;
+        });
+
+        assertEquals("", runOnFxThread(commandInput::getText));
+        press(commandInput, KeyCode.UP, false);
+        assertEquals("help", runOnFxThread(commandInput::getText));
+    }
+
+    @Test
+    void helpButtonRunsHelpCommandWithoutChangingCommandInput() throws Exception {
+        List<String> submittedCommands = new ArrayList<>();
+        HabitZoneView view = runOnFxThread(() -> {
+            MainWindowController controller = new MainWindowController(input -> {
+                submittedCommands.add(input);
+                return input.equals("list")
+                        ? CommandResult.habits("Habits", habits(1))
+                        : CommandResult.success("Available commands:" + System.lineSeparator() + "help");
+            }, () -> { });
+            controller.loadInitialHabits();
+            HabitZoneView result = new HabitZoneView(controller);
+            stage = new Stage();
+            stage.setScene(new Scene(result, 800, 500));
+            stage.show();
+            return result;
+        });
+
+        runOnFxThread(() -> {
+            view.commandInputForTesting().setText("unfinished command");
+            view.helpButtonForTesting().fire();
+            view.applyCss();
+            return null;
+        });
+
+        assertEquals(List.of("list", "help"), submittedCommands);
+        assertEquals("unfinished command", runOnFxThread(view.commandInputForTesting()::getText));
+        assertEquals("Available commands:", runOnFxThread(view.feedbackHeadingForTesting()::getText));
+        assertTrue(runOnFxThread(() -> view.feedbackHeadingForTesting()
+                .getStyleClass().contains("feedback-heading")));
     }
 
     @Test
