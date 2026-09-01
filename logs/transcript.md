@@ -2242,3 +2242,52 @@ Verification:
 - Updated JavaFX tests to verify column structure, content, styles, and fixed alignment widths.
 - Verified the focused JavaFX tests and full Gradle test suite pass.
 - Suggested the commit message `feat(ui): align habit list into index status and name columns`.
+
+## Conversation - 2026-09-01 12:52:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** I want my help command to also show the cli features like arrow up/down, shift arrow up/down
+
+**Assistant (5.6 Sol, light):** I'll trace the help command and the CLI keybindings, then update the help text to match the actual behavior and run the relevant tests.
+
+**Assistant (5.6 Sol, light):** The existing help output is generated in `HelpCommand`, while the keybindings are already documented in the User Guide. I'll append a concise "Keyboard controls" section after the registered command list, including plain arrows and all four Shift+Arrow focus actions, and lock it down with command-level tests.
+
+**Assistant (5.6 Sol, light):** The implementation and diff checks are clean. The focused tests hit the existing Gradle cache at `C:\.gradle`, which the workspace sandbox cannot access; I'm rerunning the same tests with access to that existing cache (without creating a project-local cache).
+
+**Assistant (5.6 Sol, light):** Updated the `help` command to show keyboard controls, including:
+
+- Up/Down command history
+- Up/Down habit selection
+- Left/Right habit-list scrolling
+- Shift+Left/Right panel focus
+- Shift+Down command-field focus
+- Shift+Up return to the previous upper panel
+
+Also updated tests and the User Guide. The full Gradle test suite passes successfully. No project-local Gradle cache was created.
+
+**User:** I want the title "keyboard controls:" to be bolded, similar to "Available commands" when the help command is entered
+
+**Assistant (5.6 Sol, light):** I'll extend the existing help rich-text renderer so it recognizes both section headings, then add a focused UI assertion and run the relevant tests.
+
+**Assistant (5.6 Sol, light):** Updated the help renderer so both headings are bold:
+
+- **Available commands:**
+- **Keyboard controls:**
+
+Added a JavaFX regression test confirming `Keyboard controls:` uses the existing bold heading style. The full Gradle test suite passes.
+
+**User:** what is a suitable commit message?
+
+**Assistant (5.6 Sol, light):** `feat(help): display and style keyboard controls`
+```
+
+### Summary of Actions Taken
+
+- Added keyboard controls to the `help` command output.
+- Updated command tests and the User Guide for the expanded help output.
+- Bolded both help section headings in the JavaFX feedback renderer.
+- Added a JavaFX regression test for the keyboard-controls heading style.
+- Verified the focused tests and full Gradle test suite pass without creating a project-local Gradle cache.
+- Suggested the commit message `feat(help): display and style keyboard controls`.

@@ -32,6 +32,7 @@ public final class HabitZoneView extends BorderPane {
     private static final String COMPLETED_TODAY_LABEL = "(done)";
     private static final String NOT_COMPLETED_TODAY_LABEL = "(undone)";
     private static final String HELP_HEADING = "Available commands:";
+    private static final String KEYBOARD_CONTROLS_HEADING = "Keyboard controls:";
     private static final int HORIZONTAL_SCROLL_SPEED_MULTIPLIER = 16;
     private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
     private final MainWindowController controller;
@@ -40,6 +41,8 @@ public final class HabitZoneView extends BorderPane {
     private final TextFlow feedback = new TextFlow();
     private final Text feedbackHeading = new Text();
     private final Text feedbackBody = new Text();
+    private final Text keyboardControlsHeading = new Text();
+    private final Text keyboardControlsBody = new Text();
     private final TextField commandInput = new TextField();
     private final Button runCommandButton = new Button("Run");
     private final Button helpButton = new Button("?");
@@ -238,7 +241,10 @@ public final class HabitZoneView extends BorderPane {
         feedback.getStyleClass().add("feedback");
         feedbackHeading.getStyleClass().add("feedback-heading");
         feedbackBody.getStyleClass().add("feedback-text");
-        feedback.getChildren().setAll(feedbackHeading, feedbackBody);
+        keyboardControlsHeading.getStyleClass().add("feedback-heading");
+        keyboardControlsBody.getStyleClass().add("feedback-text");
+        feedback.getChildren().setAll(
+                feedbackHeading, feedbackBody, keyboardControlsHeading, keyboardControlsBody);
         commandInput.setPromptText("Enter a command, e.g. help or list");
         commandInput.getStyleClass().add("command-input");
         commandInput.setOnAction(event -> submitCommand());
@@ -329,12 +335,24 @@ public final class HabitZoneView extends BorderPane {
     private void renderFeedback(String message) {
         if (message.startsWith(HELP_HEADING)) {
             feedbackHeading.setText(HELP_HEADING);
-            feedbackBody.setText(message.substring(HELP_HEADING.length()));
+            int keyboardHeadingStart = message.indexOf(KEYBOARD_CONTROLS_HEADING, HELP_HEADING.length());
+            if (keyboardHeadingStart >= 0) {
+                feedbackBody.setText(message.substring(HELP_HEADING.length(), keyboardHeadingStart));
+                keyboardControlsHeading.setText(KEYBOARD_CONTROLS_HEADING);
+                keyboardControlsBody.setText(message.substring(
+                        keyboardHeadingStart + KEYBOARD_CONTROLS_HEADING.length()));
+            } else {
+                feedbackBody.setText(message.substring(HELP_HEADING.length()));
+                keyboardControlsHeading.setText("");
+                keyboardControlsBody.setText("");
+            }
             return;
         }
 
         feedbackHeading.setText("");
         feedbackBody.setText(message);
+        keyboardControlsHeading.setText("");
+        keyboardControlsBody.setText("");
     }
 
     private void highlightAndRevealDisplayedHabit() {
@@ -381,6 +399,10 @@ public final class HabitZoneView extends BorderPane {
 
     Text feedbackHeadingForTesting() {
         return feedbackHeading;
+    }
+
+    Text keyboardControlsHeadingForTesting() {
+        return keyboardControlsHeading;
     }
 
     private void showHabitHistory(HabitSnapshot selectedHabit) {
