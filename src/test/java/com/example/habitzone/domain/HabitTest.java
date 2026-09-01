@@ -26,6 +26,13 @@ class HabitTest {
     }
 
     @Test
+    void acceptsNamesContainingLettersAndNumbers() {
+        Habit habit = new Habit(new HabitId("habit-1"), "Run 3 km");
+
+        assertEquals("Run 3 km", habit.name());
+    }
+
+    @Test
     void marksSameDateCompleteIdempotently() {
         Habit habit = new Habit(new HabitId("habit-1"), "Read");
         LocalDate date = LocalDate.of(2026, 8, 19);

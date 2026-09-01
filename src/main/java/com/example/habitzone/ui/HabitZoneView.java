@@ -4,6 +4,7 @@ import com.example.habitzone.usecase.HabitSnapshot;
 import javafx.css.PseudoClass;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Label;
@@ -15,6 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -28,13 +31,18 @@ public final class HabitZoneView extends BorderPane {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMMM uuuu");
     private static final String COMPLETED_TODAY_LABEL = " (done)";
     private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
+    private static final String HELP_HEADING = "Available commands:";
     private static final int HORIZONTAL_SCROLL_SPEED_MULTIPLIER = 16;
     private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
     private final MainWindowController controller;
     private final ListView<HabitSnapshot> habitList = new ListView<>();
     private final HabitHistoryCalendar historyCalendar;
-    private final Label feedback = new Label();
+    private final TextFlow feedback = new TextFlow();
+    private final Text feedbackHeading = new Text();
+    private final Text feedbackBody = new Text();
     private final TextField commandInput = new TextField();
+    private final Button runCommandButton = new Button("Run");
+    private final Button helpButton = new Button("?");
     private VBox habitPanel;
     private VBox historyPanel;
     private VBox commandPanel;
@@ -63,7 +71,7 @@ public final class HabitZoneView extends BorderPane {
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
             @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
                 super.updateItem(habit, empty);
-                setText(empty || habit == null ? null : habit.name()
+                setText(empty || habit == null ? null : (getIndex() + 1) + ". " + habit.name()
                         + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
             }
         });
@@ -100,6 +108,11 @@ public final class HabitZoneView extends BorderPane {
             }
         });
         commandInput.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) {
+                selectPanel(commandPanel);
+            }
+        });
+        runCommandButton.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
             if (isFocused) {
                 selectPanel(commandPanel);
             }
@@ -165,10 +178,14 @@ public final class HabitZoneView extends BorderPane {
         title.getStyleClass().add("app-title");
         Label date = new Label(today.format(DATE_FORMAT));
         date.getStyleClass().add("current-date");
+        helpButton.getStyleClass().add("help-button");
+        helpButton.setAccessibleText("Help");
+        helpButton.setTooltip(new javafx.scene.control.Tooltip("Show available commands"));
+        helpButton.setOnAction(event -> showHelp());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox topBar = new HBox(title, spacer, date);
+        HBox topBar = new HBox(12, title, spacer, date, helpButton);
         topBar.getStyleClass().add("top-bar");
         topBar.setAlignment(Pos.CENTER_LEFT);
         date.setAlignment(Pos.CENTER);
@@ -196,6 +213,9 @@ public final class HabitZoneView extends BorderPane {
 
     private VBox createCommandArea() {
         feedback.getStyleClass().add("feedback");
+        feedbackHeading.getStyleClass().add("feedback-heading");
+        feedbackBody.getStyleClass().add("feedback-text");
+        feedback.getChildren().setAll(feedbackHeading, feedbackBody);
         commandInput.setPromptText("Enter a command, e.g. help or list");
         commandInput.getStyleClass().add("command-input");
         commandInput.setOnAction(event -> submitCommand());
@@ -208,7 +228,14 @@ public final class HabitZoneView extends BorderPane {
                 event.consume();
             }
         });
-        commandPanel = new VBox(10, feedback, commandInput);
+        runCommandButton.getStyleClass().add("run-command-button");
+        runCommandButton.setOnAction(event -> submitCommand());
+
+        HBox commandRow = new HBox(10, commandInput, runCommandButton);
+        commandRow.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(commandInput, Priority.ALWAYS);
+
+        commandPanel = new VBox(10, feedback, commandRow);
         commandPanel.getStyleClass().add("command-area");
         return commandPanel;
     }
@@ -223,6 +250,11 @@ public final class HabitZoneView extends BorderPane {
         rememberCommand(input);
         controller.submit(input);
         commandInput.clear();
+        refresh();
+    }
+
+    private void showHelp() {
+        controller.submit("help");
         refresh();
     }
 
@@ -267,8 +299,19 @@ public final class HabitZoneView extends BorderPane {
         }
         controller.history().ifPresentOrElse(historyCalendar::show, historyCalendar::clear);
         highlightAndRevealDisplayedHabit();
-        feedback.setText(controller.feedback());
+        renderFeedback(controller.feedback());
         feedback.pseudoClassStateChanged(javafx.css.PseudoClass.getPseudoClass("error"), controller.feedbackIsError());
+    }
+
+    private void renderFeedback(String message) {
+        if (message.startsWith(HELP_HEADING)) {
+            feedbackHeading.setText(HELP_HEADING);
+            feedbackBody.setText(message.substring(HELP_HEADING.length()));
+            return;
+        }
+
+        feedbackHeading.setText("");
+        feedbackBody.setText(message);
     }
 
     private void highlightAndRevealDisplayedHabit() {
@@ -303,6 +346,18 @@ public final class HabitZoneView extends BorderPane {
 
     TextField commandInputForTesting() {
         return commandInput;
+    }
+
+    Button runCommandButtonForTesting() {
+        return runCommandButton;
+    }
+
+    Button helpButtonForTesting() {
+        return helpButton;
+    }
+
+    Text feedbackHeadingForTesting() {
+        return feedbackHeading;
     }
 
     private void showHabitHistory(HabitSnapshot selectedHabit) {

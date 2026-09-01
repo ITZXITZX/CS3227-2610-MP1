@@ -19,7 +19,7 @@ public class ViewHistoryCommand implements Command {
 
     @Override
     public String usage() {
-        return "history HABIT_NAME";
+        return "history HABIT_INDEX_OR_NAME";
     }
 
     @Override

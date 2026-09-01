@@ -19,7 +19,7 @@ public class DeleteHabitCommand implements Command {
 
     @Override
     public String usage() {
-        return "delete HABIT_NAME";
+        return "delete HABIT_INDEX_OR_NAME";
     }
 
     @Override

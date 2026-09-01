@@ -15,6 +15,17 @@ The intended dependency flow is `ui -> command -> usecase -> domain`, with
 interfaces. This keeps the domain and application behavior independently testable
 without JavaFX or file storage.
 
+Habit indices are a use-case/presentation concept rather than persisted domain state. The
+use-case layer defines one case-insensitive alphabetical display order and resolves a positive
+integer selector against that one-based order. `ViewHabitsUseCase` uses the same order, and the
+JavaFX view prefixes each snapshot with its position. This keeps command resolution consistent
+with the visible list without coupling the domain model or JSON format to mutable positions.
+To keep positive integer selectors unambiguous, the domain supplies a Unicode-aware new-name
+validation rule requiring at least one alphabetic letter. The add use case exposes violations as
+an `INVALID_HABIT_NAME` result, and the command layer translates that result into user feedback.
+Rehydration remains compatible with numeric names saved before this rule, allowing users to load
+and delete those legacy entries by their displayed index.
+
 Completion history is exposed in descending date order through `Habit.completionHistoryDescending()` and `ViewHabitHistoryUseCase`, so the most recent completion appears first.
 The JavaFX UI presents those completion values in a scrollable month calendar. Calendar layout,
 the visible month range, and completion-day styling remain presentation concerns in `ui`; no

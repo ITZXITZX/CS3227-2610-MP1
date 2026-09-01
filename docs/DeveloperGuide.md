@@ -91,7 +91,7 @@ Tests replace these concrete choices with fake repositories, fixed clocks, fake 
 
 ### Habit aggregate
 
-`Habit` is the aggregate root. It contains an immutable UUID-backed `HabitId`, a trimmed non-blank immutable name, completion dates in a `TreeSet<LocalDate>`, optional expiry and category values, a priority defaulting to `NORMAL`, and an optional reminder time.
+`Habit` is the aggregate root. It contains an immutable UUID-backed `HabitId`, a trimmed non-blank immutable name, completion dates in a `TreeSet<LocalDate>`, optional expiry and category values, a priority defaulting to `NORMAL`, and an optional reminder time. New-habit validation requires at least one Unicode alphabetic letter, preventing positive integer names from conflicting with index selectors while allowing mixed names such as `Run 3 km`. The entity can still rehydrate legacy numeric names so users can load and delete data created before this rule.
 
 The sorted set makes completion binary per date: marking twice is idempotent and unmarking an absent date is safe. It also supplies ascending persistence order and descending history order without exposing mutable state. `CompletionLog` represents one completed date.
 
@@ -105,7 +105,7 @@ Use cases do not expose mutable `Habit` objects:
 - `HabitHistory` contains the stable habit ID, name, and completion logs in descending date order.
 - `UseCaseResult<T>` contains either data or a `UseCaseError`: `DUPLICATE_HABIT`, `HABIT_NOT_FOUND`, or `INVALID_HABIT_NAME`.
 
-Habit lookup and duplicate detection are case-insensitive while stored capitalization is preserved. `ViewHabitsUseCase` sorts names case-insensitively and derives today's status from the injected clock. Mutating use cases load the collection, change a domain object, and save the complete collection through `HabitRepository`.
+Habit lookup and duplicate detection are case-insensitive while stored capitalization is preserved. Existing-habit use cases accept either a name or a positive one-based index. `HabitLookup` owns the deterministic case-insensitive alphabetical display order; both index resolution and `ViewHabitsUseCase` use it, so an index always identifies the corresponding visible row. Indices are transient and are neither domain attributes nor persisted data. `ViewHabitsUseCase` also derives today's status from the injected clock. Mutating use cases load the collection, change a domain object, and save the complete collection through `HabitRepository`.
 
 ## 4. Command and presentation design
 
@@ -113,7 +113,7 @@ Habit lookup and duplicate detection are case-insensitive while stored capitaliz
 
 `CommandParser` trims input, lowercases only the first token, and preserves the remainder as arguments. `CommandRegistry` maps the token to a small `Command` handler. Handlers validate syntax and format responses; business decisions remain in use cases. `CommandSupport` provides ISO date parsing and translates use-case failures or `StorageException` into user-safe `CommandResult` values.
 
-`help` derives its text from registered `usage()` values. `exit` returns a signal rather than calling JavaFX. For `done` and `undone`, the final whitespace-delimited token is a date only when it is valid ISO text or resembles a malformed date. This supports multi-word names but makes names ending in a valid date ambiguous.
+`help` derives its text from registered `usage()` values. Existing-habit usages advertise `HABIT_INDEX_OR_NAME`; positive integer arguments resolve against the current sorted list, while other text uses case-insensitive name lookup. `add` continues to accept a new `HABIT_NAME`, after which normal refresh assigns the new habit its visible position. `exit` returns a signal rather than calling JavaFX. For `done` and `undone`, the final whitespace-delimited token is a date only when it is valid ISO text or resembles a malformed date. This supports multi-word names but makes names ending in a valid date ambiguous.
 
 ### Result and refresh flow
 
@@ -220,7 +220,7 @@ Refreshing only after successful non-exit commands makes mutations immediately v
 
 ### JavaFX view
 
-`HabitZoneView` builds the interface in Java rather than FXML. It owns list-cell text, ephemeral de-duplicated command history, keyboard focus movement, horizontal list scrolling, panel styling, forwarding list selection as a `history` command, and rendering controller state. It contains no persistence or habit rules.
+`HabitZoneView` builds the interface in Java rather than FXML. It owns the one-based number prefixed to each list cell, ephemeral de-duplicated command history, keyboard focus movement, horizontal list scrolling, panel styling, forwarding list selection as a `history` command, and rendering controller state. It contains no persistence or habit rules.
 
 `HabitHistoryCalendar` builds Sunday-first month grids from the earliest relevant completion month to the latest, always including the current month. It highlights completed dates, provides accessible text, and initially scrolls to the current month. Calendar range, navigation, and styling stay in `ui`; only `LocalDate` values cross the inner boundary.
 
@@ -273,7 +273,7 @@ Before merging, run the full suite:
 ./gradlew test
 ```
 
-The automated suite contains 90 tests. All tests should pass on the verified Windows environment.
+The automated suite contains 97 tests. All tests pass on the verified Windows environment.
 
 Launch the application for changes involving JavaFX styling, focus, scrolling, calendar layout, packaging, or window behavior. UI geometry varies by platform, so tests should assert meaningful behavior rather than fragile pixel increments.
 

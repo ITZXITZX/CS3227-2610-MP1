@@ -3,7 +3,6 @@ package com.example.habitzone.usecase;
 import com.example.habitzone.port.ClockProvider;
 import com.example.habitzone.port.HabitRepository;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,8 +18,7 @@ public class ViewHabitsUseCase {
 
     public UseCaseResult<List<HabitSnapshot>> execute() {
         java.time.LocalDate today = clockProvider.currentDate();
-        List<HabitSnapshot> snapshots = repository.loadAll().stream()
-                .sorted(Comparator.comparing(habit -> habit.name().toLowerCase()))
+        List<HabitSnapshot> snapshots = HabitLookup.sortedByDisplayOrder(repository.loadAll()).stream()
                 .map(habit -> HabitSnapshot.from(habit, habit.isCompleteOn(today)))
                 .toList();
         return UseCaseResult.success(snapshots);

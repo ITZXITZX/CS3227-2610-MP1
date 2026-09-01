@@ -2,6 +2,9 @@
 .top-bar { -fx-background-color: linear-gradient(to right, #223a70, #315ba6); -fx-padding: 22 28; }
 .app-title { -fx-text-fill: white; -fx-font-size: 26px; -fx-font-weight: bold; }
 .current-date { -fx-text-fill: #dce7ff; -fx-font-size: 14px; }
+.help-button { -fx-min-width: 32; -fx-min-height: 32; -fx-background-color: transparent; -fx-border-color: #dce7ff; -fx-border-radius: 16; -fx-background-radius: 16; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand; }
+.help-button:hover { -fx-background-color: #ffffff26; }
+.help-button:pressed { -fx-background-color: #ffffff40; }
 .main-area { -fx-padding: 24 28 16; -fx-spacing: 18; }
 .panel { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 18; -fx-effect: dropshadow(gaussian, #00000016, 10, 0, 0, 2); }
 .panel:selected, .command-area:selected { -fx-effect: dropshadow(gaussian, rgba(62, 66, 250, 0.50), 6, 0.05, 0, 0); }
@@ -10,8 +13,13 @@
 .list-view .list-cell:selected { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }
 .command-area { -fx-background-color: white; -fx-padding: 16 28 24; -fx-border-color: #e2e8f0 transparent transparent transparent; }
 .command-input { -fx-font-size: 15px; -fx-padding: 12 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #a9b8d5; }
-.feedback { -fx-text-fill: #334155; -fx-font-size: 13px; }
-.feedback:error { -fx-text-fill: #b42318; }
+.run-command-button { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: #315ba6; -fx-background-radius: 4; -fx-padding: 12 24; -fx-cursor: hand; }
+.run-command-button:hover { -fx-background-color: #274b8c; }
+.run-command-button:pressed { -fx-background-color: #1f3c70; }
+.feedback { -fx-font-size: 13px; }
+.feedback-text, .feedback-heading { -fx-fill: #334155; }
+.feedback-heading { -fx-font-weight: bold; }
+.feedback:error .feedback-text, .feedback:error .feedback-heading { -fx-fill: #b42318; }
 .history-calendar { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; }
 .history-calendar > .viewport { -fx-background-color: transparent; }
 .history-calendar .scroll-bar:vertical { -fx-pref-width: 12; }

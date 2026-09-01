@@ -15,24 +15,27 @@ from a clean data state so that the expected habit counts are deterministic.
 Enter each command below in the command field and press Enter. Check both the
 feedback area and the two panels after every command.
 
+Before the main flow, enter `add 3` and confirm that HabitZone reports
+`Habit name must contain at least one letter.` and leaves **Your habits** empty.
+
 ## Acceptance flow
 
 | Step | Command | Expected feedback | Expected visible state |
 | --- | --- | --- | --- |
 | 1 | `list` | `You do not have any habits yet.` | **Your habits** is empty. **Selected habit history** is empty. |
-| 2 | `add reading` | `Added habit 'reading'.` | **Your habits** contains exactly `reading`; the history panel is empty. |
-| 3 | `done reading 2026-08-19` | `Marked 'reading' complete on 2026-08-19.` | **Your habits** still contains `reading`; the history panel is empty until requested. |
-| 4 | `history reading` | `Showing history for 'reading'.` | **Selected habit history** contains exactly `2026-08-19`. |
-| 5 | `undone reading 2026-08-19` | `Unmarked 'reading' complete on 2026-08-19.` | **Your habits** still contains `reading`; the history panel is cleared because the displayed habit snapshot was refreshed. |
-| 6 | `delete reading` | `Deleted habit 'reading'.` | **Your habits** is empty and the history panel is empty. |
+| 2 | `add reading` | `Added habit 'reading'.` | **Your habits** contains exactly `1. reading (undone)`; the history panel is empty. |
+| 3 | `done 1 2026-08-19` | `Marked 'reading' complete on 2026-08-19.` | **Your habits** still contains `1. reading`; the history panel is empty until requested. |
+| 4 | `history 1` | `Showing history for 'reading'.` | **Selected habit history** contains exactly `2026-08-19`. |
+| 5 | `undone 1 2026-08-19` | `Unmarked 'reading' complete on 2026-08-19.` | **Your habits** still contains `1. reading`; the history panel is cleared because the displayed habit snapshot was refreshed. |
+| 6 | `delete 1` | `Deleted habit 'reading'.` | **Your habits** is empty and the history panel is empty. |
 | 7 | `list` | `You do not have any habits yet.` | Both panels remain empty. |
 
 ## Optional persistence check
 
 To also check the MVP persistence criterion, repeat steps 1--3, close the app,
 start it again, and enter `list`. The feedback should be `Found 1 habit.` and
-**Your habits** should contain `reading`. Delete it afterwards by running
-`delete reading` so later acceptance runs start cleanly.
+**Your habits** should contain `1. reading (undone)`. Delete it afterwards by running
+`delete 1` so later acceptance runs start cleanly.
 
 ## Architecture guardrails
 

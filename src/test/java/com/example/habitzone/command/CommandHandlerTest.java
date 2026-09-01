@@ -34,6 +34,16 @@ class CommandHandlerTest {
     }
 
     @Test
+    void addHandlerExplainsThatHabitNameNeedsALetter() {
+        AddHabitCommand command = new AddHabitCommand(new AddHabitUseCase(new InMemoryHabitRepository()));
+
+        CommandResult result = command.execute("3");
+
+        assertTrue(result.error());
+        assertEquals("Habit name must contain at least one letter.", result.message());
+    }
+
+    @Test
     void deleteHandlerDeletesHabitAndReportsMissingHabit() {
         InMemoryHabitRepository repository = repositoryWith("Read");
         DeleteHabitCommand command = new DeleteHabitCommand(new DeleteHabitUseCase(repository));
@@ -84,7 +94,7 @@ class CommandHandlerTest {
 
         assertFalse(command.execute("Read 2026-08-19").error());
         assertFalse(repository.loadAll().getFirst().isCompleteOn(DATE));
-        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", command.execute("2026-08-19").message());
+        assertEquals("Please input: undone HABIT_INDEX_OR_NAME [YYYY-MM-DD]", command.execute("2026-08-19").message());
     }
 
     @Test

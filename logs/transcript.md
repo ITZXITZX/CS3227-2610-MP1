@@ -2053,3 +2053,145 @@ Here are some sample questions that you can use to guide your reflections.
 
 - Created and verified `docs/Reflections.md` from the project transcript.
 - Note: Earlier turns were unavailable in the current context.
+
+## Conversation - 2026-09-01 10:49:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** Help me to add a rectangular button in the bottom panel, leaning right of the command terminal, that when clicked, runs the command, similar function when pressing enter. Explain your code changes
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll trace the bottom-panel terminal UI and its Enter-key command path, then add the button by reusing that same execution handler so both interactions stay consistent. Afterward I’ll run the relevant checks and explain the exact changes.
+
+**Assistant (5.6 Sol, Light reasoning):** The command field already funnels Enter through a single `submitCommand()` method. I’ll place the field and a “Run” button in one horizontal row, let the field expand while the rectangular button stays on its right, and bind the button to that same method. I’m also adding a UI regression test that verifies clicking it submits, clears the input, and preserves command-history behavior.
+
+**Assistant (5.6 Sol, Light reasoning):** The implementation is in place. The first test attempt hit the sandbox because Gradle’s existing user-home is outside the repository; I’ll rerun it with the required filesystem permission, without creating a project-local cache. Before that, I’m tightening focus highlighting so the bottom panel remains selected when the new button receives focus, and updating the existing structural assertion for the new row container.
+
+**Assistant (5.6 Sol, Light reasoning):** Added a rectangular Run button to the right of the command input.
+
+- Places the input and button in an `HBox`.
+- Allows the input to expand, keeping the button aligned on the right.
+- Both Enter and button clicks invoke the existing `submitCommand()` method, ensuring identical command execution, history, clearing, and refresh behavior.
+- Maintains bottom-panel highlighting when the button receives focus.
+- Added a regression test and updated the User Guide.
+
+Validation: `gradlew.bat test` completed successfully.
+
+**User:** Add a 'Help button' with question mark icon at the top right of the window, on the right of today's date
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll add a compact question-mark button immediately after today’s date and wire it to execute the existing `help` command through the controller. I’ll also style it to fit the top bar and add a UI test confirming that clicking it displays help without altering the command field.
+
+**Assistant (5.6 Sol, Light reasoning):** Added a ? Help button to the right of today’s date.
+
+- Clicking it executes the existing `help` command and displays available commands in the feedback panel.
+- Any partially typed command remains unchanged.
+- Includes a tooltip and accessible label.
+- Added hover and pressed styling, a UI test, and User Guide documentation.
+
+The complete test suite passes successfully.
+
+**User:** Bold the heading "Available commands:" , which is the output of the help command
+
+**Assistant (5.6 Sol, Light reasoning):** I’ll update the feedback renderer so help output uses rich text: only the `Available commands:` heading will be bold, while ordinary feedback and error styling continue to behave as before. I’ll add a focused UI test for that formatting.
+
+**Assistant (5.6 Sol, Light reasoning):** The renderer now splits help feedback into a bold heading node and a normal body node, rather than bolding the entire help response. Error coloring is still applied to both pieces when relevant. I’m running the full suite now.
+
+**Assistant (5.6 Sol, Light reasoning):** The behavior test reached the correct heading, but its font assertion failed because this test fixture intentionally creates a bare JavaFX scene without loading the application stylesheet. I’ll make the regression assertion verify the dedicated bold-heading style class—the production application loads that stylesheet—and rerun all tests.
+
+**Assistant (5.6 Sol, Light reasoning):** Bolded only the `Available commands:` heading in help output.
+
+The feedback renderer now separates the heading from the remaining command list using JavaFX `TextFlow`. Normal feedback and error coloring remain unchanged. Updated `HabitZoneView.java`, `habit-zone.css`, and `HabitZoneViewTest.java`. All 92 tests pass.
+
+**User:** you placed the entry in the wrong position in the transcript, which is sorted by date starting from the earliest datetime at the top and the most recent datetime at the bottom
+
+**Assistant (5.6 Sol, Light reasoning):** You’re right—the entry was inserted before later-dated entries. I’ll remove that misplaced block and re-add the same entry after the latest existing conversation, preserving chronological order.
+
+**Assistant (5.6 Sol, Light reasoning):** Corrected `logs/transcript.md`. The 10:49 AM entry is now at the bottom, after the 06:07 AM entry, preserving chronological order from earliest to latest.
+```
+
+### Summary of Actions Taken
+
+- Added and tested the bottom-panel Run button.
+- Added and tested the top-right ? Help button.
+- Bolded the Available commands: heading and verified all 92 tests pass.
+- Corrected the transcript entry placement so it is chronologically last.
+
+## Conversation - 2026-09-01 11:42:00 +08:00
+
+### Conversation history
+
+````markdown
+**User:** I want the habits to be in a list form with numbering. Currently it does not have numbers in the list. The reason for numbers is so that I can type the index of the habit in the list, instead of typing the full habit name. So help me add the indexing for the habits in the list form, and update the add, delete, history, streak, done and undone to be able to work with the index instead.
+
+Follow architecture.md, and update where necessary for this new feature
+
+Update the documentation, as well as the help command description, and any other test code
+
+**Assistant (5.6 Sol, light):** I’ll trace the command flow, domain/storage boundaries, architecture notes, and existing tests first. Then I’ll implement index-based habit selection consistently across listing and all six commands, and verify the documentation and test suite.
+
+**Assistant (5.6 Sol, light):** The architecture document is under `docs/architecture.md`, not the repository root. I’ve also noted the existing project-local Gradle directories, but I won’t create or use any new cache directory; I’ll run the wrapper with the project’s existing configuration as instructed.
+
+**Assistant (5.6 Sol, light):** The cleanest fit is to keep indexing in the application/use-case layer: indices resolve against the same alphabetically sorted snapshot shown by `list`, while the domain and JSON schema remain unchanged. I’ll preserve habit-name input for backward compatibility, make positive integer input select the displayed 1-based index, and show numbers in the JavaFX list. `add` still necessarily takes a new name; after it succeeds, the refreshed sorted list assigns/display its index.
+
+**Assistant (5.6 Sol, light):** The core path is now being updated around one shared ordering rule so list rendering and command resolution cannot drift. I’m also retaining name-based commands, which protects existing saved workflows while enabling concise numeric input.
+
+**Assistant (5.6 Sol, light):** Index resolution is now shared by delete, completion/uncompletion, history, and streak, and it uses the exact ordering returned by `list`. Next I’m tightening the visible syntax/help text and adding focused regression coverage for reordered repository data, out-of-range indices, dated commands, and numbered cells.
+
+**Assistant (5.6 Sol, light):** Implementation and documentation edits are in place. The test run reached the existing Gradle configuration but the sandbox blocked its configured cache at `C:\.gradle`; I’m rerunning the same wrapper command with permission to use that existing cache, without creating a project-local Gradle home.
+
+**Assistant (5.6 Sol, light):** All 94 tests now pass, including the new command-resolution and JavaFX row-number tests. I’m doing the final consistency pass now: test-count notes, stale syntax references in current guides, whitespace, and the complete diff.
+
+**Assistant (5.6 Sol, light):** Implemented numbered, index-addressable habits.
+
+Key changes:
+
+- Habit rows now display as `1. Reading (undone)`.
+- `done`, `undone`, `history`, `streak`, and `delete` accept either a 1-based index or habit name.
+- Indices consistently follow the alphabetically sorted visible list.
+- `add` still takes a new habit name; the refreshed list automatically assigns its index.
+- Help syntax now uses `HABIT_INDEX_OR_NAME`.
+- Updated architecture, user guide, developer guide, and acceptance-test documentation.
+- Added command and JavaFX regression tests, including alphabetical index resolution and invalid indices.
+
+Examples:
+
+```text
+done 1
+history 2
+undone 1 2026-08-19
+streak 3
+delete 2
+```
+
+Verification: all 94 tests pass via `.\gradlew.bat test`, and `git diff --check` reports no whitespace errors.
+
+**User:** I have an edge case whereby I name the habit as "3", it shows up as the 1st item on the list. Then my 3rd item is "tennis". When I enter streak 3 it shows the streak for tennis.
+
+Help me to prevent users from saving only numbers as the habit name. Habit names must have at least 1 alphabet
+
+**Assistant (5.6 Sol, light):** I’ll enforce this as a domain invariant so numeric-only names cannot enter through any adapter or future feature, then align add-command feedback, documentation, and regression tests. Existing names that contain at least one Unicode alphabetic character—such as `Run 3`—will remain valid.
+
+**Assistant (5.6 Sol, light):** The validation now lives in `Habit` itself and uses Unicode-aware letter detection. The add use case converts that invariant into a normal failure result, so `add 3` produces a clear explanation instead of throwing or creating an ambiguous habit. Names such as `5K Run` and non-English alphabetic names remain valid.
+
+**Assistant (5.6 Sol, light):** The automated suite passes. One compatibility point is worth checking before I finish: because your example may already be persisted, I’m verifying whether a legacy numeric-only habit would be handled cleanly on startup rather than making the whole data file unreadable.
+
+**Assistant (5.6 Sol, light):** Implemented numeric-only habit-name prevention.
+
+- `add 3`, `add 123 - 456`, and symbol-only names are rejected.
+- Feedback: `Habit name must contain at least one letter.`
+- Mixed names such as `Run 3 km` remain valid.
+- Unicode letters are supported.
+- Previously saved numeric habits still load, allowing them to be deleted using their displayed index.
+- Updated architecture, user/developer guides, acceptance documentation, and tests.
+
+Verification: all 97 tests pass, and `git diff --check` passes.
+````
+
+### Summary of Actions Taken
+
+- Added one-based numbering to the alphabetically sorted habit list.
+- Enabled existing-habit commands to resolve either a displayed index or a case-insensitive name.
+- Updated help text, architecture guidance, user/developer documentation, and manual acceptance instructions.
+- Prevented creation of numeric-only and symbol-only habit names while allowing mixed alphanumeric and Unicode-letter names.
+- Preserved loading and index-based deletion of legacy numeric-only habits.
+- Added command, use-case, domain, and JavaFX regression coverage and verified all 97 tests pass.

@@ -21,7 +21,7 @@ public class MarkCompleteCommand implements Command {
 
     @Override
     public String usage() {
-        return "done HABIT_NAME [YYYY-MM-DD]";
+        return "done HABIT_INDEX_OR_NAME [YYYY-MM-DD]";
     }
 
     @Override

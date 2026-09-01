@@ -42,4 +42,16 @@ class AddHabitUseCaseTest {
         assertEquals(UseCaseError.INVALID_HABIT_NAME, result.error());
         assertEquals(0, repository.saveCount());
     }
+
+    @Test
+    void rejectsNumericOnlyHabitNameWithoutSaving() {
+        FakeHabitRepository repository = new FakeHabitRepository();
+
+        UseCaseResult<HabitSnapshot> result = new AddHabitUseCase(repository).execute("123");
+
+        assertFalse(result.success());
+        assertEquals(UseCaseError.INVALID_HABIT_NAME, result.error());
+        assertTrue(repository.loadAll().isEmpty());
+        assertEquals(0, repository.saveCount());
+    }
 }

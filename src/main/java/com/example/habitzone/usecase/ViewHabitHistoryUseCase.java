@@ -14,7 +14,7 @@ public class ViewHabitHistoryUseCase {
     }
 
     public UseCaseResult<HabitHistory> execute(String habitName) {
-        Habit habit = HabitLookup.findByName(repository.loadAll(), habitName).orElse(null);
+        Habit habit = HabitLookup.findBySelector(repository.loadAll(), habitName).orElse(null);
         if (habit == null) {
             return UseCaseResult.failure(UseCaseError.HABIT_NOT_FOUND);
         }
