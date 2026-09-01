@@ -4,6 +4,7 @@ import com.example.habitzone.usecase.ViewHabitsUseCase;
 
 import java.util.Objects;
 
+/** Handles the {@code list} command by displaying the user's saved habits. */
 public class ListHabitsCommand implements Command {
     private final ViewHabitsUseCase viewHabitsUseCase;
 

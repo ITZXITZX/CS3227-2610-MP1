@@ -5,5 +5,6 @@ import com.example.habitzone.domain.HabitId;
 
 import java.util.List;
 
+/** Immutable completion history prepared for presentation. */
 public record HabitHistory(HabitId habitId, String habitName, List<CompletionLog> completions) {
 }

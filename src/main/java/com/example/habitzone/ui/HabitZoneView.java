@@ -42,6 +42,7 @@ public final class HabitZoneView extends BorderPane {
     private int commandHistoryIndex;
     private UpperPanel lastFocusedUpperPanel = UpperPanel.LEFT;
 
+    /** Identifies the upper panel currently selected in the main view. */
     private enum UpperPanel { LEFT, RIGHT }
 
     public HabitZoneView(MainWindowController controller) {

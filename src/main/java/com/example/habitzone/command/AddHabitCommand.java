@@ -4,9 +4,17 @@ import com.example.habitzone.usecase.AddHabitUseCase;
 
 import java.util.Objects;
 
+/**
+ * Handles the {@code add} command by delegating habit creation to the add-habit use case.
+ */
 public class AddHabitCommand implements Command {
     private final AddHabitUseCase addHabitUseCase;
 
+    /**
+     * Creates an add-habit command.
+     *
+     * @param addHabitUseCase use case that creates the requested habit
+     */
     public AddHabitCommand(AddHabitUseCase addHabitUseCase) {
         this.addHabitUseCase = Objects.requireNonNull(addHabitUseCase, "addHabitUseCase");
     }

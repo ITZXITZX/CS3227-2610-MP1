@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/** Contains common parsing and use-case result handling utilities for commands. */
+/** Contains common parsing and use-case result handling utilities for commands. */
 final class CommandSupport {
     private CommandSupport() {
     }

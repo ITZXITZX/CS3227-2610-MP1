@@ -2,6 +2,8 @@ package com.example.habitzone.command;
 
 import com.example.habitzone.usecase.UseCaseError;
 
+/** Provides shared user-facing messages for command processing outcomes. */
+/** Provides shared user-facing messages for command processing outcomes. */
 final class CommandMessages {
     static final String EMPTY_COMMAND = "Please enter a command.";
     static final String UNKNOWN_COMMAND = "Unknown command. Type 'help' to see available commands.";

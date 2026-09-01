@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+/** Handles the {@code help} command by listing the registered command usages. */
 public class HelpCommand implements Command {
     private final Supplier<Collection<Command>> commands;
 

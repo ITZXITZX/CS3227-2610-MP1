@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/** Removes a recorded completion from an existing habit and persists the update. */
 public class UnmarkHabitCompleteUseCase {
     private final HabitRepository repository;
     private final ClockProvider clockProvider;

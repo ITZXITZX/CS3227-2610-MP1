@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/** Creates a new habit when its name is valid and not already in use. */
 public class AddHabitUseCase {
     private final HabitRepository repository;
 

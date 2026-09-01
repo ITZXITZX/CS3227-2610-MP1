@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/** Removes an existing habit from the repository. */
 public class DeleteHabitUseCase {
     private final HabitRepository repository;
 

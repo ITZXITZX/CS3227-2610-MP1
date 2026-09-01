@@ -3,6 +3,7 @@ package com.example.habitzone.usecase;
 import java.util.Objects;
 import java.util.Optional;
 
+/** Represents either successful use-case data or an expected business-rule error. */
 public record UseCaseResult<T>(boolean success, T data, UseCaseError error) {
     public UseCaseResult {
         if (success) {
