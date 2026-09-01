@@ -12,10 +12,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,19 +70,27 @@ class HabitZoneViewTest {
     }
 
     @Test
-    void prefixesHabitRowsWithOneBasedNumbers() throws Exception {
+    void laysOutHabitRowsInAlignedIndexStatusAndNameColumns() throws Exception {
         ListView<HabitSnapshot> list = showInteractiveView(habits(3), 500);
 
-        List<String> rowTexts = runOnFxThread(() -> list.lookupAll(".list-cell").stream()
+        List<List<Label>> rows = runOnFxThread(() -> list.lookupAll(".list-cell").stream()
                 .filter(ListCell.class::isInstance)
                 .map(ListCell.class::cast)
                 .filter(cell -> !cell.isEmpty())
                 .sorted(java.util.Comparator.comparingInt(ListCell::getIndex))
-                .map(ListCell::getText)
+                .map(cell -> ((HBox) cell.getGraphic()).getChildren().stream()
+                        .map(Label.class::cast)
+                        .toList())
                 .toList());
 
-        assertEquals(List.of("1. Habit 0 (undone)", "2. Habit 1 (undone)",
-                "3. Habit 2 (undone)"), rowTexts);
+        assertEquals(List.of("1.", "(undone)", "Habit 0"),
+                rows.getFirst().stream().map(Label::getText).toList());
+        assertEquals(List.of("2.", "(undone)", "Habit 1"),
+                rows.get(1).stream().map(Label::getText).toList());
+        assertEquals(List.of("habit-index", "habit-status", "habit-name"),
+                rows.getFirst().stream().map(label -> label.getStyleClass().getLast()).toList());
+        assertEquals(rows.getFirst().get(0).getPrefWidth(), rows.get(1).get(0).getPrefWidth());
+        assertEquals(rows.getFirst().get(1).getPrefWidth(), rows.get(1).get(1).getPrefWidth());
     }
 
     @Test

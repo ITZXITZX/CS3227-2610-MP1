@@ -29,8 +29,8 @@ import java.util.function.Supplier;
 /** Main JavaFX layout; it renders controller state and forwards input unchanged. */
 public final class HabitZoneView extends BorderPane {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMMM uuuu");
-    private static final String COMPLETED_TODAY_LABEL = " (done)";
-    private static final String NOT_COMPLETED_TODAY_LABEL = " (undone)";
+    private static final String COMPLETED_TODAY_LABEL = "(done)";
+    private static final String NOT_COMPLETED_TODAY_LABEL = "(undone)";
     private static final String HELP_HEADING = "Available commands:";
     private static final int HORIZONTAL_SCROLL_SPEED_MULTIPLIER = 16;
     private static final PseudoClass SELECTED_PANEL = PseudoClass.getPseudoClass("selected");
@@ -71,11 +71,34 @@ public final class HabitZoneView extends BorderPane {
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
             @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
                 super.updateItem(habit, empty);
-                setText(empty || habit == null ? null : (getIndex() + 1) + ". " + habit.name()
-                        + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
+                setText(null);
+                if (empty || habit == null) {
+                    setGraphic(null);
+                    setAccessibleText(null);
+                    return;
+                }
+
+                String index = (getIndex() + 1) + ".";
+                String status = habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL;
+                Label indexLabel = habitColumn(index, "habit-index");
+                Label statusLabel = habitColumn(status, "habit-status");
+                Label nameLabel = habitColumn(habit.name(), "habit-name");
+                HBox.setHgrow(nameLabel, Priority.ALWAYS);
+
+                HBox row = new HBox(indexLabel, statusLabel, nameLabel);
+                row.getStyleClass().add("habit-row");
+                row.setAlignment(Pos.CENTER_LEFT);
+                setGraphic(row);
+                setAccessibleText(index + " " + status + " " + habit.name());
             }
         });
         refresh();
+    }
+
+    private static Label habitColumn(String text, String styleClass) {
+        Label label = new Label(text);
+        label.getStyleClass().add(styleClass);
+        return label;
     }
 
     private void installPanelFocusNavigation() {

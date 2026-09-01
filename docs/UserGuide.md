@@ -50,7 +50,7 @@ The first launch can take longer while dependencies are downloaded. A window tit
 
 The window has three main areas:
 
-- **Your habits** lists saved habits alphabetically, ignoring letter case. Each row has a one-based number and is labelled `(done)` or `(undone)` according to its completion status for the current local date.
+- **Your habits** lists saved habits alphabetically, ignoring letter case. Each row uses aligned columns for its one-based number, `(done)` or `(undone)` status for the current local date, and habit name.
 - **Selected habit history** shows a calendar for one habit. Completed dates are highlighted.
 - The bottom area shows feedback, a command field, and a **Run** button. Type a command and press **Enter** or click **Run** to execute it. The field is focused when the application opens.
 
@@ -241,7 +241,7 @@ For deterministic results, first close HabitZone and back up or remove `data/hab
 | Step | Command | Expected result |
 | --- | --- | --- |
 | 1 | `list` | Feedback says `You do not have any habits yet.` and both panels are empty. |
-| 2 | `add Reading` | Feedback says `Added habit 'Reading'.`; the list contains `1. Reading (undone)`. |
+| 2 | `add Reading` | Feedback says `Added habit 'Reading'.`; the aligned list row contains `1.`, `(undone)`, and `Reading`. |
 | 3 | `done 1 2026-08-19` | Feedback says `Marked 'Reading' complete on 2026-08-19.` |
 | 4 | `history 1` | The history calendar includes August 2026 and highlights day 19. |
 | 5 | `streak 1` | The feedback reports a streak of 0 unless the test is run on 2026-08-19; the history panel is cleared. |

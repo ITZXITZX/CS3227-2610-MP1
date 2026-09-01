@@ -2195,3 +2195,50 @@ Verification: all 97 tests pass, and `git diff --check` passes.
 - Prevented creation of numeric-only and symbol-only habit names while allowing mixed alphanumeric and Unicode-letter names.
 - Preserved loading and index-based deletion of legacy numeric-only habits.
 - Added command, use-case, domain, and JavaFX regression coverage and verified all 97 tests pass.
+
+## Conversation - 2026-09-01 12:36:00 +08:00
+
+### Conversation history
+
+```markdown
+**User:** Currently the list of habits show the number index, (done) or (undone) forllowed by the habit name. They are not aligned vertically. Could you help make those 3 items aligned? maybe each can take a certain number of spaces, or the table can be split into 3 columns. Help implement your recommended approach, follwoing architecture.md and update the documentatino and test cases
+
+**Assistant (5.6 Sol, light):** I'll inspect the project guidance and the current habit-list rendering, then implement the alignment in the existing architectural style and update both docs and tests.
+
+**Assistant (5.6 Sol, light):** The view currently concatenates all three values into one proportional-font string. I'm switching the cell presentation to three explicit JavaFX columns (index, status, name), which keeps alignment stable across font choices and multi-digit indices while remaining entirely in the UI layer as the architecture requires.
+
+**Assistant (5.6 Sol, light):** The implementation and documentation are updated. I've also replaced the old concatenated-text assertion with a UI test that verifies the three column nodes, their order, and shared fixed widths; I'm running the focused JavaFX tests and then the full suite.
+
+**Assistant (5.6 Sol, light):** Implemented aligned habit rows using three JavaFX UI columns:
+
+- Right-aligned index
+- Fixed-width `(done)` / `(undone)` status
+- Flexible habit-name column
+
+This is more reliable than padding strings with spaces and remains correctly scoped to the UI layer per `architecture.md`.
+
+Also updated:
+
+- Architecture and developer documentation
+- User guide and MVP acceptance test
+- JavaFX tests to verify column order, content, styles, and consistent widths
+- Selected-row styling and accessibility text
+
+Verification:
+
+- Focused `HabitZoneViewTest`: passed
+- Full Gradle test suite: passed
+- `git diff --check`: clean aside from existing line-ending notices
+
+**User:** suitable commit message?
+
+**Assistant (5.6 Sol, light):** `feat(ui): align habit list into index status and name columns`
+```
+
+### Summary of Actions Taken
+
+- Replaced concatenated habit-row text with aligned index, completion-status, and habit-name UI columns.
+- Updated architecture, developer, user, and MVP acceptance documentation.
+- Updated JavaFX tests to verify column structure, content, styles, and fixed alignment widths.
+- Verified the focused JavaFX tests and full Gradle test suite pass.
+- Suggested the commit message `feat(ui): align habit list into index status and name columns`.

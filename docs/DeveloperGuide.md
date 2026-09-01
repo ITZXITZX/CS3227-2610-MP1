@@ -220,7 +220,7 @@ Refreshing only after successful non-exit commands makes mutations immediately v
 
 ### JavaFX view
 
-`HabitZoneView` builds the interface in Java rather than FXML. It owns the one-based number prefixed to each list cell, ephemeral de-duplicated command history, keyboard focus movement, horizontal list scrolling, panel styling, forwarding list selection as a `history` command, and rendering controller state. It contains no persistence or habit rules.
+`HabitZoneView` builds the interface in Java rather than FXML. It owns the aligned index, current-status, and name columns in each list cell, ephemeral de-duplicated command history, keyboard focus movement, horizontal list scrolling, panel styling, forwarding list selection as a `history` command, and rendering controller state. Fixed presentation widths align the index and status columns without padding data with spaces. It contains no persistence or habit rules.
 
 `HabitHistoryCalendar` builds Sunday-first month grids from the earliest relevant completion month to the latest, always including the current month. It highlights completed dates, provides accessible text, and initially scrolls to the current month. Calendar range, navigation, and styling stay in `ui`; only `LocalDate` values cross the inner boundary.
 

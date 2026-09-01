@@ -18,7 +18,7 @@ without JavaFX or file storage.
 Habit indices are a use-case/presentation concept rather than persisted domain state. The
 use-case layer defines one case-insensitive alphabetical display order and resolves a positive
 integer selector against that one-based order. `ViewHabitsUseCase` uses the same order, and the
-JavaFX view prefixes each snapshot with its position. This keeps command resolution consistent
+JavaFX view presents each snapshot in aligned index, current-status, and name columns. This keeps command resolution consistent
 with the visible list without coupling the domain model or JSON format to mutable positions.
 To keep positive integer selectors unambiguous, the domain supplies a Unicode-aware new-name
 validation rule requiring at least one alphabetic letter. The add use case exposes violations as

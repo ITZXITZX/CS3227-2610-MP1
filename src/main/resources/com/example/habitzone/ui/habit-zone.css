@@ -11,6 +11,13 @@
 .panel-heading { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
 .list-view { -fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-background-radius: 8; }
 .list-view .list-cell:selected { -fx-background-color: #315ba6; -fx-text-fill: white; -fx-font-weight: bold; }
+.habit-row { -fx-spacing: 12; }
+.habit-index { -fx-min-width: 34; -fx-pref-width: 34; -fx-alignment: center-right; }
+.habit-status { -fx-min-width: 70; -fx-pref-width: 70; }
+.habit-name { -fx-max-width: infinity; }
+.list-view .list-cell:selected .habit-index,
+.list-view .list-cell:selected .habit-status,
+.list-view .list-cell:selected .habit-name { -fx-text-fill: white; }
 .command-area { -fx-background-color: white; -fx-padding: 16 28 24; -fx-border-color: #e2e8f0 transparent transparent transparent; }
 .command-input { -fx-font-size: 15px; -fx-padding: 12 14; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #a9b8d5; }
 .run-command-button { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: #315ba6; -fx-background-radius: 4; -fx-padding: 12 24; -fx-cursor: hand; }
