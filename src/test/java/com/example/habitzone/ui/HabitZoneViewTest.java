@@ -268,7 +268,9 @@ class HabitZoneViewTest {
                 submittedCommands.add(input);
                 return input.equals("list")
                         ? CommandResult.habits("Habits", habits(1))
-                        : CommandResult.success("Available commands:" + System.lineSeparator() + "help");
+                        : CommandResult.success("Available commands:" + System.lineSeparator() + "help"
+                                + System.lineSeparator() + System.lineSeparator() + "Keyboard controls:"
+                                + System.lineSeparator() + "Up / Down: navigate commands");
             }, () -> { });
             controller.loadInitialHabits();
             HabitZoneView result = new HabitZoneView(controller);
@@ -289,6 +291,10 @@ class HabitZoneViewTest {
         assertEquals("unfinished command", runOnFxThread(view.commandInputForTesting()::getText));
         assertEquals("Available commands:", runOnFxThread(view.feedbackHeadingForTesting()::getText));
         assertTrue(runOnFxThread(() -> view.feedbackHeadingForTesting()
+                .getStyleClass().contains("feedback-heading")));
+        assertEquals("Keyboard controls:",
+                runOnFxThread(view.keyboardControlsHeadingForTesting()::getText));
+        assertTrue(runOnFxThread(() -> view.keyboardControlsHeadingForTesting()
                 .getStyleClass().contains("feedback-heading")));
     }
 

@@ -128,6 +128,13 @@ class CommandRegistryTest {
         assertTrue(result.message().contains("history HABIT_INDEX_OR_NAME"));
         assertTrue(result.message().contains("help"));
         assertTrue(result.message().contains("exit"));
+        assertTrue(result.message().contains("Keyboard controls:"));
+        assertTrue(result.message().contains("Up / Down (command field): navigate submitted commands"));
+        assertTrue(result.message().contains("Up / Down (habit list): select a habit and show its history"));
+        assertTrue(result.message().contains("Left / Right (habit list): scroll long habit names"));
+        assertTrue(result.message().contains("Shift+Left / Shift+Right: focus the habits / history panel"));
+        assertTrue(result.message().contains("Shift+Down: focus the command field"));
+        assertTrue(result.message().contains("Shift+Up: return to the last focused upper panel"));
     }
 
     @Test

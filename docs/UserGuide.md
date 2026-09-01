@@ -83,7 +83,7 @@ Command history is kept only until the application closes. If the same command i
 - Dates must use the exact ISO format `YYYY-MM-DD`, for example `2026-09-01`.
 - In the command formats below, `HABIT_INDEX_OR_NAME` means either a displayed number or the full habit name. Text in square brackets is optional. Do not type the brackets.
 
-Enter `help` at any time to display the command formats available in the running application.
+Enter `help` at any time to display the command formats and keyboard controls available in the running application.
 
 ## Features and commands
 

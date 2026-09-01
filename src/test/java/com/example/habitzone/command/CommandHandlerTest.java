@@ -125,7 +125,11 @@ class CommandHandlerTest {
         ExitCommand exit = new ExitCommand();
         HelpCommand command = new HelpCommand(() -> List.of(exit));
 
-        assertEquals("Available commands:" + System.lineSeparator() + "exit", command.execute("").message());
+        String help = command.execute("").message();
+        assertTrue(help.startsWith("Available commands:" + System.lineSeparator() + "exit"));
+        assertTrue(help.contains("Keyboard controls:"));
+        assertTrue(help.contains("Up / Down (command field): navigate submitted commands"));
+        assertTrue(help.contains("Shift+Up: return to the last focused upper panel"));
     }
 
     @Test
