@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
+/** Handles the {@code done} command by marking a habit complete on a specified date. */
 public class MarkCompleteCommand implements Command {
     private final MarkHabitCompleteUseCase markHabitCompleteUseCase;
 
@@ -47,6 +48,7 @@ public class MarkCompleteCommand implements Command {
         );
     }
 
+    /** Holds a habit name and optional completion date parsed from command arguments. */
     record ParsedDatedHabit(String habitName, Optional<LocalDate> date, boolean invalidDate) {
         static ParsedDatedHabit from(String arguments) {
             if (CommandSupport.isBlank(arguments)) {

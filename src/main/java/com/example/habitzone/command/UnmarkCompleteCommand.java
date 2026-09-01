@@ -5,6 +5,7 @@ import com.example.habitzone.usecase.UnmarkHabitCompleteUseCase;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/** Handles the {@code undone} command by removing a habit's completion for a date. */
 public class UnmarkCompleteCommand implements Command {
     private final UnmarkHabitCompleteUseCase unmarkHabitCompleteUseCase;
 

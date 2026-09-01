@@ -5,6 +5,7 @@ import com.example.habitzone.domain.Habit;
 import java.util.List;
 import java.util.Optional;
 
+/** Provides shared name normalization and lookup operations for habit use cases. */
 final class HabitLookup {
     private HabitLookup() {
     }

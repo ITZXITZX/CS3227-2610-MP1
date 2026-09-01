@@ -8,6 +8,7 @@ import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
 
+/** Domain entity representing a named habit and the dates on which it was completed. */
 public class Habit {
     private final HabitId id;
     private final String name;

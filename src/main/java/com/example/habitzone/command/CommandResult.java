@@ -6,6 +6,7 @@ import com.example.habitzone.usecase.HabitSnapshot;
 import java.util.List;
 import java.util.Optional;
 
+/** Represents the presentation-ready outcome of executing a command. */
 public record CommandResult(
         String message,
         boolean error,

@@ -4,6 +4,7 @@ import com.example.habitzone.usecase.ViewHabitHistoryUseCase;
 
 import java.util.Objects;
 
+/** Handles the {@code history} command by displaying a habit's completion history. */
 public class ViewHistoryCommand implements Command {
     private final ViewHabitHistoryUseCase viewHabitHistoryUseCase;
 

@@ -6,6 +6,7 @@ import com.example.habitzone.domain.HabitId;
 import java.time.LocalDate;
 import java.util.List;
 
+/** Immutable view of a habit returned by application use cases. */
 public record HabitSnapshot(
         HabitId id,
         String name,

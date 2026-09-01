@@ -1,5 +1,6 @@
 package com.example.habitzone.command;
 
+/** Splits command-line input into a command name and its arguments. */
 public class CommandParser {
     public ParsedCommand parse(String input) {
         if (input == null || input.isBlank()) {
@@ -20,6 +21,7 @@ public class CommandParser {
         return new ParsedCommand(commandName, arguments);
     }
 
+    /** Holds the normalized command name and accompanying arguments parsed from input. */
     public record ParsedCommand(String name, String arguments) {
     }
 }

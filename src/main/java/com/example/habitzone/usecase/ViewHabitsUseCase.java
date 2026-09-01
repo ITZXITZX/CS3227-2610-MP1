@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+/** Retrieves the user's habits as sorted presentation snapshots. */
 public class ViewHabitsUseCase {
     private final HabitRepository repository;
     private final ClockProvider clockProvider;

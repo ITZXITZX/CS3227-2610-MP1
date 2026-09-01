@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/** Persists the user's habits in a JSON file. */
 public class JsonHabitRepository implements HabitRepository {
     private static final Path DEFAULT_PATH = Path.of("data", "habits.json");
 
@@ -185,6 +186,7 @@ public class JsonHabitRepository implements HabitRepository {
         return escaped.toString();
     }
 
+    /** Minimal JSON serializer and parser used for the repository's storage format. */
     private static final class Json {
         private final String input;
         private int index;
@@ -353,6 +355,7 @@ public class JsonHabitRepository implements HabitRepository {
         }
     }
 
+    /** Signals malformed JSON encountered while reading persisted habit data. */
     private static final class JsonParseException extends RuntimeException {
         JsonParseException(String message) {
             super(message);

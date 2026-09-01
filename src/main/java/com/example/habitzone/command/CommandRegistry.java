@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/** Registers commands and dispatches parsed user input to the matching command. */
 public class CommandRegistry {
     private final CommandParser parser;
     private final Map<String, Command> commands = new LinkedHashMap<>();

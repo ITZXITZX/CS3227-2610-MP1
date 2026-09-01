@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/** Records a completion for an existing habit and persists the updated collection. */
 public class MarkHabitCompleteUseCase {
     private final HabitRepository repository;
     private final ClockProvider clockProvider;

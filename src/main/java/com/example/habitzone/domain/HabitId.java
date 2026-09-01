@@ -3,6 +3,7 @@ package com.example.habitzone.domain;
 import java.util.Objects;
 import java.util.UUID;
 
+/** Immutable identifier for a habit. */
 public record HabitId(String value) {
     public HabitId {
         Objects.requireNonNull(value, "value");

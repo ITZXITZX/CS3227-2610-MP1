@@ -4,6 +4,7 @@ import com.example.habitzone.usecase.DeleteHabitUseCase;
 
 import java.util.Objects;
 
+/** Handles the {@code delete} command by delegating habit removal to its use case. */
 public class DeleteHabitCommand implements Command {
     private final DeleteHabitUseCase deleteHabitUseCase;
 

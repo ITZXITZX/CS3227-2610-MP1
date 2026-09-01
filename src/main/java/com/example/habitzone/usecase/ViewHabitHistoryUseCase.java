@@ -5,6 +5,7 @@ import com.example.habitzone.port.HabitRepository;
 
 import java.util.Objects;
 
+/** Retrieves the completion history for a habit identified by name. */
 public class ViewHabitHistoryUseCase {
     private final HabitRepository repository;
 
