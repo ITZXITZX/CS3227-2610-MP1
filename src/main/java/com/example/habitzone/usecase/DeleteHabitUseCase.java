@@ -17,7 +17,7 @@ public class DeleteHabitUseCase {
 
     public UseCaseResult<HabitSnapshot> execute(String habitName) {
         List<Habit> habits = new ArrayList<>(repository.loadAll());
-        Habit habit = HabitLookup.findByName(habits, habitName).orElse(null);
+        Habit habit = HabitLookup.findBySelector(habits, habitName).orElse(null);
         if (habit == null) {
             return UseCaseResult.failure(UseCaseError.HABIT_NOT_FOUND);
         }

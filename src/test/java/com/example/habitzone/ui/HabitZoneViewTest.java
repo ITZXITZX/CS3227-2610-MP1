@@ -68,6 +68,22 @@ class HabitZoneViewTest {
     }
 
     @Test
+    void prefixesHabitRowsWithOneBasedNumbers() throws Exception {
+        ListView<HabitSnapshot> list = showInteractiveView(habits(3), 500);
+
+        List<String> rowTexts = runOnFxThread(() -> list.lookupAll(".list-cell").stream()
+                .filter(ListCell.class::isInstance)
+                .map(ListCell.class::cast)
+                .filter(cell -> !cell.isEmpty())
+                .sorted(java.util.Comparator.comparingInt(ListCell::getIndex))
+                .map(ListCell::getText)
+                .toList());
+
+        assertEquals(List.of("1. Habit 0 (undone)", "2. Habit 1 (undone)",
+                "3. Habit 2 (undone)"), rowTexts);
+    }
+
+    @Test
     void scrollsDisplayedHabitIntoViewInALongList() throws Exception {
         List<HabitSnapshot> habits = habits(60);
         HabitSnapshot displayed = habits.getLast();

@@ -121,11 +121,11 @@ class CommandRegistryTest {
 
         assertFalse(result.error());
         assertTrue(result.message().contains("add HABIT_NAME"));
-        assertTrue(result.message().contains("delete HABIT_NAME"));
+        assertTrue(result.message().contains("delete HABIT_INDEX_OR_NAME"));
         assertTrue(result.message().contains("list"));
-        assertTrue(result.message().contains("done HABIT_NAME [YYYY-MM-DD]"));
-        assertTrue(result.message().contains("undone HABIT_NAME [YYYY-MM-DD]"));
-        assertTrue(result.message().contains("history HABIT_NAME"));
+        assertTrue(result.message().contains("done HABIT_INDEX_OR_NAME [YYYY-MM-DD]"));
+        assertTrue(result.message().contains("undone HABIT_INDEX_OR_NAME [YYYY-MM-DD]"));
+        assertTrue(result.message().contains("history HABIT_INDEX_OR_NAME"));
         assertTrue(result.message().contains("help"));
         assertTrue(result.message().contains("exit"));
     }
@@ -221,12 +221,12 @@ class CommandRegistryTest {
         CommandRegistry registry = registry(new FakeHabitRepository());
 
         assertEquals("Please input: add HABIT_NAME", registry.execute("add").message());
-        assertEquals("Please input: delete HABIT_NAME", registry.execute("delete").message());
-        assertEquals("Please input: history HABIT_NAME", registry.execute("history").message());
-        assertEquals("Please input: done HABIT_NAME [YYYY-MM-DD]", registry.execute("done").message());
-        assertEquals("Please input: done HABIT_NAME [YYYY-MM-DD]", registry.execute("done 2026-08-19").message());
-        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", registry.execute("undone").message());
-        assertEquals("Please input: undone HABIT_NAME [YYYY-MM-DD]", registry.execute("undone 2026-08-19").message());
+        assertEquals("Please input: delete HABIT_INDEX_OR_NAME", registry.execute("delete").message());
+        assertEquals("Please input: history HABIT_INDEX_OR_NAME", registry.execute("history").message());
+        assertEquals("Please input: done HABIT_INDEX_OR_NAME [YYYY-MM-DD]", registry.execute("done").message());
+        assertEquals("Please input: done HABIT_INDEX_OR_NAME [YYYY-MM-DD]", registry.execute("done 2026-08-19").message());
+        assertEquals("Please input: undone HABIT_INDEX_OR_NAME [YYYY-MM-DD]", registry.execute("undone").message());
+        assertEquals("Please input: undone HABIT_INDEX_OR_NAME [YYYY-MM-DD]", registry.execute("undone 2026-08-19").message());
     }
 
     @Test

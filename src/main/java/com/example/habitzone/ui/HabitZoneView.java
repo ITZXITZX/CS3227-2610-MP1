@@ -71,7 +71,7 @@ public final class HabitZoneView extends BorderPane {
         habitList.setCellFactory(list -> new javafx.scene.control.ListCell<>() {
             @Override protected void updateItem(HabitSnapshot habit, boolean empty) {
                 super.updateItem(habit, empty);
-                setText(empty || habit == null ? null : habit.name()
+                setText(empty || habit == null ? null : (getIndex() + 1) + ". " + habit.name()
                         + (habit.completedToday() ? COMPLETED_TODAY_LABEL : NOT_COMPLETED_TODAY_LABEL));
             }
         });

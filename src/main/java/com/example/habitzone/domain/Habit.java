@@ -33,6 +33,11 @@ public class Habit {
         return normalized;
     }
 
+    /** Returns whether a name is eligible for creation and contains a Unicode letter. */
+    public static boolean isValidName(String name) {
+        return name != null && !name.isBlank() && name.codePoints().anyMatch(Character::isLetter);
+    }
+
     public HabitId id() {
         return id;
     }

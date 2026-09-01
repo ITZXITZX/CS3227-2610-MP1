@@ -2115,3 +2115,83 @@ The feedback renderer now separates the heading from the remaining command list 
 - Added and tested the top-right ? Help button.
 - Bolded the Available commands: heading and verified all 92 tests pass.
 - Corrected the transcript entry placement so it is chronologically last.
+
+## Conversation - 2026-09-01 11:42:00 +08:00
+
+### Conversation history
+
+````markdown
+**User:** I want the habits to be in a list form with numbering. Currently it does not have numbers in the list. The reason for numbers is so that I can type the index of the habit in the list, instead of typing the full habit name. So help me add the indexing for the habits in the list form, and update the add, delete, history, streak, done and undone to be able to work with the index instead.
+
+Follow architecture.md, and update where necessary for this new feature
+
+Update the documentation, as well as the help command description, and any other test code
+
+**Assistant (5.6 Sol, light):** I’ll trace the command flow, domain/storage boundaries, architecture notes, and existing tests first. Then I’ll implement index-based habit selection consistently across listing and all six commands, and verify the documentation and test suite.
+
+**Assistant (5.6 Sol, light):** The architecture document is under `docs/architecture.md`, not the repository root. I’ve also noted the existing project-local Gradle directories, but I won’t create or use any new cache directory; I’ll run the wrapper with the project’s existing configuration as instructed.
+
+**Assistant (5.6 Sol, light):** The cleanest fit is to keep indexing in the application/use-case layer: indices resolve against the same alphabetically sorted snapshot shown by `list`, while the domain and JSON schema remain unchanged. I’ll preserve habit-name input for backward compatibility, make positive integer input select the displayed 1-based index, and show numbers in the JavaFX list. `add` still necessarily takes a new name; after it succeeds, the refreshed sorted list assigns/display its index.
+
+**Assistant (5.6 Sol, light):** The core path is now being updated around one shared ordering rule so list rendering and command resolution cannot drift. I’m also retaining name-based commands, which protects existing saved workflows while enabling concise numeric input.
+
+**Assistant (5.6 Sol, light):** Index resolution is now shared by delete, completion/uncompletion, history, and streak, and it uses the exact ordering returned by `list`. Next I’m tightening the visible syntax/help text and adding focused regression coverage for reordered repository data, out-of-range indices, dated commands, and numbered cells.
+
+**Assistant (5.6 Sol, light):** Implementation and documentation edits are in place. The test run reached the existing Gradle configuration but the sandbox blocked its configured cache at `C:\.gradle`; I’m rerunning the same wrapper command with permission to use that existing cache, without creating a project-local Gradle home.
+
+**Assistant (5.6 Sol, light):** All 94 tests now pass, including the new command-resolution and JavaFX row-number tests. I’m doing the final consistency pass now: test-count notes, stale syntax references in current guides, whitespace, and the complete diff.
+
+**Assistant (5.6 Sol, light):** Implemented numbered, index-addressable habits.
+
+Key changes:
+
+- Habit rows now display as `1. Reading (undone)`.
+- `done`, `undone`, `history`, `streak`, and `delete` accept either a 1-based index or habit name.
+- Indices consistently follow the alphabetically sorted visible list.
+- `add` still takes a new habit name; the refreshed list automatically assigns its index.
+- Help syntax now uses `HABIT_INDEX_OR_NAME`.
+- Updated architecture, user guide, developer guide, and acceptance-test documentation.
+- Added command and JavaFX regression tests, including alphabetical index resolution and invalid indices.
+
+Examples:
+
+```text
+done 1
+history 2
+undone 1 2026-08-19
+streak 3
+delete 2
+```
+
+Verification: all 94 tests pass via `.\gradlew.bat test`, and `git diff --check` reports no whitespace errors.
+
+**User:** I have an edge case whereby I name the habit as "3", it shows up as the 1st item on the list. Then my 3rd item is "tennis". When I enter streak 3 it shows the streak for tennis.
+
+Help me to prevent users from saving only numbers as the habit name. Habit names must have at least 1 alphabet
+
+**Assistant (5.6 Sol, light):** I’ll enforce this as a domain invariant so numeric-only names cannot enter through any adapter or future feature, then align add-command feedback, documentation, and regression tests. Existing names that contain at least one Unicode alphabetic character—such as `Run 3`—will remain valid.
+
+**Assistant (5.6 Sol, light):** The validation now lives in `Habit` itself and uses Unicode-aware letter detection. The add use case converts that invariant into a normal failure result, so `add 3` produces a clear explanation instead of throwing or creating an ambiguous habit. Names such as `5K Run` and non-English alphabetic names remain valid.
+
+**Assistant (5.6 Sol, light):** The automated suite passes. One compatibility point is worth checking before I finish: because your example may already be persisted, I’m verifying whether a legacy numeric-only habit would be handled cleanly on startup rather than making the whole data file unreadable.
+
+**Assistant (5.6 Sol, light):** Implemented numeric-only habit-name prevention.
+
+- `add 3`, `add 123 - 456`, and symbol-only names are rejected.
+- Feedback: `Habit name must contain at least one letter.`
+- Mixed names such as `Run 3 km` remain valid.
+- Unicode letters are supported.
+- Previously saved numeric habits still load, allowing them to be deleted using their displayed index.
+- Updated architecture, user/developer guides, acceptance documentation, and tests.
+
+Verification: all 97 tests pass, and `git diff --check` passes.
+````
+
+### Summary of Actions Taken
+
+- Added one-based numbering to the alphabetically sorted habit list.
+- Enabled existing-habit commands to resolve either a displayed index or a case-insensitive name.
+- Updated help text, architecture guidance, user/developer documentation, and manual acceptance instructions.
+- Prevented creation of numeric-only and symbol-only habit names while allowing mixed alphanumeric and Unicode-letter names.
+- Preserved loading and index-based deletion of legacy numeric-only habits.
+- Added command, use-case, domain, and JavaFX regression coverage and verified all 97 tests pass.

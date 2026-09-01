@@ -20,7 +20,7 @@ public class UnmarkCompleteCommand implements Command {
 
     @Override
     public String usage() {
-        return "undone HABIT_NAME [YYYY-MM-DD]";
+        return "undone HABIT_INDEX_OR_NAME [YYYY-MM-DD]";
     }
 
     @Override
